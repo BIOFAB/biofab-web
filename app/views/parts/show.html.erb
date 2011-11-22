@@ -1,0 +1,24 @@
+
+<ol class='show'>
+  <li>
+    <div class='key'>BIOFAB ID</div>
+    <div class='value'><%= @part.biofab_id %></div>
+  </li>
+  <li>
+    <div class='key'>Part type</div>
+    <div class='value'><%= @part.part_type %></div>
+  </li>
+  <li>
+    <div class='key'>Sequence</div>
+    <div class='value'><%= @part.sequence %></div>
+  </li>
+  <li>
+    <div class='key'>Description</div>
+    <div class='value'><%= @part.description %></div>
+  </li>
+</ol>
+
+
+
+<%= link_to 'Edit', edit_part_path(@part) %> |
+<%= link_to 'Back', parts_path %>

@@ -1,0 +1,23 @@
+<%= semantic_form_for(@annotation_type) do |f| %>
+  <% if @annotation_type.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@annotation_type.errors.count, "error") %> prohibited this annotation_type from being saved:</h2>
+
+      <ul>
+      <% @annotation_type.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.inputs do %>
+  
+    <%= f.input :name %>
+
+  <% end %>
+
+  <div class="actions">
+    <%= f.buttons %>
+  </div>
+<% end %>

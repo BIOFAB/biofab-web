@@ -1,0 +1,66 @@
+<script type='text/javascript'>
+
+  // TODO! waaay too much hardcoding
+
+  function show_plot_for(row, col) {
+    if((row == 0) || (col == 0)) {
+      return false;
+    }
+    var img_id = 'img_'+row+'_'+col;
+    if(!$(img_id)) {
+      return false;
+    }
+    $('plot').src = "";
+    $('plot').alt = 'Loading plot for well '+row+col;
+
+    $('plot').src = $(img_id).src;
+    console.log($(img_id).src);
+  }
+
+</script>
+
+<div class='flow_cyte_container flow_cyte_data_container'>
+
+    <h1>Plate data</h1>
+
+    <h2>Plate: <%= @plate.name %></h2>
+
+    <table class='plate_layout' style='float:left'>
+
+      <% 9.times do |row| %>
+        <tr id='<%= "row_#{row}" %>' <%= "class='topmost'" if row == 0 %>>
+        <% 13.times do |col| %>
+         <td id='<%= "row_#{row}_col_#{col}" %>' class='<%= "topmost" if row == 0 %> <%= "leftmost" if col == 0 %>' onmouseover='show_plot_for("<%= row %>", "<%= col %>")'>
+           <% if (row == 0) && (col > 0) %>
+             <div class='row_number'><%= col %></div>
+           <% elsif (col == 0) && (row > 0) %>
+             <div class='col_number'><%= row_to_letter(row) %></div>
+           <% end %>
+
+           <% if (row > 0) && (col > 0) %>
+             <% well = @plate.well_at(row, col) %>
+             <% if !well %>
+               <div class='mean'>NA</div>
+             <% else %>
+               <img id="<%= "img_#{row}_#{col}" %>" style='display:none' src="<%= well.file_by_type('plot').filepath %>" />
+               <div class='mean'>
+                 <%= well.replicate.characterization_with_type_name('mean').value.round(2) %>
+               </div>
+               <div class='sd'>
+                 <%= well.replicate.characterization_with_type_name('standard_deviation').value.round(2) %>
+               </div>
+             <% end %>
+           <% end %>
+
+         </td>
+        <% end %>
+        </tr>
+      <% end %>
+
+    </table>
+    
+    <div id='plot_container' style='float:left; padding-left:20px'>
+      <img id='plot' />
+    </div>
+
+</div>

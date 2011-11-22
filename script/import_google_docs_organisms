@@ -1,0 +1,38 @@
+#!script/rails runner
+
+g = Google.new(Settings['google_docs_key'], Settings['google_username'], Settings['google_password'])
+
+g.default_sheet = 'CHASSIS'
+
+row = 2
+while(!g.cell(row, 2).blank?)
+
+  species = g.cell(row, 2) || ''
+  strain = g.cell(row, 3) || ''
+  sub_strain = g.cell(row, 4) || ''
+  url = g.cell(row, 5) || ''
+   
+
+  organism = Organism.where(["species = ? AND strain = ? and substrain = ?", species, strain, sub_strain]).first
+  if organism
+    puts "Skipped: #{species} | #{strain} | #{sub_strain} - Already in database."
+    row += 1
+    next
+  end
+
+  organism = Organism.new
+  organism.species = species
+  organism.strain = strain
+  organism.substrain = sub_strain
+  organism.url = url  
+
+  begin
+    organism.save!
+    puts "Imported #{organism.descriptor}"
+  rescue Exception => e
+    puts "Failed to import row #{row}: #{e.message}"
+  end
+
+  row += 1
+end
+

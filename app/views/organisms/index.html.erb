@@ -1,0 +1,28 @@
+<h1>Listing organisms</h1>
+
+<table>
+  <tr>
+    <th>Species</th>
+    <th>Strain</th>
+    <th>Sub-strain</th>
+
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @organisms.each do |organism| %>
+  <tr>
+    <td><%= organism.species %></td>
+    <td><%= organism.strain %></td>
+    <td><%= organism.substrain %></td>
+    <td><%= link_to 'Show', organism %></td>
+    <td><%= link_to 'Edit', edit_organism_path(organism) %></td>
+    <td><%= link_to 'Destroy', organism, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Organism', new_organism_path %>

@@ -1,0 +1,19 @@
+hostname: localhost
+port: 3000
+protocol: http # or https
+url_prefix: false # e.g. /my_app
+
+admin_email: someone@example.com
+
+# for biofab google docs import scripts only
+# most developers won't need this
+google_username: false
+google_password: false
+google_docs_key: false
+
+# where data files are stored relative to Rails.root/public
+data_files_path: data_files
+
+# the dir containing dirs, containing one dir per replicate, containing min 96 fcs files
+fcs_input_path: public/flow_cytometer_input_data
+fcs_input_path_is_relative: true

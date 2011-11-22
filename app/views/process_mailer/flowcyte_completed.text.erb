@@ -1,0 +1,13 @@
+Hello fellow worker drone.
+
+The analysis of your flow cytometer data has been completed
+and is ready for your viewing at:
+
+  <%=raw absolute_url_for(:controller => 'plate_layout', :action => 'data', :id => @id) %>
+
+-- 
+FabIO
+
+<% if @fortune %>
+<%=raw @fortune %>
+<% end %>

@@ -1,0 +1,24 @@
+<h1>Listing annotation_types</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @annotation_types.each do |annotation_type| %>
+  <tr>
+    <td><%= annotation_type.name %></td>
+    <td><%= link_to 'Show', annotation_type %></td>
+    <td><%= link_to 'Edit', edit_annotation_type_path(annotation_type) %></td>
+    <td><%= link_to 'Destroy', annotation_type, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Annotation type', new_annotation_type_path %>

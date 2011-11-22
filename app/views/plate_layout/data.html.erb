@@ -1,0 +1,38 @@
+<h1>Flow cytometer analysis</h1>
+
+<ul class='tab_container'>
+  <li class='tab first'>
+    <%= link_to 'Layout', :action => 'show', :id => @layout.id %>
+  </li>
+  <li class='tab last'>Data</li>
+</ul>
+
+<h3>Plates using this layout</h3>
+<% if @layout.plates.length == 0 %>
+  <p>There are no plates with this layout.</p>
+<% else %>
+  <ul>
+    <% @layout.plates.each do |plate| %>
+      <li>
+        <%= link_to "#{plate.name} - #{plate.description}", :controller => 'plate', :action => 'show', :id => plate.id %> - <%= l plate.created_at %> -
+        <%= link_to 'characterization', :controller => 'plate', :action => 'characterization_xls', :id => plate.id %> -
+        <%= link_to 'performance', :controller => 'plate', :action => 'performance_xls', :id => plate.id %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<h3>Analyze plates</h3>
+<% if @dirs.length == 0 %>
+  <p>No flow cytometer data available.</p>
+<% else %>
+  <ul>
+  <% @dirs.each do |dir| %>
+    <li>
+      <%= dir[:name] %> - 
+      <%= link_to 'analyze', :action => 'analyze2', :id => @layout.id, :path => dir[:path] %>
+      <%= l dir[:created_at] %>
+    </li>
+  <% end %>
+  </ul>
+<% end %>

@@ -1,0 +1,33 @@
+<h1>User admin</h1>
+
+<% if @users.empty? %>
+
+  <p>There are no users.</p>
+  <p>(how are you viewing this? are you magic?)</p>
+
+<% else %>
+
+  <table>
+    <tr>
+      <th>User</th>
+      <th>Created at</th>
+      <th>Updated at</th>
+      <th>Verified?</th>
+    </tr>
+
+    <% @users.each do |user| %>
+
+      <tr>
+        <td><%= link_to user.email, edit_admin_user_path(user) %></td>
+        <td><%= l user.created_at %></td>
+        <td><%= l user.updated_at %></td>
+        <td>NA</td>
+      </tr>
+
+    <% end %>
+
+  </table>
+
+<% end %>
+
+<%= link_to 'Create new user', new_admin_user_path %>

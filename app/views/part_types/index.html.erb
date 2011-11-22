@@ -1,0 +1,26 @@
+<h1>Listing part_types</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @part_types.each do |part_type| %>
+  <tr>
+    <td><%= part_type.name %></td>
+
+    <td><%= link_to 'Show', part_type %></td>
+    <td><%= link_to 'Edit', edit_part_type_path(part_type) %></td>
+    <td><%= link_to 'Destroy', part_type, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Part type', new_part_type_path %>

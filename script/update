@@ -1,0 +1,6 @@
+#!/bin/sh
+
+git pull &&
+git submodule update &&
+bundle install &&
+bundle exec rake db:migrate

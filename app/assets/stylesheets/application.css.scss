@@ -1,0 +1,130 @@
+/*
+ *= require_self 
+*/  
+
+/* begin flow cyte specific */
+
+#container {
+  padding-top: 14px;
+}
+
+/* begin plate.show */
+
+.mean {
+  width: 100%;
+  text-align: center;
+}
+
+.sd {
+  width: 100%;
+  text-align: center;
+  color: gray;
+  padding-top: 5px;
+}
+
+/* end plate.show */
+
+.flashes {
+  color: red;
+  font-size: 14px;
+  width: 400px;
+}
+
+.flow_cyte_data_container {
+  height: 2000px;
+}
+
+.flow_cyte_container .table_autocomplete {
+  display: block;
+  width: 100px;
+  font-size: 10px;
+}
+
+.flow_cyte_container .warning {
+  color: red;
+  font-size: 35px;
+  line-height: 40px;
+  font-weight: bold;
+}
+
+.flow_cyte_container .table_label {
+  width: 100px;
+  font-size: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.flow_cyte_container table {
+  border-collapse: collapse;
+}
+
+.flow_cyte_container table .row_number,
+.flow_cyte_container table .col_number {
+  width: 100%;
+  text-align: center;
+}
+
+.flow_cyte_container tr {
+
+}
+
+.flow_cyte_container table input.table_autocomplete::-webkit-input-placeholder {
+  color: #AA6666;
+}
+.flow_cyte_container table input.table_autocomplete:-moz-placeholder {
+  color: #AA6666;
+}
+
+.flow_cyte_container table input.ok::-webkit-input-placeholder {
+  color: #338833;
+}
+.flow_cyte_container table input.ok:-moz-placeholder {
+  color: #338833;
+}
+
+.flow_cyte_container table input.hide {
+  display: none;
+}
+
+.flow_cyte_container td {
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  padding: 5px;
+}
+
+.flow_cyte_container td.topmost {
+  background-color: #DDDDDD;
+  border-top: 1px solid black;
+}
+
+.flow_cyte_container td.leftmost {
+  background-color: #DDDDDD;
+  border-left: 1px solid black;
+}
+
+
+/* end flow cyte specific */
+
+
+.user_nav {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+}
+
+ol.show {
+  list-style: none;
+}
+
+ol.show .key {
+  display: inline-block;
+  width: 150px;
+  font-weight: bold;
+}
+
+ol.show .value {
+  display: inline-block;
+}
+
+@import "scaffolds.css.scss";
+@import "formtastic.css.scss";

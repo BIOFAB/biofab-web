@@ -1,0 +1,23 @@
+<%= semantic_form_for(@characterization_type) do |f| %>
+  <% if @characterization_type.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@characterization_type.errors.count, "error") %> prohibited this characterization_type from being saved:</h2>
+
+      <ul>
+      <% @characterization_type.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.inputs do %>
+
+    <%= f.input :name %>
+
+  <% end %>
+
+  <div class="actions">
+    <%= f.buttons %>
+  </div>
+<% end %>

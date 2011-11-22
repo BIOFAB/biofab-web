@@ -1,0 +1,114 @@
+#!script/rails runner
+
+#  Add methods to Enumerable, which makes them available to Array
+
+class Numeric
+  def square
+    self * self
+  end
+end
+
+module Enumerable
+ 
+  #  sum of an array of numbers
+  def sum
+    return self.inject(0){|acc,i|acc +i}
+  end
+ 
+  #  mean of an array of numbers
+  def mean
+    return self.sum/self.length.to_f
+  end
+ 
+  #  variance of an array of numbers
+  def variance2
+    avg=self.mean
+    sum=self.inject(0){|acc,i|acc +(i-avg)**2}
+    return(1/self.length.to_f*sum)
+  end
+
+  def squares
+    self.inject(0){|a,x|x.square+a}
+  end
+ 
+  def variance
+   self.squares.to_f/self.size - self.mean.square
+  end
+
+
+
+  #  standard deviation of an array of numbers
+  def standard_deviation
+    return Math.sqrt(self.variance)
+  end
+ 
+end  #  module Enumerable
+
+
+
+
+def generate_performances(char_type, perf_type_name, calc_method)
+
+  perf_type = PerformanceType.find_by_name(perf_type_name)
+  return nil if !perf_type
+
+  PlateLayout.all.each do |layout|
+    if !layout.plates.first || !layout.plates.first.wells.first
+      puts " ---skipped layout (no plates or no wells)"
+      next
+    end
+
+    layout.plates.first.wells.each do |ref_well|
+
+      perf = Performance.new
+      perf.performance_type = perf_type
+
+      layout.plates.each do |plate|
+        characterization = plate.well_characterization(ref_well.row, ref_well.column, char_type)
+        break if !characterization
+        perf.characterizations << characterization
+      end
+
+      if perf.characterizations.length != layout.plates.length
+        puts "skipped #{ref_well.row}.#{ref_well.column}"
+        next
+      end
+
+      values = perf.characterizations.collect{|char| char.value}
+      puts "vals: #{values.inspect}"
+
+      perf.value = values.send(calc_method)
+
+      puts "#{perf_type_name}: #{perf.value}"
+
+      perf.save!
+
+    end
+
+  end
+end
+
+
+Performance.all.each do |perf|
+  perf.delete
+end
+
+char_type = 'mean'
+perf_type_name = 'variance_of_means'
+calc_method = :variance
+
+generate_performances(char_type, perf_type_name, calc_method)
+
+char_type = 'mean'
+perf_type_name = 'standard_deviation_of_means'
+calc_method = :standard_deviation
+
+generate_performances(char_type, perf_type_name, calc_method)
+
+char_type = 'mean'
+perf_type_name = 'mean_of_means'
+calc_method = :mean
+
+generate_performances(char_type, perf_type_name, calc_method)
+
+

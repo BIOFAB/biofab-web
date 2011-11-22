@@ -1,0 +1,46 @@
+#!script/rails runner
+
+f = File.new('/home/juul/biofab/data/google_docs/fab_plasmids.csv')
+
+first = true
+lines = f.readlines
+lines.each do |line|
+  if first
+    first = false
+    next
+  end
+
+
+  id, type, desc, seq = line.gsub("\n", '').split(",")
+
+  biofab_id = "apFAB#{id}"
+
+  type_query = '%' + type.gsub(/[^\w\d]+/, '%') + '%'
+
+  part_type = PartType.where("name like '#{type_query}'")
+  if part_type.length != 1
+    puts "Failed for #{biofab_id} to find part type based on: #{type}"
+    exit
+  end
+
+  part_type = part_type[0]
+
+  part = Part.new
+  
+  part.biofab_id = biofab_id
+  part.sequence = seq
+  part.description = desc
+  part.part_type = part_type
+
+  begin
+    part.save!
+    puts "Succeeded for #{biofab_id}"
+  rescue Exception => e
+     puts "Failed for part #{biofab_id}: #{e.message}"
+     exit
+  end
+end
+
+
+
+

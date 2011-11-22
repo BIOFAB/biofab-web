@@ -1,0 +1,22 @@
+
+<ol class='show'>
+  <li>
+    <div class='key'>Species</div>
+    <div class='value'><%= @organism.species %></div>
+  </li>
+  <li>
+    <div class='key'>Strain</div>
+    <div class='value'><%= @organism.strain %></div>
+  </li>
+  <li>
+    <div class='key'>Sub-strain</div>
+    <div class='value'><%= @organism.substrain %></div>
+  </li>
+  <li>
+    <div class='key'>URL</div>
+    <div class='value'><%= link_to @organism.url %></div>
+  </li>
+</ol>
+
+<%= link_to 'Edit', edit_organism_path(@organism) %> |
+<%= link_to 'Back', organisms_path %>

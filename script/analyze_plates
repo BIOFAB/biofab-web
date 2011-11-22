@@ -1,0 +1,66 @@
+#!script/rails runner
+
+
+names = [/^BD.*M1$/, /^BD.*M2$/, /^BD.*M3$/, /^BD.*M4$/, /^BD.*M7$/, /^BD.*M8$/, /^BD.*M9$/, /^BD.*M10$/, /^BD.*S1$/, /^BD.*S2$/, /^BD.*S3$/, /^BD.*S4$/, /^BD.*S7$/, /^BD.*S8$/, /^BD.*S9$/, /^BD.*S10$/]
+
+#names = [/^BD.*M1$/, /^BD.*S1$/, /^BD.*S2$/, /^BD.*S3$/, /^BD.*S4$/, /^BD.*S7$/, /^BD.*S8$/, /^BD.*S9$/, /^BD.*S10$/]
+
+
+def find_layout(layouts, regex)
+  layouts.each do |layout|
+    if layout.name.match(regex)
+      return layout
+    end
+  end
+  nil
+end
+
+def find_dir(dirs, regex)
+  dirs.each do |dir|
+    if dir.match(regex)
+      return dir
+    end
+  end
+  nil
+end
+
+def get_dirs()
+  dirs = []
+  dir_path = File.join(Rails.root, 'public', 'flow_cytometer_input_data')
+  dir = Dir.new(dir_path)
+  dir.each do |entry|
+    next if (entry == '.') || (entry == '..')
+    entry_path = File.join(dir_path, entry)
+    next if !File.directory?(entry_path)
+    dirs << entry
+  end
+  dirs
+end
+
+current_user = User.first
+
+pairs = []
+
+names.each do |name|
+
+  dirs = get_dirs()
+  plate_layouts = PlateLayout.all
+  
+  dir = find_dir(dirs, name)
+  if !dir
+    raise "Could not find dir for #{name.inspect}"
+  end
+  plate_layout = find_layout(plate_layouts, name)
+  if !plate_layout
+    raise "Could not find plate layout for #{name.inspect}"
+  end
+
+  pairs << {:layout => plate_layout, :dir => dir}
+
+end
+
+pairs.each do |pair|
+  Plate.delay.analyze(pair[:layout], 'GRN', current_user, pair[:dir])
+  Plate.delay.analyze(pair[:layout], 'RED', current_user, pair[:dir])
+  puts "Queued #{pair[:dir]} for analysis"
+end

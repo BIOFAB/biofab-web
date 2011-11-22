@@ -1,0 +1,19 @@
+<%= semantic_form_for(@part_type) do |f| %>
+  <% if @part_type.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@part_type.errors.count, "error") %> prohibited this part_type from being saved:</h2>
+
+      <ul>
+      <% @part_type.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.inputs %>
+
+  <div class="actions">
+    <%= f.buttons %>
+  </div>
+<% end %>

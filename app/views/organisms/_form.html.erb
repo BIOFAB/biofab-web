@@ -1,0 +1,25 @@
+<%= semantic_form_for(@organism) do |f| %>
+  <% if @organism.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@organism.errors.count, "error") %> prohibited this organism from being saved:</h2>
+      <ul>
+      <% @organism.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.inputs  do %>
+
+    <%= f.input :species %>
+    <%= f.input :strain %>
+    <%= f.input :substrain %>
+    <%= f.input :url %>
+
+  <% end %>
+
+  <div class="actions">
+    <%= f.buttons %>
+  </div>
+<% end %>

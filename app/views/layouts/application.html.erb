@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BIOFAB</title>
+  <%= stylesheet_link_tag 'jquery-ui-1.8.16.custom' %>
+  <%= stylesheet_link_tag 'application' %>
+
+  <%= javascript_include_tag 'jquery-1.6.2.min' %>
+  <%= javascript_include_tag 'jquery-ui-1.8.16.custom.min' %>
+  <script type='text/javascript'>
+    $.noConflict(); // relinquish jquery control of $ variable
+  </script>
+
+  <%= javascript_include_tag 'prototype' %>
+  <%= javascript_include_tag 'application' %>
+
+  <%= csrf_meta_tags %>
+</head>
+<body>
+  <div id='container'>
+    <div class='user_nav'>
+      <% if current_user %>
+        Logged in as <%= current_user.email %>
+        <%= link_to "Log out", logout_path %>
+      <% else %>
+        <%= link_to "Log in", login_path %>
+        -
+        <%= link_to "Sign up", signup_path %>
+      <% end %>
+    </div>
+    <div class='flashes'>
+      <% flash.each do |name, msg| %>
+        <%= content_tag :div, msg, :id => "flash_#{name}" %>
+      <% end %>
+    </div>
+
+    <%= yield %>
+  </div>
+</body>
+</html>

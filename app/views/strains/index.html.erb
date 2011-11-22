@@ -1,0 +1,45 @@
+<h1>Listing strains</h1>
+
+<table>
+  <tr>
+    <th>BIOFAB ID</th>
+    <th>Expression level</th>
+    <th>Reliability</th>
+    <th>Promoter</th>
+    <th>5' UTR</th>
+    <th>Gene</th>
+    <th>Terminator</th>
+    <th>Organism</th>
+    <th>Plasmid</th>
+
+  </tr>
+
+  <% @strains.each do |strain| %>
+    <tr>
+      <td><%= link_to strain.biofab_id, strain %></td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td><%= strain.promoter %></td>
+      <td><%= strain.five_prime_utr %></td>
+      <td><%= strain.gene %></td>
+      <td><%= strain.terminator %></td>
+      <td><%= strain.organism %></td>
+      <td><%= strain.plasmid %></td>
+    </tr>
+  <% end %>
+
+<!--
+  <% @strains.each do |strain| %>
+    <tr>
+      <td><%= link_to 'Show', strain %></td>
+      <td><%= link_to 'Edit', edit_strain_path(strain) %></td>
+      <td><%= link_to 'Destroy', strain, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+-->
+
+</table>
+
+<br />
+
+<%= link_to 'New Strain', new_strain_path %>

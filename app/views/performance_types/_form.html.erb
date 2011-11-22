@@ -1,0 +1,21 @@
+<%= semantic_form_for(@performance_type) do |f| %>
+  <% if @performance_type.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@performance_type.errors.count, "error") %> prohibited this performance_type from being saved:</h2>
+
+      <ul>
+      <% @performance_type.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.inputs do %>
+    <%= f.input :name %>
+  <% end %>
+
+  <div class="actions">
+    <%= f.buttons %>
+  </div>
+<% end %>

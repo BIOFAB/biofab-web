@@ -1,0 +1,24 @@
+<h1>Listing performance_types</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @performance_types.each do |performance_type| %>
+  <tr>
+    <td><%= performance_type.name %></td>
+    <td><%= link_to 'Show', performance_type %></td>
+    <td><%= link_to 'Edit', edit_performance_type_path(performance_type) %></td>
+    <td><%= link_to 'Destroy', performance_type, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Performance type', new_performance_type_path %>

@@ -1,0 +1,23 @@
+<%= semantic_form_for(@measurement_type) do |f| %>
+  <% if @measurement_type.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@measurement_type.errors.count, "error") %> prohibited this measurement_type from being saved:</h2>
+
+      <ul>
+      <% @measurement_type.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.inputs do %>
+
+    <%= f.input :name %>
+
+  <% end %>
+
+  <div class="actions">
+    <%= f.buttons %>
+  </div>
+<% end %>

@@ -1,0 +1,174 @@
+== General information ==
+
+This is the new BIOFAB web app for internal lab workflows as well as public access to BIOFAB part sequence, measurement, performance and reliability data.
+
+It is implemented in Ruby on Rails 3.1
+
+Currently it includes:
+
+  The BIOFAB data model (SQL and ORM).
+
+  Flow cytometer integration:
+    Import of data from FCS3 files.
+    Gating and clustering analysis (using R and BioConductor).
+    Queued background jobs for batch processing.
+    Email notification upon analysis completion/error.
+
+  Plate layout management and import from xlsx.
+
+  Plate data viewing:
+    View in browser with distribution plots.
+    Xls export of characterization and performance data.
+
+  Parts import from google docs.
+
+  SBOL parts export (work in progress).
+
+  Parts management (work in progress).
+
+  User signup and authentication.  
+
+== Installation instructions ==
+
+These instructions have been tested on Ubuntu only and are a work in progress.
+
+Install dependencies:
+  sudo aptitude install ruby-full openjdk-6-jdk openjdk-6-jre r-base r-base-dev
+
+The openjdk packages are only needed if you want SBOL support. The R packages are only needed if you want flow cytometry data analysis support.
+
+If you don't have aptitude, don't worry about it, just replace aptitude with apt-get in this document. Aptitude is the preferred over apt-get according to Debian GNU/Linux.
+
+If you're running an older distro, you may want to manually get the newest version of rubygems [http://rubygems.org/ https://rubygems.org/pages/download], install it and create the following symlink:
+
+ cd /usr/bin
+ sudo ln -s gem1.8 gem
+
+For newer distros you can just do:
+
+ sudo aptitude install rubygems
+
+Install rails:
+
+ sudo gem install rails --no-rdoc --no-ri
+
+Install rsruby (allows calling of R functions from ruby, only required if you want flow cytometry analysis support):
+
+ sudo gem install rsruby -- --with-R-dir=/usr/lib/R --with-R-include=/usr/share/R/include
+
+Start R as root:
+
+  sudo R
+
+Use the R command line to install bioconductor packages (again, only required for flow cytometry analysis support):
+
+  source("http://bioconductor.org/biocLite.R")
+  biocLite("flowCore")
+  biocLite("flowClust")
+  biocLite("flowViz")
+
+While still in the R command line, install RSvgDevice (for flow cytometry plot output support);
+
+  install.packages('RSvgDevice')
+
+Exit the R command line by hitting ctrl+d and answering 'n' to the question.
+
+Run these commands and put them at the end of your /etc/profile:
+
+ export JAVA_HOME=/usr/lib/jvm/java-6-openjdk
+ export R_HOME=/usr/lib/R
+
+Get the web app:
+
+ git clone git://github.com/Juul/biofab-web.git
+
+Switch into the web app dir:
+
+ cd biofab-web/
+
+Get submodules:
+
+  git submodule init
+  git submodule update
+
+Get nested SBOL submodule:
+
+  cd java/libSBOLxml
+  git submodule init
+  git submodule update
+
+Compile libSBOLxml jar
+
+  ant clean build jar
+
+Compile libSBOLcore jar:
+
+  cd core/
+  ant clean build jar
+ 
+Return to Rails root dir:
+
+  cd ../../../
+
+Install gem dependencies:
+
+ sudo bundle install
+
+Configure the database:
+
+ cp config/database.yml.example config/database.yml
+ chmod 600 config/database.yml
+
+The example database.yml will cause the web app to use a locally stored sqlite database. You can edit the database.yml file if you want to use a different database, such as your existing postgresql or mysql database.
+
+Configure the site:
+
+ cp config/settings.yml.example config/settings.yml
+
+Edit this file to change e.g. hostname and default reply-to email address for the web app.
+
+Initialize the database, creating the required tables:
+
+ rake db:migrate
+
+The web app is now installed!
+
+== Importing BIOFAB data ==
+
+TODO writeme
+
+== Usage ==
+
+To start the web app, simply cd into the web app directory and run:
+
+ rails s thin
+
+The web app is now accessible at http://localhost:3000/
+
+Some processing, such as flow cytometer data analysis, take a long time and uses a background processor. To start the background processor run:
+
+ ./script/delayed_job_nodaemon
+
+To start the background processor as a daemon, run:
+
+ ./script/delayed_job
+
+An admin user with username admin and password admin will have been created.
+
+An entity-relationship diagram for the database is in the ERD.pdf file. It can be regenerated from the current database by running:
+
+ ./script/generate_er_diagram
+
+A dump of the current schema is in db/schema.rb. It can be regenerated from the current database by running ./script/schema_dump.
+
+== Production use ==
+
+If you plan to run the web app in a production environment, there are a few things you need to know.
+
+Per default, the web app will run in the development environment. This has a few advantages, such as showing nice readable errors with stack traces when something goes wrong, and caching very few files. For production, you should run the web app in the production environment. You probably also want to run it on port 80. For the thin webserver, this can be done like so:
+
+ rails s thin -p 80 -e production
+
+You should take a look at using [https://github.com/blog/517-unicorn Unicorn] and [http://nginx.org/ nginx] in combination, since a single instance of the thin web server will likely not be adequate.
+
+Make sure you aren't running the server as root. It's probably a good idea to create a separate rails user to run the server. Remember to change ownership of the appropriate files to the rails user.

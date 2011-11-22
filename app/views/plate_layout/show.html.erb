@@ -1,0 +1,102 @@
+<script type='text/javascript'>
+
+  jQuery(document).ready(function() {
+    FlowCyte.init({
+      organism_descriptors: <%=raw @organism_descriptors.to_json %>,
+      promoter_descriptors: <%=raw @promoter_descriptors.to_json %>,
+      five_prime_utr_descriptors: <%=raw @five_prime_utr_descriptors.to_json %>,
+      cds_descriptors: <%=raw @cds_descriptors.to_json %>,
+      terminator_descriptors: <%=raw @terminator_descriptors.to_json %>,
+      channel_descriptors: <%=raw @channel_descriptors.to_json %>
+    });
+  });
+
+</script>
+
+<div class='flow_cyte_container'>
+
+  <% if @layout.plates.length > 0 %>
+
+    <p class='warning'>
+      WARNING: This plate layout has already been used for <%= @layout.plates.length %> plate(s). If you change the layout, it will quite possibly ruin everything! Only change this plate layout if you are absolutely certain that you are fixing a past mistake!
+    </p>
+
+  <% end %>
+
+  <%= form_tag url_for(:action => 'save', :id => @layout.id), :onsubmit => "return FlowCyte.pre_save()" do %>
+
+    <h1>Flow cytometer analysis</h1>
+
+    <ul class='tab_container'>
+      <li class='tab first'>Layout</li>
+      <% if @layout.id %>
+        <li class='tab last'>
+          <%= link_to 'Data', :action => 'data', :id => @layout.id %>
+        </li>
+      <% end %>
+    </ul>
+
+    <h2>Plate name</h2>
+
+    Give us a name: <input name='plate_layout[name]' value='<%= @layout.name %>' />
+
+    <h2>Plate-global settings</h2>
+
+    <ul class='master'>
+      <li>Organism: <input name='plate_layout_organism' id='organism' placeholder='<variable>' value='<%= @layout.organism.descriptor if @layout.organism %>' /></li>
+      <li>Promoter: <input name='plate_layout_eou[promoter]' id='promoter' placeholder='<variable>' value='<%= @layout.eou.promoter.descriptor if @layout.eou && @layout.eou.promoter %>' /></li>
+      <li>5' UTR: <input name='plate_layout_eou[five_prime_utr]' id='five_prime_utr' placeholder='<variable>' value='<%= @layout.eou.five_prime_utr.descriptor if @layout.eou && @layout.eou.five_prime_utr %>' /></li>
+      <li>CDS: <input name='plate_layout_eou[cds]' id='cds' placeholder='<variable>' value='<%= @layout.eou.cds.descriptor if @layout.eou && @layout.eou.cds %>' /></li>
+      <li>Terminator: <input name='plate_layout_eou[terminator]' id='terminator' placeholder='<variable>' value='<%= @layout.eou.terminator.descriptor if @layout.eou && @layout.eou.terminator %>' /></li>
+      <li>Channel: <input name='plate_layout_channel' id='channel' placeholder='<variable>' value='<%= @layout.channel if !@layout.channel.blank?  %>' /></li>
+      <li>Hide plate-global settings in plate layout: <input name='plate_layout[hide_global_wells]' id='hide_master' type='checkbox' <%= "checked='checked'" if @layout.hide_global_wells %> /></li>
+    </ul>
+
+    <h3>Plate layout</h3>
+
+    <table class='plate_layout'>
+
+      <% 9.times do |row| %>
+        <tr id='<%= "row_#{row}" %>' <%= "class='topmost'" if row == 0 %>>
+        <% 13.times do |col| %>
+         <td id='<%= "row_#{row}_col_#{col}" %>' class='<%= "topmost" if row == 0 %> <%= "leftmost" if col == 0 %>'>
+           <% if (row == 0) && (col > 0) %>
+             <div class='row_number'><%= col %></div>
+           <% elsif (col == 0) && (row > 0) %>
+             <div class='col_number'><%= row_to_letter(row) %></div>
+           <% end %>
+
+           <% if (row == 0) && (col == 0) %>
+
+             <% @placeholder_names.each_index do |i| %> 
+               <input type='text' class='table_autocomplete' disabled='disabled' placeholder="<%= @placeholder_names[i] %>" />
+             <% end %>
+
+           <% else %>
+             <% @field_names.each_index do |i| %> 
+               <input type='text' class='table_autocomplete' id="<%= "row_#{row}_col_#{col}_#{@field_names[i]}" %>" name="<%= "data[#{row}][#{col}][#{@field_names[i]}]" %>" placeholder="<%=h "<#{@placeholder_names[i]}>" %>" value="<%= @layout.well_descriptor_for(@field_names[i], row, col) %>" />
+             <% end %>
+           <% end %>
+
+         </td>
+        <% end %>
+        </tr>
+      <% end %>
+
+    </table>
+
+    <input type='submit' value='Save plate layout' />
+    
+  <% end %>
+
+  <% if @layout.id %>
+    <% if @layout.plates.length > 0 %>
+      <p>You cannot delete this plate layout, as plates have already been run using this layout.</p>
+    <% else %>
+      <p>
+        <%= link_to 'Delete this plate layout', {:action => 'destroy', :id => @layout.id}, :onclick => "return confirm('Are you absolutely sure you want to delete this plate layout? There is no undo.')" %>
+      </p>
+    <% end %>
+  <% end %>
+
+</div>

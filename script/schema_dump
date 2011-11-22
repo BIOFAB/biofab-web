@@ -1,0 +1,4 @@
+#!/bin/sh
+
+bundle exec rake db:schema:dump
+echo "Current database schema dumped to db/schema.rb"

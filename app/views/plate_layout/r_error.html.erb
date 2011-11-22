@@ -1,0 +1,31 @@
+
+
+<h1>R error</h1>
+
+<h2>Error message from R</h2>
+
+<p>@r_msg</p>
+
+<h2>R backtrace</h2>
+
+<% if @r_backtrace.length == 0 %>
+  <p>No R backtrace information</p>
+<% else %>
+  <ul>
+    <% @r_backtrace.each do |line| %>
+      <li><%= line %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<h2>Ruby backtrace</h2>
+
+<% if @ruby_backtrace.length == 0 %>
+  <p>No ruby backtrace information</p>
+<% else %>
+  <ul>
+    <% @ruby_backtrace.each do |line| %>
+      <li><%= line %></li>
+    <% end %>
+  </ul>
+<% end %>

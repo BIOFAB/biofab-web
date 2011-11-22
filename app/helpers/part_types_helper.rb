@@ -1,0 +1,2 @@
+module PartTypesHelper
+end

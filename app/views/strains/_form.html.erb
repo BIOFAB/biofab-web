@@ -1,0 +1,19 @@
+<%= semantic_form_for @strain do |f| %>
+  <% if @strain.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@strain.errors.count, "error") %> prohibited this strain from being saved:</h2>
+
+      <ul>
+      <% @strain.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.inputs %>
+
+  <div class="actions">
+    <%= f.buttons %>
+  </div>
+<% end %>

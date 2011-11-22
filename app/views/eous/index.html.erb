@@ -1,0 +1,21 @@
+<h1>Listing eous</h1>
+
+<table>
+  <tr>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @eous.each do |eou| %>
+  <tr>
+    <td><%= link_to 'Show', eou %></td>
+    <td><%= link_to 'Edit', edit_eou_path(eou) %></td>
+    <td><%= link_to 'Destroy', eou, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Eou', new_eou_path %>

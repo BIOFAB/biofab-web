@@ -1,0 +1,13 @@
+<ol class='show'>
+  <li>
+    <div class='key'>Name</div>
+    <div class='value'><%= @part_type.name %></div>
+  </li>
+  <li>
+    <div class='key'>Description</div>
+    <div class='value'><%= @part_type.description %></div>
+  </li>
+</ol>
+
+<%= link_to 'Edit', edit_part_type_path(@part_type) %> |
+<%= link_to 'Back', part_types_path %>

@@ -1,0 +1,24 @@
+<h1>Listing characterization_types</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @characterization_types.each do |characterization_type| %>
+  <tr>
+    <td><%= characterization_type.name %></td>
+    <td><%= link_to 'Show', characterization_type %></td>
+    <td><%= link_to 'Edit', edit_characterization_type_path(characterization_type) %></td>
+    <td><%= link_to 'Destroy', characterization_type, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Characterization type', new_characterization_type_path %>

@@ -1,0 +1,33 @@
+Greetings fellow human!
+
+I regret to inform you that your background process has failed.
+
+An exception of class <%=raw @e.class.to_s %> occurred.
+
+The exception message was:
+
+  <%=raw @message %>
+
+<% if @extra %>
+Extra information:
+
+  <%=raw @extra %>
+<% end %>
+
+<% if @r_backtrace %>
+R backtrace:
+
+  <%=raw @r_backtrace.join("\n") %>
+<% end %>
+
+Ruby backtrace:
+
+<%=raw @backtrace.join("\n") %>
+
+Have a nice day!
+
+-- 
+FabIO
+
+“Don’t worry if it doesn’t work right.  If everything did, you’d be out of a job.”
+  -- Mosher’s Law of Software Engineering

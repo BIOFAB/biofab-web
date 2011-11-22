@@ -1,0 +1,17 @@
+<%= form_for(@eou) do |f| %>
+  <% if @eou.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@eou.errors.count, "error") %> prohibited this eou from being saved:</h2>
+
+      <ul>
+      <% @eou.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
