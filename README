@@ -131,7 +131,16 @@ Initialize the database, creating the required tables:
 
  rake db:migrate
 
+
 The web app is now installed!
+
+== Updating to latest version ==
+
+Run the update script:
+
+  ruby script/update
+
+This will update the web app itself, all required submodules, all required ruby gems, and the database schema. If you don't care about r_scripts or java libraries, you can make your own version of this script by copying to e.g. scripts/my_update and removing the lines that deal with submodules and ant.
 
 == Importing BIOFAB data ==
 
@@ -145,7 +154,7 @@ To start the web app, simply cd into the web app directory and run:
 
 The web app is now accessible at http://localhost:3000/
 
-Some processing, such as flow cytometer data analysis, take a long time and uses a background processor. To start the background processor run:
+Some processing, such as flow cytometer data analysis, take a long time and uses a background processor. To start the background processor in debug mode run:
 
  ./script/delayed_job_nodaemon
 
@@ -153,7 +162,9 @@ To start the background processor as a daemon, run:
 
  ./script/delayed_job
 
-An admin user with username admin and password admin will have been created.
+== Useful information ==
+
+When the database was first migrated, an admin user with username admin and password admin will have been created.
 
 An entity-relationship diagram for the database is in the ERD.pdf file. It can be regenerated from the current database by running:
 
@@ -171,4 +182,4 @@ Per default, the web app will run in the development environment. This has a few
 
 You should take a look at using [https://github.com/blog/517-unicorn Unicorn] and [http://nginx.org/ nginx] in combination, since a single instance of the thin web server will likely not be adequate.
 
-Make sure you aren't running the server as root. It's probably a good idea to create a separate rails user to run the server. Remember to change ownership of the appropriate files to the rails user.
+Make sure you aren't running the server as root. It's probably a good idea to create a separate rails user to run the server. Remember to change ownership of the appropriate files to the rails user. Remember that config/database.yml should be readable only by the user running the web server.

@@ -1,6 +1,19 @@
 #!/bin/sh
 
+echo "Pulling updated from git"
 git pull &&
+echo "Updating submodules"
 git submodule update &&
+echo "Installing required ruby gems"
 bundle install &&
-bundle exec rake db:migrate
+echo "Migrating database"
+bundle exec rake db:migrate &&
+echo "Updating nested SBOL submodule"
+cd java/libSBOLxml &&
+git submodule update &&
+echo "Compiling libSBOLxml"
+ant clean build jar &&
+cd core &&
+echo "Compiling libSBOLcore"
+ant clean build jar &&
+echo "BIOFAB web-app update completed successfully!"
