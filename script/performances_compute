@@ -89,9 +89,8 @@ def generate_performances(char_type, perf_type_name, calc_method)
 end
 
 
-Performance.all.each do |perf|
-  perf.delete
-end
+# warning!
+Performance.delete_all
 
 char_type = 'mean'
 perf_type_name = 'variance_of_means'

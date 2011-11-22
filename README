@@ -138,7 +138,7 @@ The web app is now installed!
 
 Run the update script:
 
-  ruby script/update
+  ./script/update
 
 This will update the web app itself, all required submodules, all required ruby gems, and the database schema. If you don't care about r_scripts or java libraries, you can make your own version of this script by copying to e.g. scripts/my_update and removing the lines that deal with submodules and ant.
 
