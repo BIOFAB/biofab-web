@@ -1,6 +1,6 @@
 class Plate < ActiveRecord::Base
   has_many :wells, :class_name => 'PlateWell', :dependent => :destroy
-  belongs_to :plate_layout, :dependent => :nullify
+  belongs_to :plate_layout
 
   def self.foo()
     # TODO move path to settings.rb

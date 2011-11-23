@@ -18,7 +18,7 @@ puts "Deleted #{c} plate wells"
 c = 0
 PlateLayoutWell.all.each do |well|
 
-  if (well.files.length == 0) || !well.replicate || !well.plate
+  if !well.plate_layout
     well.delete
     c += 1
   end

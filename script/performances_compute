@@ -35,8 +35,6 @@ module Enumerable
    self.squares.to_f/self.size - self.mean.square
   end
 
-
-
   #  standard deviation of an array of numbers
   def standard_deviation
     return Math.sqrt(self.variance)
@@ -65,12 +63,62 @@ def generate_performances(char_type, perf_type_name, calc_method)
 
       layout.plates.each do |plate|
         characterization = plate.well_characterization(ref_well.row, ref_well.column, char_type)
-        break if !characterization
+        next if !characterization
         perf.characterizations << characterization
       end
 
-      # a performance needs at least two characterizations
-      if perf.characterizations.length < 2
+      # a performance needs at least one characterization for mean
+      # and at least two for everything else
+      if ((perf.characterizations.length < 2) && (calc_method == :mean)) || (perf.characterizations.length < 1)
+        puts "skipped #{ref_well.row}.#{ref_well.column}"
+        next
+      end
+
+      values = perf.characterizations.collect{|char| char.value}
+
+      perf.value = values.send(calc_method)
+
+      puts "#{perf_type_name}: #{perf.value}"
+
+      perf.save!
+
+    end
+
+  end
+end
+
+
+def generate_total_variance_performances
+
+  perf_type = PerformanceType.find_by_name('total_variance')
+  return nil if !perf_type
+
+  PlateLayout.all.each do |layout|
+    if !layout.plates.first || !layout.plates.first.wells.first
+      puts " ---skipped layout (no plates or no wells)"
+      next
+    end
+
+    layout.plates.first.wells.each do |ref_well|
+
+      perf = Performance.new
+      perf.performance_type = perf_type
+
+      means = []
+      variances = []
+
+      layout.plates.each do |plate|
+        characterization = plate.well_characterization(ref_well.row, ref_well.column, 'mean')
+        next if !characterization
+        means << characterization
+        characterization = plate.well_characterization(ref_well.row, ref_well.column, 'variance')
+        next if !characterization
+        variances << characterization
+      end
+
+      # a performance needs at least one characterization for mean
+      # and at least two for everything else
+      if (means < 2) || (variances < 2)
         puts "skipped #{ref_well.row}.#{ref_well.column}"
         next
       end
@@ -78,9 +126,9 @@ def generate_performances(char_type, perf_type_name, calc_method)
       values = perf.characterizations.collect{|char| char.value}
       puts "vals: #{values.inspect}"
 
-      perf.value = values.send(calc_method)
+      perf.value = means.variance + variances.mean
 
-      puts "#{perf_type_name}: #{perf.value}"
+      puts "Total variance: #{perf.value}"
 
       perf.save!
 
@@ -111,4 +159,10 @@ calc_method = :mean
 
 generate_performances(char_type, perf_type_name, calc_method)
 
+char_type = 'variance'
+perf_type_name = 'mean_of_variances'
+calc_method = :mean
 
+generate_performances(char_type, perf_type_name, calc_method)
+
+generate_total_variance_performances
