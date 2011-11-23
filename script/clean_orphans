@@ -1,0 +1,59 @@
+#!script/rails runner
+
+# Work-in-progress script for cleaning
+# all orphans in the database
+
+c = 0
+PlateWell.all.each do |well|
+
+  if (well.files.length == 0) || !well.replicate || !well.plate
+    well.delete
+    c += 1
+  end
+
+end
+
+puts "Deleted #{c} plate wells"
+
+c = 0
+PlateLayoutWell.all.each do |well|
+
+  if (well.files.length == 0) || !well.replicate || !well.plate
+    well.delete
+    c += 1
+  end
+
+end
+
+puts "Deleted #{c} plate layout wells"
+
+c = 0
+Plate.all.each do |plate|
+  if plate.wells.length == 0
+    plate.delete
+    c += 1
+  end
+end
+
+puts "Deleted #{c} plates"
+
+c = 0
+PlateLayout.all.each do |layout|
+  if layout.wells.length == 0
+    layout.delete
+    c += 1
+  end
+end
+
+puts "Deleted #{c} plate layouts"
+
+c = 0
+DataFile.all.each do |file|
+
+  if file.plate_wells.length == 0
+    file.destroy
+    c += 1
+  end
+end
+
+puts "Deleted #{c} data files"

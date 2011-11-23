@@ -1,8 +1,8 @@
 # a large, properly formatted, data file
 class DataFile < ActiveRecord::Base
   
-#  after_save :write_file
-#  after_destroy :delete_file
+  after_destroy :delete_file
+
   has_and_belongs_to_many :plate_wells
 
 #  def self.from_data(data, filename)
@@ -31,34 +31,6 @@ class DataFile < ActiveRecord::Base
     file
   end
 
-#  def file=(uploaded_file)  
-#    @uploaded_file = uploaded_file
-#    @filename = sanitize_filename(@uploaded_file.original_filename)
-#    self.content_type = @uploaded_file.content_type
-#  end
-
-  
-#  def write_file
-#    if File.exists?(path_to_file)
-#      return
-#    end
-#    if !@uploaded_file
-#      return
-#    end
-#    if @uploaded_file.instance_of?(Tempfile)
-#      FileUtils.copy(@uploaded_file.local_path, path_to_file)
-#    else
-#      File.open(self.path_to_file, "wb") { |f| f.write(@uploaded_file.read) }
-#    end
-#    self.filepath = self.path_to_file # TODO this happens after save?! then it isn't saved?
-#  end
-
-#  def delete_file
-#    if File.exists?(self.file)
-#      File.delete(self.file)
-#      Dir.rmdir(File.dirname(self.file))
-#    end
-#  end
   
   def absolute_filepath
     base_path = File.join(Rails.root, 'public', Settings['data_files_path'])
@@ -68,6 +40,11 @@ class DataFile < ActiveRecord::Base
 
   def filepath
     '/'+[Settings['data_files_path'], self.id.to_s, self.filename].join('/')
+  end
+
+
+  def delete_file
+    FileUtils.rmtree(File.dirname(absolute_filepath))
   end
   
 end

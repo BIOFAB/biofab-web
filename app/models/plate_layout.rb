@@ -3,8 +3,8 @@ class PlateLayout < ActiveRecord::Base
   belongs_to :project
   belongs_to :eou
   belongs_to :organism
-  has_many :wells, :class_name => 'PlateLayoutWell'
-  has_many :plates
+  has_many :wells, :class_name => 'PlateLayoutWell', :dependent => :destroy
+  has_many :plates, :dependent => :nullify
 
   def analyze_replicate_dirs(replicate_dirs, user)
     begin

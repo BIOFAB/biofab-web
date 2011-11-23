@@ -69,7 +69,8 @@ def generate_performances(char_type, perf_type_name, calc_method)
         perf.characterizations << characterization
       end
 
-      if perf.characterizations.length != layout.plates.length
+      # a performance needs at least two characterizations
+      if perf.characterizations.length < 2
         puts "skipped #{ref_well.row}.#{ref_well.column}"
         next
       end
