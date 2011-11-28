@@ -405,7 +405,7 @@ class Plate < ActiveRecord::Base
       sd_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
 
       perf = characterization.performance_with_type_name('variance_of_means')
-      var_mean_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
+      var_means_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
 
       perf = characterization.performance_with_type_name('mean_of_variances')
       mean_vars_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
