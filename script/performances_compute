@@ -110,10 +110,12 @@ def generate_total_variance_performances
       layout.plates.each do |plate|
         characterization = plate.well_characterization(ref_well.row, ref_well.column, 'mean')
         next if !characterization
+        perf.characterizations << characterization
         means << characterization.value
         characterization = plate.well_characterization(ref_well.row, ref_well.column, 'variance')
         next if !characterization
         variances << characterization.value
+        perf.characterizations << characterization
       end
 
       # a performance needs at least one characterization for mean
