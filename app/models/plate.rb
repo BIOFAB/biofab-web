@@ -389,7 +389,9 @@ class Plate < ActiveRecord::Base
     layout_sheet = xls_add_plate_layout_sheet(workbook)
     value_sheet = xls_add_plate_sheet(workbook, 'Performance')
     sd_sheet = xls_add_plate_sheet(workbook, 'Standard deviation')
-    var_sheet = xls_add_plate_sheet(workbook, 'Variance')
+    var_means_sheet = xls_add_plate_sheet(workbook, 'Variance of means')
+    mean_vars_sheet = xls_add_plate_sheet(workbook, 'Mean of variances')
+    total_var_sheet = xls_add_plate_sheet(workbook, 'Total variances')
 
     wells.each do |well|
       next if (well.row == 0) || (well.column == 0)
@@ -403,7 +405,13 @@ class Plate < ActiveRecord::Base
       sd_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
 
       perf = characterization.performance_with_type_name('variance_of_means')
-      var_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
+      var_mean_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
+
+      perf = characterization.performance_with_type_name('mean_of_variances')
+      mean_vars_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
+
+      perf = characterization.performance_with_type_name('total_variance')
+      total_var_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
 
     end
 
