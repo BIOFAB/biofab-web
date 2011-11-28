@@ -1,0 +1,32 @@
+#!script/rails runner
+
+def row_name_to_number(row_name)
+
+  row_name = row_name.upcase
+
+  row_name[0]-?A+1
+end
+
+def redo_row(plate_layout_q, row_name)
+
+  PlateLayout.where(["name like ?", plate_layout_q]).all.each do |layout|
+
+    layout.plates.each do |plate|
+
+      1.upto(12) do |col|
+
+        well = plate.well_at(row_name_to_number(row_name), col)
+        next if !well
+        well.re_analyze
+
+      end
+
+    end
+
+  end
+end
+
+
+redo_row("%GOII%M%", 'H')
+
+redo_row("%PBD%M%", 'H')

@@ -110,21 +110,20 @@ def generate_total_variance_performances
       layout.plates.each do |plate|
         characterization = plate.well_characterization(ref_well.row, ref_well.column, 'mean')
         next if !characterization
-        means << characterization
+        means << characterization.value
         characterization = plate.well_characterization(ref_well.row, ref_well.column, 'variance')
         next if !characterization
-        variances << characterization
+        variances << characterization.value
       end
 
       # a performance needs at least one characterization for mean
       # and at least two for everything else
-      if (means < 2) || (variances < 2)
+      if (means.length < 2) || (variances.length < 2)
         puts "skipped #{ref_well.row}.#{ref_well.column}"
         next
       end
 
       values = perf.characterizations.collect{|char| char.value}
-      puts "vals: #{values.inspect}"
 
       perf.value = means.variance + variances.mean
 
@@ -140,6 +139,8 @@ end
 
 # warning!
 Performance.delete_all
+
+generate_total_variance_performances
 
 char_type = 'mean'
 perf_type_name = 'variance_of_means'
@@ -165,4 +166,3 @@ calc_method = :mean
 
 generate_performances(char_type, perf_type_name, calc_method)
 
-generate_total_variance_performances

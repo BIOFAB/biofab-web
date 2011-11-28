@@ -259,13 +259,17 @@ class Plate < ActiveRecord::Base
     end
   end
 
-  def create_well_from_r_data(input_file_path, data)
+  def create_well_from_r_data(input_file_path, data, well=nil)
       if !data || !data['error'].blank?
         return nil
       end
-      
-      well = PlateWell.new
-      plate.wells << well
+
+      if !well        
+        well = PlateWell.new
+        self.wells << well
+      else
+        well.files = []
+      end
 
       original_fcs_file = DataFile.from_local_file(input_file_path, 'original_fcs_file')
       well.files << original_fcs_file

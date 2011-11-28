@@ -11,3 +11,4 @@ tmp/
 Gemfile.lock
 test/*
 data/*
+config/deploy.rb

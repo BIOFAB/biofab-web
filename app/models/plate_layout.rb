@@ -93,6 +93,16 @@ class PlateLayout < ActiveRecord::Base
 
   end
 
+  # re-analyze a specific well for all plates
+  # and return re-analyzed wells
+  def re_analyze_well(row, col)
+    wells = []
+    plates.each do |plate|
+      wells << plate.well_at(row, col).re_analyze
+    end
+    wells.compact
+  end
+
 
   # find dirs containing a dir for each replicate, each containing at least 96 fcs files
   def self.list_valid_fcs_dirs
