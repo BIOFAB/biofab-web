@@ -133,7 +133,7 @@ class PlateLayout < ActiveRecord::Base
             fcs_count += 1
           end
         end
-        if (fcs_count >= 96) 
+        if (fcs_count >= 1) 
           subdir_count += 1
         end
       end
