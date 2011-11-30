@@ -28,9 +28,11 @@ class PlateLayoutController < ApplicationController
 
     plate_layout.delay.analyze_replicate_dirs(replicate_dirs, current_user)
     
-    render :text => 'queued job'
+    flash[:notice] = "The flow cytometer data is being analyzed. You will receive an email at #{current_user.email} when it is complete. When the analysis completes, the new plates will appear under the \"Plates using this layout\" section"
+    redirect_to :action => 'data', :id => params['id']
   end
 
+  # TODO this method is no longer used
   def analyze
     plate_layout = PlateLayout.find(params['id'])
     if params['channel'] == 'red'
