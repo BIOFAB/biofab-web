@@ -1,0 +1,206 @@
+#!script/rails runner
+
+def well_name_to_coords(name)
+  mr = name.match(/[A-Za-z]/)
+  mc = name.match(/\d+/)
+  if !mr || !mc
+    raise "invalid well name: #{name}"
+  end
+  row_name = mr[0].upcase
+  if row_name.length != 1
+    raise "invalid row name: #{row_name}"
+  end
+  col = mc[0].to_i
+  row = row_name[0] - 'A'[0] + 1
+  return row, col
+end
+
+def usage
+  puts "This script imports plate layouts from csv files."
+  puts "Usage: "
+  puts "  #{__FILE__} <csv_file.csv> <layout_name>"
+  puts " "
+end
+
+if ARGV.length != 2
+  usage()
+  exit
+end
+
+filepath = ARGV[0]
+layout_name = ARGV[1]
+
+old_layout = PlateLayout.find_by_name(layout_name)
+if old_layout
+  puts "Old layout exists. Overwriting..."
+  old_layout.wells.each do |well|
+    well.delete
+  end
+  old_layout.delete
+end
+
+f = File.new(ARGV[0])
+data = f.readlines
+puts "Read #{data.length} lines of data"
+
+organism = Organism.find_by_strain("BW25113")
+
+promoter = nil #variable
+five_prime_utr = nil # variable
+cds = nil # variable
+channel = nil # variable
+
+terminator_biofab_id = "apFAB789" # dbl-downstream terminator in EOU1
+terminator = Part.by_id(terminator_biofab_id)
+if !terminator
+  raise "Terminator #{terminator_biofab_id} not found in database!"
+end
+
+puts "Creating new layout with name: #{layout_name}"
+layout = PlateLayout.new
+layout.name = layout_name
+layout.organism = organism
+layout.eou = Eou.new
+layout.eou.terminator = terminator
+
+
+layouts = {}
+skip_layouts = []
+plate = nil
+
+max_empty_rows = 20
+blank_count = 0
+row = 1 # skip first row
+
+while(row < data.length)
+  puts "processing row #{row}"
+
+  promoter = nil
+  five_prime_utr = nil
+  cds = nil
+
+  well_name, pfab, sfab, desc, channel, status = data[row].split(',')
+
+  if well_name.blank?
+    row += 1
+    blank_count += 1
+    break if blank_count >= max_empty_rows
+    puts "-- empty line: skipping"
+    next
+  end
+  blank_count = 0
+
+  if !['GRN', 'RED'].index(channel)
+    puts "no channel specified: skipping"
+    row += 1
+    next
+  end
+
+  promoter_name, fputr_name, junk = desc.split('_')
+
+  puts " -- New well!"
+  well = PlateLayoutWell.new
+  well_row, well_col = well_name_to_coords(well_name)
+  well.row = well_row.to_i
+  well.column = well_col.to_i
+  puts " -- -- position: #{well_row}.#{well_col}"
+  layout.wells << well
+  puts " -- -- now: #{layout.wells.length} wells"
+
+  if !promoter_name.blank?
+    promoter = Part.find_by_description(promoter_name)
+    if !promoter
+      promoters = Part.where(["description like ?", "%#{promoter_name}%"]).all
+      if !promoters || (promoters.length != 1)
+        raise "Could not find unique promoter with name: #{promoter_name}"
+      end
+      promoter = promoters[0]
+    end
+  end
+
+  if !fputr_name.blank?
+    fputrs = Part.where(["description like ?", "%#{fputr_name}%"]).all
+    if !fputrs || (fputrs.length != 1)
+      fputrs = Part.where(["description like ?", "%#{fputr_name} %"]).all
+      if !fputrs || (fputrs.length != 1)
+        fputrs = Part.where(["description like ?", "#{fputr_name} %"]).all
+        if !fputrs || (fputrs.length != 1) 
+          raise "Could not find unique 5' UTR with name: '#{fputr_name}' - #{fputrs.length}"
+        end
+      end
+    end
+    fputr = fputrs[0]
+  end
+
+
+  if(channel == 'RED')
+    cds = Part.find_by_biofab_id('apFAB351')
+  elsif(channel == 'GRN')
+    cds = Part.find_by_biofab_id('apFAB350')
+  end
+
+  if !cds
+    raise "Could not find CDS."
+  end
+
+
+  if fputr || cds || promoter || channel
+    well.organism = organism
+    well.eou = Eou.new
+    well.eou.five_prime_utr = fputr
+    well.eou.cds = cds
+  end
+
+#  puts "Layout: #{layout_name} - Well: #{well_name} - Organism: #{organism.descriptor} - EOU: #{promoter_biofab_id} | #{five_prime_utr_biofab_id} | #{cds_biofab_id} | #{terminator_biofab_id}"
+
+  row += 1
+end
+
+if layout.wells.length == 0
+  puts "No wells found, not saving."
+else
+  puts " == Now saving plate layout with #{layout.wells.length} wells =="
+  layout.save!
+end
+
+
+def get_row_well(wells, row)
+  wells.each do |well|
+    if (well.row == row) && (well.column == 0)
+      return well
+    end
+  end
+  return false
+end
+
+def get_col_well(wells, col)
+  wells.each do |well|
+    if (well.row == 0) && (well.column == col)
+      return well
+    end
+  end
+  return false
+end
+
+def num_wells_with_eou_in_row(wells, row)
+  count = 0
+  wells.each do |well|
+    next if well.row != row
+    next if well.column == 0
+    next if !well.eou
+    count += 1
+  end
+  return count
+end
+
+def num_wells_with_eou_in_col(wells, col)
+  count = 0
+  wells.each do |well|
+    next if well.column != col
+    next if well.row == 0
+    next if !well.eou
+    count += 1
+  end
+  return count
+end
+
