@@ -33,7 +33,7 @@ class PlateWell < ActiveRecord::Base
     out_dir = Dir.mktmpdir('biofab_fcs')
     dump_file = File.join(Rails.root, 'out.dump')
     
-    init_gate = 'rectangle'
+    init_gate = Settings['fcs_analysis_gate_type']
     
     # get file path for the original, unprocessed fcs file
     fcs_file_path = files.find_by_type_name('original_fcs_file').absolute_filepath

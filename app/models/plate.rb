@@ -216,8 +216,7 @@ class Plate < ActiveRecord::Base
     # fluo = 'RED'
     fluo = 'GRN' # fallback fluo if not defined for channel
 
-    #init_gate = 'ellipse'
-    init_gate = 'rectangle'
+    init_gate = Settings['fcs_analysis_gate_type']
     
     # retrieve the set of original fcs files for this plate
     fcs_file_paths = well_files_by_type_name('original_fcs_file')
