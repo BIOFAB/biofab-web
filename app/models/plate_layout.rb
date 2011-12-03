@@ -60,8 +60,7 @@ class PlateLayout < ActiveRecord::Base
     # fluo = 'RED'
     fluo = 'GRN' # fallback fluo if not defined for channel
 
-    #init_gate = 'ellipse'
-    init_gate = 'rectangle'
+    init_gate = Settings['fcs_analysis_gate_type']
     
     fcs_file_paths = []
     
