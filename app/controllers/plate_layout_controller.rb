@@ -58,10 +58,20 @@ class PlateLayoutController < ApplicationController
     end
 
     @dirs = PlateLayout.list_valid_fcs_dirs
+  end
 
 
+  def re_calculate_performances
+
+    layout = PlateLayout.find(params['id'])
+    PlateLayout.delay.re_calculate_performances(layout, current_user)
+    
+    flash[:notice] = "Performance is being generated. You will receive an email at #{current_user.email} when it is complete. When the analysis completes, the new plates will appear under the \"Plates using this layout\" section"
+    redirect_to :action => 'data', :id => params['id']    
+    
 
   end
+
 
   def show
 

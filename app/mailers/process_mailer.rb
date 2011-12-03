@@ -5,6 +5,22 @@ class ProcessMailer < ActionMailer::Base
 
   default :from => Settings['admin_email']
 
+
+  def performance_calculations_completed(user, layout_id)
+    @layout_id = layout_id
+
+    if system("which fortune > /dev/null")
+      @fortune = `fortune`
+    else
+      @fortune = nil
+    end
+
+    mail(:to => user.email, 
+         :subject => "[FabIO] Performance calculations ready!")
+
+  end
+
+
   def flowcyte_completed(user, id)
     # TODO settings.yml
     @id = id

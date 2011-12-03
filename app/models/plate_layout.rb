@@ -6,6 +6,18 @@ class PlateLayout < ActiveRecord::Base
   has_many :wells, :class_name => 'PlateLayoutWell', :dependent => :destroy
   has_many :plates
 
+  def self.re_calculate_performances(layout, user)
+    begin
+
+      layout.re_calculate_performances
+
+      ProcessMailer.performance_calculations_completed(user, layout.id).deliver
+
+    rescue Exception => e
+      ProcessMailer.error(user, e, data_path).deliver
+    end
+  end
+
   def analyze_replicate_dirs(replicate_dirs, user)
     begin
       cur_rep_dir = ''
@@ -13,6 +25,10 @@ class PlateLayout < ActiveRecord::Base
         cur_rep_dir = rep_dir
         self.analyze_replicate_dir(rep_dir, user)
       end
+
+  # TODO XXX UNTESTED!
+#      calculate_performances
+
       ProcessMailer.flowcyte_completed(user, self.id).deliver
       
     rescue Exception => e
@@ -21,6 +37,148 @@ class PlateLayout < ActiveRecord::Base
 
     end
   end
+
+  # first delete all performances, then calculate them again
+  def re_calculate_performances
+    plates.each do |plate|
+      plate.wells.each do |well|
+        next if !well.replicate
+        well.replicate.characterizations.each do |char|
+          char.performances.each do |perf|
+            perf.delete
+          end
+        end
+      end
+    end
+
+    calculate_performances
+  end
+
+  # calculate performances based on characterization data
+  def calculate_performances
+
+    perfs = []
+
+    perfs << calculate_total_variance_performance
+
+    char_type = 'mean'
+    perf_type_name = 'variance_of_means'
+    calc_method = :variance
+
+    perfs << calculate_performance(char_type, perf_type_name, calc_method)
+    
+    char_type = 'mean'
+    perf_type_name = 'standard_deviation_of_means'
+    calc_method = :standard_deviation
+    
+    perfs << calculate_performance(char_type, perf_type_name, calc_method)
+    
+    char_type = 'mean'
+    perf_type_name = 'mean_of_means'
+    calc_method = :mean
+    
+    perfs << calculate_performance(char_type, perf_type_name, calc_method)
+    
+    char_type = 'variance'
+    perf_type_name = 'mean_of_variances'
+    calc_method = :mean
+    
+    perfs << calculate_performance(char_type, perf_type_name, calc_method)
+
+    perfs
+  end
+  
+  # calculate a performances for a specific type
+  # e.g. char_type 'mean', perf_type_name 'variance_of_means' and calc_method :variance
+  # will calculate the variance of means for this plate_layout based on the available plates (replicates)
+  def calculate_performance(char_type, perf_type_name, calc_method)
+    
+    perf_type = PerformanceType.find_by_name(perf_type_name)
+    return nil if !perf_type
+    
+    if !plates.first || !plates.first.wells.first
+      next
+    end
+    
+    performances = []
+
+    plates.first.wells.each do |ref_well|
+      
+      perf = Performance.new
+      perf.performance_type = perf_type
+      
+      plates.each do |plate|
+        characterization = plate.well_characterization(ref_well.row, ref_well.column, char_type)
+        next if !characterization
+        perf.characterizations << characterization
+      end
+      
+      # a performance needs at least one characterization for mean
+      # and at least two for everything else
+      if ((perf.characterizations.length < 2) && (calc_method == :mean)) || (perf.characterizations.length < 1)
+        puts "skipped #{ref_well.row}.#{ref_well.column}"
+        next
+      end
+      
+      values = perf.characterizations.collect{|char| char.value}
+      
+      perf.value = StatisticsHelpers.send(calc_method, values)
+      
+      perf.save!
+      
+      performances << perf
+    end
+    performances
+  end
+
+  # special method for calculating the performances with the type 'total_variance'
+  def calculate_total_variance_performance
+
+    performances = []
+
+    perf_type = PerformanceType.find_by_name('total_variance')
+    return nil if !perf_type
+
+    if !plates.first || !plates.first.wells.first
+      next
+    end
+
+    plates.first.wells.each do |ref_well|
+
+      perf = Performance.new
+      perf.performance_type = perf_type
+
+      means = []
+      variances = []
+
+      plates.each do |plate|
+        characterization = plate.well_characterization(ref_well.row, ref_well.column, 'mean')
+        next if !characterization
+        perf.characterizations << characterization
+        means << characterization.value
+        characterization = plate.well_characterization(ref_well.row, ref_well.column, 'variance')
+        next if !characterization
+        variances << characterization.value
+        perf.characterizations << characterization
+      end
+
+      # a performance needs at least one characterization for mean
+      # and at least two for everything else
+      if (means.length < 2) || (variances.length < 2)
+        next
+      end
+
+      values = perf.characterizations.collect{|char| char.value}
+
+      perf.value = StatisticsHelpers.variance(means) + StatisticsHelpers.mean(variances)
+
+      perf.save!
+
+      performances << perf
+    end
+    performances
+  end
+
 
   # get a hash where the keys are the well names (e.g. B03)
   # and the values are the fluorescence channels (e.g. GRN or RED)
