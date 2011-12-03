@@ -26,8 +26,7 @@ class PlateLayout < ActiveRecord::Base
         self.analyze_replicate_dir(rep_dir, user)
       end
 
-  # TODO XXX UNTESTED!
-#      calculate_performances
+      calculate_performances
 
       ProcessMailer.flowcyte_completed(user, self.id).deliver
       
