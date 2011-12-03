@@ -149,6 +149,8 @@ while(row < data.length)
     well.eou = Eou.new
     well.eou.five_prime_utr = fputr
     well.eou.cds = cds
+    well.eou.promoter = promoter
+    well.channel = channel
   end
 
 #  puts "Layout: #{layout_name} - Well: #{well_name} - Organism: #{organism.descriptor} - EOU: #{promoter_biofab_id} | #{five_prime_utr_biofab_id} | #{cds_biofab_id} | #{terminator_biofab_id}"
