@@ -1,0 +1,229 @@
+#!script/rails runner
+
+def well_name_to_coords(name)
+  mr = name.match(/[A-Za-z]/)
+  mc = name.match(/\d+/)
+  if !mr || !mc
+    raise "invalid well name: #{name}"
+  end
+  row_name = mr[0].upcase
+  if row_name.length != 1
+    raise "invalid row name: #{row_name}"
+  end
+  col = mc[0].to_i
+  row = row_name[0] - 'A'[0] + 1
+  return row, col
+end
+
+def usage
+  puts "This script imports plate layouts from xlsx files."
+  puts "Usage: "
+  puts "  #{__FILE__} <excel_sheet.xlsx> <sheet_name>"
+  puts " "
+  puts "  Reminder: Put quotes around sheet_name if it contains spaces."
+  puts " "
+end
+
+
+if ARGV.length != 2
+  usage()
+  exit
+end
+
+filepath = ARGV[0]
+
+x = Excelx.new(filepath)
+x.default_sheet = ARGV[1]
+
+organism = nil # variable
+promoter = nil
+five_prime_utr = nil # variable
+cds = nil
+
+terminator_biofab_id = "apFAB789" # dbi-downstream terminator in EOU1
+terminator = Part.by_id(terminator_biofab_id)
+if !terminator
+  raise "Terminator #{terminator_biofab_id} not found in database!"
+end
+
+layouts = {}
+skip_layouts = []
+plate = nil
+
+max_empty_rows = 20
+blank_count = 0
+row = 2
+while(true)
+  layout_name = x.cell(row, 2)
+  well_name = x.cell(row, 3)
+
+  if layout_name.blank? || well_name.blank?
+    row += 1
+    blank_count += 1
+    break if blank_count >= max_empty_rows
+    next
+  end
+  blank_count = 0
+
+  puts "row: #{row}"    
+
+  if !layouts[layout_name]
+    if skip_layouts.index(layout_name)
+      row += 1
+      next
+    end
+    if PlateLayout.find_by_name(layout_name)
+      skip_layouts << layout_name
+      row += 1
+      next
+    else # does not exist in database
+      puts "New layout!"
+      layout = PlateLayout.new
+      layout.name = layout_name
+      layouts[layout_name] = layout
+      layout.eou = Eou.new
+      layout.eou.terminator = terminator
+    end
+  else 
+    layout = layouts[layout_name]
+  end
+
+  puts " -- New well!"
+  well = PlateLayoutWell.new
+  well_row, well_col = well_name_to_coords(well_name)
+  well.row = well_row.to_i
+  well.column = well_col.to_i
+  puts " -- -- position: #{well_row}.#{well_col}"
+  layout.wells << well
+  puts " -- -- now: #{layout.wells.length} wells"
+
+  vector_backbone = x.cell(row, 4)
+  five_prime_utr_biofab_id = x.cell(row, 8)
+
+  promoter_biofab_id = x.cell(row, 6)
+
+  cds_type = x.cell(row, 5)
+  pfab_number = x.cell(row, 10)
+  pfab_biofab_id = (pfab_number) ? "pFAB#{pfab_number}" : nil
+  strain_name = x.cell(row, 11)
+  antibiotic_marker = x.cell(row, 12)
+  sfab_number = x.cell(row, 13)
+  sfab_biofab_id = (sfab_number) ? "sFAB#{sfab_number}" : nil
+ 
+  comment = nil
+  if promoter_biofab_id.blank?
+    if !five_prime_utr_biofab_id.blank?
+      comment = five_prime_utr_biofab_id
+    elsif !vector_backbone.blank?
+      comment = vector_backbone
+    end
+  end
+
+  if !strain_name.blank?        
+    organism = Organism.where(["strain like ? OR substrain like ?", strain_name, strain_name]).first
+    if !organism
+      raise "Failed to find an organism matching: #{strain_name}"
+    end
+  end
+
+  channel = 'GRN'
+
+  if !cds_type.blank?
+    if(cds_type == 'GFP')
+      cds = Part.by_id('apFAB350')
+      channel = 'GRN'
+    elsif(cds_type == 'RFP')
+      cds = Part.by_id('apFAB351')
+      channel = 'RED'
+    elsif(cds_type == "NONE") || cds_type.blank?
+      cds = nil
+      puts "no cds"
+    else
+     raise "WTF?!"
+    end
+  end
+
+  if !promoter_biofab_id.blank?
+    promoter = Part.by_id(promoter_biofab_id)
+  end
+
+  if !five_prime_utr_biofab_id.blank?
+    five_prime_utr = Part.by_id(five_prime_utr_biofab_id)
+  end
+
+  if channel || five_prime_utr || promoter || cds
+    well.channel = channel
+    well.organism = organism
+    well.eou = Eou.new
+    well.eou.five_prime_utr = five_prime_utr
+    well.eou.promoter = promoter
+    well.eou.cds = cds
+  end
+
+  well.comment = comment
+
+#  puts "Layout: #{layout_name} - Well: #{well_name} - Organism: #{organism.descriptor} - EOU: #{promoter_biofab_id} | #{five_prime_utr_biofab_id} | #{cds_biofab_id} | #{terminator_biofab_id}"
+
+  row += 1
+end
+
+
+def get_row_well(wells, row)
+  wells.each do |well|
+    if (well.row == row) && (well.column == 0)
+      return well
+    end
+  end
+  return false
+end
+
+def get_col_well(wells, col)
+  wells.each do |well|
+    if (well.row == 0) && (well.column == col)
+      return well
+    end
+  end
+  return false
+end
+
+def num_wells_with_eou_in_row(wells, row)
+  count = 0
+  wells.each do |well|
+    next if well.row != row
+    next if well.column == 0
+    next if !well.eou
+    count += 1
+  end
+  return count
+end
+
+def num_wells_with_eou_in_col(wells, col)
+  count = 0
+  wells.each do |well|
+    next if well.column != col
+    next if well.row == 0
+    next if !well.eou
+    count += 1
+  end
+  return count
+end
+
+
+layouts.each_pair do |key, layout|
+
+  organisms = []
+  layout.wells.each do |well|
+    if !organisms.index(well.organism)
+      organisms << well.organism
+    end
+  end
+
+  if organisms.length == 1
+    layout.organism = organisms[0]
+    layout.wells.each do |well|
+      well.organism = nil
+    end
+  end
+
+  layout.save!
+end

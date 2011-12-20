@@ -16,139 +16,6 @@ class Plate < ActiveRecord::Base
     data
   end
 
-
-  # TODO old code, this now happens in plate_layout.rb
-  def self.analyze(plate_layout, fluo_channel, user, dirname)
-    begin
-
-      # TODO move path to settings.rb
-      input_path = File.join(Rails.root, 'public', 'flow_cytometer_input_data')
-      script_dir = File.join(Rails.root, 'r_scripts', 'fcs3_analysis')
-
-      # Initialize R and load the r source file
-      r = RSRuby.instance
-      r.setwd(script_dir)
-
-      # For better exception handling (needed for Exceptor module to work)
-      r.source(File.join(script_dir, 'exceptor.r'))
-
-      # Flow cytometer analysis script
-      r.source(File.join(script_dir, 'fcs3_analysis.r'))
-
-      # The current directory to process
-      # This will have one subdir per replicate
-      data_path = File.join(input_path, dirname)
-
-      out_path = File.join(Rails.root, 'public', 'flow_cytometer_output', plate_layout.id.to_s)
-      if !File.directory?(out_path)
-        Dir.mkdir(out_path)
-      end
-
-#      f = File.new(File.join(Rails.root, 'foobar.out'))
-#      data = eval(f.readlines.join(''))
-#      f.close
-
-      # TODO remove hard-coded "rectangle" gating
-      data = Exceptor::call_r_func(r, r.run, out_path, data_path, :fluo => fluo_channel, :init_gate => "rectangle")
-
-      if !data
-        raise "No data returned from analysis"
-      end
-
-      if fluo_channel == 'RED'
-        fluo_channel = 'RED2'
-      end
-
-      # TODO remove this debug code
-      f = File.new(File.join(Rails.root, 'foobar.out'), 'w+')
-      f.puts(data.inspect)
-      f.close
-
-      plate_names = self.scan_for_plates(data_path)
-
-      # characterizations
-      chars = []
-      8.times do |row|
-        chars[row] = []
-        12.times do |col|
-          chars[row][col] = []
-        end
-      end
-
-      plate_names.each do |plate_name|
-        if !data[plate_name]
-          next
-        end
-
-        plate = Plate.new
-        plate.name = plate_name
-        plate.plate_layout = plate_layout
-
-        # the raw data for the plate
-        plate_data = data[plate_name]
-
-        plate_data["mean.#{fluo_channel}.HLin"].each_index do |i|
-          break if i > 95 # don't accept more than 96 wells
-
-          mean = plate_data["mean.#{fluo_channel}.HLin"][i]
-          sd = plate_data["sd.#{fluo_channel}.HLin"][i]
-
-          col = (i % 12)
-          row = (i / 12)
-
-          well = PlateWell.new
-          well.column = (col+1).to_s
-          well.row = (row+1).to_s
-          well.replicate = Replicate.new
-
-          characterization = Characterization.new
-          characterization.value = mean
-          characterization.standard_deviation = sd
-
-          chars[row][col] << characterization
-
-          well.replicate.characterizations << characterization
-
-          well.save!
-
-          plate.wells << well
-        end
-
-        plate.description = fluo_channel
-
-        plate.save!
-      end
-
-      summary_data = data['Summary']
-
-      # Performances
-
-      
-      chars.each_index do |row|
-        row_a = chars[row]
-        row_a.each_index do |col|
-          col_chars = row_a[col]
-          perf = Performance.new
-          col_chars.each do |char| # loop through the characterizations for the different replicates
-            perf.characterizations << char
-          end
-          i = row * 12 + col
-          perf.value = summary_data["mean.mean.#{fluo_channel}.HLin"][i]
-          perf.standard_deviation = summary_data["sd.mean.#{fluo_channel}.HLin"][i]
-          perf.save!
-        end
-      end
-     
-      ProcessMailer.flowcyte_completed(user, plate_layout.id).deliver
-
-    rescue Exception => e
-      ProcessMailer.error(user, e, data_path).deliver
-    end
-  end
-
-
-
-
   def self.scan_for_plates(path)
     puts path
     plate_names = []
@@ -307,13 +174,29 @@ class Plate < ActiveRecord::Base
       c.fluo_channel = data['fluo_channel']
       well.replicate.characterizations << c
 
-      # TODO unpretty
+      # TODO we probably shouldn't be saving the raw events to the DB
       c = Characterization.new_with_type('events')
       c.value = 0.0
       c.fluo_channel = data['fluo_channel']
       c.description = data['events']
       well.replicate.characterizations << c
-      
+
+      # second cluster info
+
+      if data['num_events_c2']
+        c = Characterization.new_with_type('event_count_c2')
+        c.value = data['num_events_c2']
+        c.fluo_channel = data['fluo_channel']
+        well.replicate.characterizations << c
+      end
+
+      if data['mean_c2']
+        c = Characterization.new_with_type('mean_c2')
+        c.value = data['mean_c2']
+        c.fluo_channel = data['fluo_channel']
+        well.replicate.characterizations << c
+      end
+
       well.save!
   end
 

@@ -11,7 +11,7 @@ class Organism < ActiveRecord::Base
   end
 
   def descriptor
-    if !substrain.strip.blank?
+    if !substrain.blank? && !substrain.strip.blank?
       "#{species}: #{strain}: #{substrain}"
     else
       "#{species}: #{strain}"
