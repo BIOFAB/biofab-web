@@ -9,12 +9,15 @@ class PlateLayout < ActiveRecord::Base
   def self.re_calculate_performances(layout, user)
     begin
 
+      puts "re-calculating performances"
+
       layout.re_calculate_performances
 
       ProcessMailer.performance_calculations_completed(user, layout.id).deliver
 
     rescue Exception => e
-      ProcessMailer.error(user, e, data_path).deliver
+      puts "exception encountered... email being sent"
+      ProcessMailer.error(user, e).deliver
     end
   end
 
@@ -112,7 +115,10 @@ class PlateLayout < ActiveRecord::Base
 
   # first delete all performances, then calculate them again
   def re_calculate_performances
+    count = 1
     plates.each do |plate|
+      puts "deleting old performances for plate number #{count}"
+      count += 1
       plate.wells.each do |well|
         next if !well.replicate
         well.replicate.characterizations.each do |char|
@@ -123,6 +129,7 @@ class PlateLayout < ActiveRecord::Base
       end
     end
 
+    puts "all old performances deleted. now calculating new performances"
     calculate_performances
   end
 
@@ -174,20 +181,33 @@ class PlateLayout < ActiveRecord::Base
     
     performances = []
 
-    plates.first.wells.each do |ref_well|
+    wells.each do |ref_well|
+
+      puts "---------------------------------------------------"
+      puts "Calculating #{perf_type_name} for #{ref_well.name}"
       
       perf = Performance.new
       perf.performance_type = perf_type
       
+      count = 1
       plates.each do |plate|
+        puts "  For plate: #{plate.name} - #{count}"
+        count += 1
         characterization = plate.well_characterization(ref_well.row, ref_well.column, char_type)
+        if characterization
+          puts "    Result: #{characterization.value}"
+        else
+          puts "    No result!"
+        end
         next if !characterization
         perf.characterizations << characterization
       end
       
+      puts "  = char count #{perf.characterizations.length}"
+
       # a performance needs at least one characterization for mean
       # and at least two for everything else
-      if ((perf.characterizations.length < 2) && (calc_method == :mean)) || (perf.characterizations.length < 1)
+      if ((perf.characterizations.length < 1) && (calc_method == :mean)) || ((perf.characterizations.length < 2) && (calc_method != :mean))
         puts "skipped #{ref_well.row}.#{ref_well.column}"
         next
       end
@@ -203,6 +223,7 @@ class PlateLayout < ActiveRecord::Base
     performances
   end
 
+
   # special method for calculating the performances with the type 'total_variance'
   def calculate_total_variance_performance
 
@@ -215,7 +236,10 @@ class PlateLayout < ActiveRecord::Base
       next
     end
 
-    plates.first.wells.each do |ref_well|
+    wells.each do |ref_well|
+
+      puts "---------------------------------------------------"
+      puts "Calculating total_variance for #{ref_well.name}"
 
       perf = Performance.new
       perf.performance_type = perf_type
@@ -223,20 +247,33 @@ class PlateLayout < ActiveRecord::Base
       means = []
       variances = []
 
+      count = 1
       plates.each do |plate|
+        puts "  For plate: #{plate.name} - #{count}"
+        count += 1
         characterization = plate.well_characterization(ref_well.row, ref_well.column, 'mean')
+        if characterization
+          puts "    mean: #{characterization.value}"
+        else
+          puts "    No mean!"
+        end
         next if !characterization
         perf.characterizations << characterization
         means << characterization.value
         characterization = plate.well_characterization(ref_well.row, ref_well.column, 'variance')
+        if characterization
+          puts "    variance: #{characterization.value}"
+        else
+          puts "    No variance!"
+        end
         next if !characterization
         variances << characterization.value
         perf.characterizations << characterization
       end
 
-      # a performance needs at least one characterization for mean
-      # and at least two for everything else
+      # a performance needs at least two characterizations for total variance
       if (means.length < 2) || (variances.length < 2)
+        puts "skipped #{ref_well.row}.#{ref_well.column}"
         next
       end
 

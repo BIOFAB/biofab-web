@@ -3,6 +3,14 @@ class PlateWell < ActiveRecord::Base
   belongs_to :replicate
   has_and_belongs_to_many :files, :class_name => 'DataFile'
 
+  # returns a name like C03
+  def name
+    return nil if (column <= 0) || (row <= 0)
+    row_name = (?A..?Z).to_a[row-1].chr
+    col_name = (column < 10) ? '0'+column.to_s : column.to_s
+    return row_name+col_name    
+  end
+
   def self.well_name_to_row_col(well_name)
     row_name = well_name[0..0].upcase
     col_name = well_name[1..2]
