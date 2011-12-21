@@ -24,6 +24,7 @@ class Admin::TasksController < ApplicationController
   def re_analyze_all
     plate_layouts = PlateLayout.all
     plate_layouts.each do |plate_layout|
+      next if plate_layout.plates.length == 0 # don't attempt to re-analyze non-existant plates
       PlateLayout.delay.re_analyze_plates(plate_layout, current_user)
     end
 
