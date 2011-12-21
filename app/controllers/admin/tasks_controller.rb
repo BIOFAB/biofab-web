@@ -9,8 +9,10 @@ class Admin::TasksController < ApplicationController
   def eta
     num_jobs = DelayedJob.where("failed_at is NULL").length
     
-    hours = (num_jobs * 35) / 60
-    minutes = (num_jobs * 35) % 60
+    time_per_job = 20 # in minutes
+
+    hours = (num_jobs * time_per_job) / 60
+    minutes = (num_jobs * time_per_job) % 60
 
     render :text => "ETA is #{hours} hours and #{minutes} minutes (very rough estimate)"
   end
@@ -22,7 +24,7 @@ class Admin::TasksController < ApplicationController
   def re_analyze_all
     plate_layouts = PlateLayout.all
     plate_layouts.each do |plate_layout|
-      PlateLayout.re_analyze_plates(plate_layout, current_user)
+      PlateLayout.delay.re_analyze_plates(plate_layout, current_user)
     end
 
     flash[:notice] = "The flow cytometer data is being re-analyzed. You will receive an email at #{current_user.email} when it is complete. When the analysis completes, the new plates will appear under the \"Plates using this layout\" section"
