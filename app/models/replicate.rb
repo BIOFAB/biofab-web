@@ -7,4 +7,10 @@ class Replicate < ActiveRecord::Base
     characterizations.joins(:characterization_type).where(["characterization_types.name = ?", type_name]).first
   end
 
+  def delete_completely
+    characterizations.each do |char|
+      char.delete
+    end
+  end
+
 end

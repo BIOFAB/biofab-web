@@ -5,7 +5,8 @@
     <%= link_to 'Layout', :action => 'show', :id => @layout.id %>
   </li>
   <li class='tab'>Data</li>
-  <li class='tab last'><%= link_to '(re)calculate performances', :action => 're_calculate_performances', :id => @layout.id %></li>
+  <li class='tab'><%= link_to 're-analyze and re-calculate performances', :action => 're_analyze', :id => @layout.id %></li>
+  <li class='tab last'><%= link_to 're-calculate performances', :action => 're_calculate_performances', :id => @layout.id %></li>
 </ul>
 
 <h3>Plates using this layout</h3>

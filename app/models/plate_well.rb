@@ -3,11 +3,26 @@ class PlateWell < ActiveRecord::Base
   belongs_to :replicate
   has_and_belongs_to_many :files, :class_name => 'DataFile'
 
+
+  def delete_but_keep_files
+    old_files = []
+    files.each do |file|
+      old_files << file
+    end
+    if replicate
+      replicate.delete_completely
+    end
+    self.files = []
+    delete
+
+    old_files
+  end
+
   # returns a name like C03
   def name
-    return nil if (column <= 0) || (row <= 0)
-    row_name = (?A..?Z).to_a[row-1].chr
-    col_name = (column < 10) ? '0'+column.to_s : column.to_s
+    return nil if column.blank? || row.blank? || (column.to_i <= 0) || (row.to_i <= 0)
+    row_name = (?A..?Z).to_a[(row.to_i)-1].chr
+    col_name = (column.to_i < 10) ? '0'+column.to_s : column.to_s
     return row_name+col_name    
   end
 

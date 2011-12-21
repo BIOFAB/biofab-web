@@ -34,6 +34,15 @@ class PlateLayoutController < ApplicationController
 
   end
 
+
+  def re_analyze
+    plate_layout = PlateLayout.find(params['id'])
+    PlateLayout.delay.re_analyze_plates(plate_layout, current_user)
+
+    flash[:notice] = "The flow cytometer data is being re-analyzed. You will receive an email at #{current_user.email} when it is complete. When the analysis completes, the new plates will appear under the \"Plates using this layout\" section"
+    redirect_to :action => 'data', :id => params['id']
+  end
+
   def analyze2
 
     plate_layout = PlateLayout.find(params['id'])

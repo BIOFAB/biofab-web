@@ -21,6 +21,25 @@ class PlateLayout < ActiveRecord::Base
     end
   end
 
+  def self.re_analyze_plates(layout, user)
+    begin
+
+      puts "re-analyzing plates"
+
+      layout.re_analyze_plates
+
+      puts "re-calculating performances"
+
+      layout.re_calculate_performances
+
+      ProcessMailer.flowcyte_completed(user, layout.id).deliver
+
+    rescue Exception => e
+      puts "exception encountered... email being sent"
+      ProcessMailer.error(user, e).deliver
+    end
+  end
+
   def analyze_replicate_dirs(replicate_dirs, user)
     begin
       plates = []
@@ -298,7 +317,6 @@ class PlateLayout < ActiveRecord::Base
       next if well.channel.blank?
       well_channels[well.name] = well.channel
     end
-    raise well_channels.inspect
     well_channels
   end
 

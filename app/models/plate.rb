@@ -60,7 +60,8 @@ class Plate < ActiveRecord::Base
   # get all of the data files associated with all plate wells,
   # that have a specific type_name (e.g. all plots)
   def well_files_by_type_name(type_name)
-    DataFile.joins(:plate_wells => :plate).where(["plates.id = ? AND data_files.type_name = ?", id, type_name])
+    data_files = DataFile.joins(:plate_wells => :plate).where(["plates.id = ? AND data_files.type_name = ?", id, type_name])
+    data_files.collect {|dfile| dfile.absolute_filepath}
   end
 
   # re-do the flow cytometer analysis based on the plate layout and the original fcs files
@@ -100,19 +101,38 @@ class Plate < ActiveRecord::Base
     f = File.new(dump_file, 'w+')
     f.puts(data_set.inspect)
     f.close
-    
-    plate = Plate.new
-    plate.plate_layout = self
-    plate.name = self.name # TODO what would be a good name?
+
+    puts "deleting old data_file objects"
+    old_files = []
+    # delete the old wells
+    wells.each do |well|
+#      puts "#{well.name} - files: #{well.files.length}"
+      old_files_well = well.delete_but_keep_files
+#      puts "  old_files: #{old_files_well.length}"
+#      puts " "
+      old_files += old_files_well
+    end
+
+    puts "creating wells from R data"
 
     # create wells and characterizations based on analysis data
-    plate.create_wells_from_r_data(data_set)
+    create_wells_from_r_data(data_set)
 
-    plate.save!
+    if old_files.length == 0
+      raise "no old files"
+    end
 
-    delete # delete self
+    puts "deleting old files"
 
-    plate
+    # delete the old files (they have now been copied for the new wells)
+    old_files.each do |file|
+      file.delete_file # delete the actual filesystem file
+      file.delete # delete the database entry
+    end
+
+    puts "saving plate"
+
+    save!
   end
 
 
