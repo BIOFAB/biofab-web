@@ -10,6 +10,7 @@ class PlateController < ApplicationController
     send_file(path, :type => "application/vnd.ms-excel")
   end
 
+  # old, look at plate_layout_controllers method of the same name
   def performance_xls
     plate = Plate.find(params['id'])
     path = plate.get_performance_xls

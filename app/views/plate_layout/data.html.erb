@@ -6,7 +6,9 @@
   </li>
   <li class='tab'>Data</li>
   <li class='tab'><%= link_to 're-analyze and re-calculate performances', :action => 're_analyze', :id => @layout.id %></li>
-  <li class='tab last'><%= link_to 're-calculate performances', :action => 're_calculate_performances', :id => @layout.id %></li>
+  <li class='tab'><%= link_to 're-calculate performances', :action => 're_calculate_performances', :id => @layout.id %></li>
+  <li class='tab'> </li>
+  <li class='tab last'><%= link_to 'generate performance excel sheet', :controller => 'plate_layout', :action => 'performance_xls', :id => @layout.id %>
 </ul>
 
 <h3>Plates using this layout</h3>
@@ -17,8 +19,7 @@
     <% @layout.plates.each do |plate| %>
       <li>
         <%= link_to "#{plate.name} - #{plate.description}", :controller => 'plate', :action => 'show', :id => plate.id %> - <%= l plate.created_at %> -
-        <%= link_to 'characterization', :controller => 'plate', :action => 'characterization_xls', :id => plate.id %> -
-        <%= link_to 'performance', :controller => 'plate', :action => 'performance_xls', :id => plate.id %>
+        <%= link_to 'characterization', :controller => 'plate', :action => 'characterization_xls', :id => plate.id %>
       </li>
     <% end %>
   </ul>

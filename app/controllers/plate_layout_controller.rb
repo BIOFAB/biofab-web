@@ -240,4 +240,12 @@ class PlateLayoutController < ApplicationController
     end
   end
 
+
+  def performance_xls
+    layout = PlateLayout.find(params['id'])
+    path = layout.get_performance_xls
+    send_file(path, :type => "application/vnd.ms-excel")
+  end
+
+
 end

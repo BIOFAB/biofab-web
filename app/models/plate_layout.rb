@@ -489,4 +489,116 @@ class PlateLayout < ActiveRecord::Base
   end
 
 
+  # TODO this could definitely be better
+  def get_performance_xls
+    workbook = Spreadsheet::Workbook.new
+
+    layout_sheet = xls_add_plate_layout_sheet(workbook)
+    value_sheet = xls_add_plate_sheet(workbook, 'Performance')
+    sd_sheet = xls_add_plate_sheet(workbook, 'Standard deviation')
+    var_means_sheet = xls_add_plate_sheet(workbook, 'Variance of means')
+    mean_vars_sheet = xls_add_plate_sheet(workbook, 'Mean of variances')
+    total_var_sheet = xls_add_plate_sheet(workbook, 'Total variances')
+
+
+    # iterate over plate_layout wells
+    wells.each do |well|
+      next if (well.row == 0) || (well.column == 0)
+
+      # find at least one corresponding plate_well that has a mean value
+      characterization = nil
+      plates.each do |plate|
+        plate_well = plate.well_at(well.row, well.column)
+        next if !plate_well
+        characterization = plate_well.replicate.characterization_with_type_name('mean')
+        break if characterization
+      end
+
+      if characterization # if at least one plate_well had a mean-value characterization 
+
+        perf = characterization.performance_with_type_name('mean_of_means')
+        value_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
+
+        perf = characterization.performance_with_type_name('standard_deviation_of_means')
+        sd_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
+
+        perf = characterization.performance_with_type_name('variance_of_means')
+        var_means_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
+
+      end
+
+      # find at least one corresponding plate_well that has a variance value
+      characterization = nil
+      plates.each do |plate|
+        plate_well = plate.well_at(well.row, well.column)
+        next if !plate_well
+        characterization = plate_well.replicate.characterization_with_type_name('variance')
+        break if characterization
+      end
+      
+      if characterization # if at least one plate_well had a variance-value characterization 
+        
+        perf = characterization.performance_with_type_name('mean_of_variances')
+        mean_vars_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
+
+        perf = characterization.performance_with_type_name('total_variance')
+        total_var_sheet[well.row.to_i, well.column.to_i] = (perf && !perf.value.blank?) ? perf.value : ''
+
+      end
+    end
+
+    out_path = File.join(Rails.root, 'public', "plate_layout_#{id}_performance.xls")
+    workbook.write(out_path)
+    out_path
+  end
+
+
+  def xls_add_plate_sheet(workbook, sheet_name, y_offset=0, x_offset=0)
+    sheet = workbook.create_worksheet
+    sheet.name = sheet_name
+
+    row_name_format = Spreadsheet::Format.new(:weight => :bold)
+    col_name_format = Spreadsheet::Format.new(:weight => :bold)
+
+    # write row names
+    8.times do |row|
+      row_name = ((?A)+row).chr
+      sheet[y_offset+row+1, x_offset] = row_name
+      sheet.row(y_offset+row+1).set_format(x_offset, row_name_format)
+    end
+
+    # write column names
+    12.times do |col|
+      col_name = (col+1).to_s
+      sheet[y_offset, x_offset+col+1] = col_name
+      sheet.row(y_offset).set_format(x_offset+col+1, col_name_format)
+    end
+    sheet
+  end
+
+
+
+  def xls_add_plate_layout_sheet(workbook)
+    sheet = xls_add_plate_sheet(workbook, 'Plate layout', 1, 1)
+    1.upto(8) do |row|
+      sheet[row+1, 0] = well_descriptor_at(row, 0)
+      1.upto(12) do |col|
+        if row == 1
+          sheet[0, col] = well_descriptor_at(0, col)
+        end
+        sheet[row+1, col+1] = brief_well_descriptor_at(row, col, :hide_NA => true)
+      end
+    end
+    if organism
+      sheet[12, 1] = "Plate-global organism:"
+      sheet[12, 3] = organism.descriptor
+    end
+    if eou
+      sheet[14, 1] = "Plate-global EOU:"
+      sheet[14, 3] = eou.descriptor
+    end
+    sheet
+  end
+
+
 end

@@ -221,6 +221,8 @@ class Plate < ActiveRecord::Base
   end
 
 
+  # TODO XXX duplicated in plate_layout.rb
+  # should be called from there
   def xls_add_plate_sheet(workbook, sheet_name, y_offset=0, x_offset=0)
     sheet = workbook.create_worksheet
     sheet.name = sheet_name
@@ -244,6 +246,8 @@ class Plate < ActiveRecord::Base
     sheet
   end
 
+  # TODO XXX duplicated in plate_layout.rb
+  # should be called from there
   def xls_add_plate_layout_sheet(workbook)
     sheet = xls_add_plate_sheet(workbook, 'Plate layout', 1, 1)
     1.upto(8) do |row|
