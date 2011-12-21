@@ -12,6 +12,28 @@ class PlateLayoutController < ApplicationController
 
   end
 
+  # debug method that doesn't run in a background job
+  def analyze3
+
+    plate_layout = PlateLayout.find(params['id'])
+
+    replicate_dirs = []
+
+    dir = Dir.new(params['path'])
+    dir.each do |replicate_entry|
+      next if (replicate_entry == '.') || (replicate_entry == '..')
+      replicate_entry_path = File.join(params['path'], replicate_entry)
+      next if !File.directory?(replicate_entry_path)
+      replicate_dirs << replicate_entry_path
+    end
+
+    plate_layout.analyze_replicate_dirs(replicate_dirs, current_user)
+    
+    flash[:notice] = "Stuff happened"
+    redirect_to :action => 'data', :id => params['id']
+
+  end
+
   def analyze2
 
     plate_layout = PlateLayout.find(params['id'])

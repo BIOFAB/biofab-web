@@ -261,6 +261,7 @@ class PlateLayout < ActiveRecord::Base
       next if well.channel.blank?
       well_channels[well.name] = well.channel
     end
+    raise well_channels.inspect
     well_channels
   end
 
