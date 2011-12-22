@@ -146,78 +146,86 @@ class Plate < ActiveRecord::Base
   end
 
   def create_well_from_r_data(input_file_path, data, well=nil)
-      if !data || !data['error'].blank?
-        return nil
-      end
-
-      if !well        
-        well = PlateWell.new
-        self.wells << well
-      else
+    if !data
+      return nil
+    end
+    
+    if !well        
+      well = PlateWell.new
+      self.wells << well
+    else
+      if data['error'].blank?
         well.files = []
       end
-
-      original_fcs_file = DataFile.from_local_file(input_file_path, 'original_fcs_file')
-      well.files << original_fcs_file
-
-      plot_file = DataFile.from_local_file(data['outfile_plot'], 'plot')
-      well.files << plot_file
-
-      cleaned_fcs_file = DataFile.from_local_file(data['outfile_fcs'], 'cleaned_fcs_file')
-      well.files << cleaned_fcs_file
-
-      well.row, well.column = PlateWell.well_name_to_row_col(data['well_name'])
-      well.replicate = Replicate.new
+    end
+    
+    if data['error'].blank?
       
-      c = Characterization.new_with_type('mean')
-      c.value = data['mean']
+
+    end
+
+
+    original_fcs_file = DataFile.from_local_file(input_file_path, 'original_fcs_file')
+    well.files << original_fcs_file
+    
+    plot_file = DataFile.from_local_file(data['outfile_plot'], 'plot')
+    well.files << plot_file
+    
+    cleaned_fcs_file = DataFile.from_local_file(data['outfile_fcs'], 'cleaned_fcs_file')
+    well.files << cleaned_fcs_file
+    
+    well.row, well.column = PlateWell.well_name_to_row_col(data['well_name'])
+    well.replicate = Replicate.new
+    
+    c = Characterization.new_with_type('mean')
+    c.value = data['mean']
+    c.fluo_channel = data['fluo_channel']
+    well.replicate.characterizations << c
+    
+    c = Characterization.new_with_type('standard_deviation')
+    c.value = data['standard_deviation']
+    c.fluo_channel = data['fluo_channel']
+    well.replicate.characterizations << c
+    
+    c = Characterization.new_with_type('variance')
+    c.value = data['variance']
+    c.fluo_channel = data['fluo_channel']
+    well.replicate.characterizations << c
+    
+    c = Characterization.new_with_type('event_count')
+    c.value = data['num_events']
+    c.fluo_channel = data['fluo_channel']
+    well.replicate.characterizations << c
+    
+    c = Characterization.new_with_type('cluster_count')
+    c.value = data['num_clusters']
+    c.fluo_channel = data['fluo_channel']
+    well.replicate.characterizations << c
+    
+    # TODO we probably shouldn't be saving the raw events to the DB
+    c = Characterization.new_with_type('events')
+    c.value = 0.0
+    c.fluo_channel = data['fluo_channel']
+    c.description = data['events']
+    well.replicate.characterizations << c
+
+    # second cluster info
+    
+    if data['num_events_c2']
+      c = Characterization.new_with_type('event_count_c2')
+      c.value = data['num_events_c2']
       c.fluo_channel = data['fluo_channel']
       well.replicate.characterizations << c
+    end
 
-      c = Characterization.new_with_type('standard_deviation')
-      c.value = data['standard_deviation']
+    if data['mean_c2']
+      c = Characterization.new_with_type('mean_c2')
+      c.value = data['mean_c2']
       c.fluo_channel = data['fluo_channel']
       well.replicate.characterizations << c
-
-      c = Characterization.new_with_type('variance')
-      c.value = data['variance']
-      c.fluo_channel = data['fluo_channel']
-      well.replicate.characterizations << c
-
-      c = Characterization.new_with_type('event_count')
-      c.value = data['num_events']
-      c.fluo_channel = data['fluo_channel']
-      well.replicate.characterizations << c
-
-      c = Characterization.new_with_type('cluster_count')
-      c.value = data['num_clusters']
-      c.fluo_channel = data['fluo_channel']
-      well.replicate.characterizations << c
-
-      # TODO we probably shouldn't be saving the raw events to the DB
-      c = Characterization.new_with_type('events')
-      c.value = 0.0
-      c.fluo_channel = data['fluo_channel']
-      c.description = data['events']
-      well.replicate.characterizations << c
-
-      # second cluster info
-
-      if data['num_events_c2']
-        c = Characterization.new_with_type('event_count_c2')
-        c.value = data['num_events_c2']
-        c.fluo_channel = data['fluo_channel']
-        well.replicate.characterizations << c
-      end
-
-      if data['mean_c2']
-        c = Characterization.new_with_type('mean_c2')
-        c.value = data['mean_c2']
-        c.fluo_channel = data['fluo_channel']
-        well.replicate.characterizations << c
-      end
-
-      well.save!
+    end
+    
+    well.save!
   end
 
 
