@@ -1,20 +1,38 @@
 <script type='text/javascript'>
 
-  // TODO! waaay too much hardcoding
+  // TODO! move this javascript to own file
 
   function show_plot_for(row, col) {
     if((row == 0) || (col == 0)) {
       return false;
     }
+
+    $('plot').style.display = 'none';
+    $('error').style.display = 'none';
+
     var img_id = 'img_'+row+'_'+col;
     if(!$(img_id)) {
-      return false;
+      return show_error_for(row, col);
     }
     $('plot').src = "";
     $('plot').alt = 'Loading plot for well '+row+col;
 
     $('plot').src = $(img_id).src;
-    console.log($(img_id).src);
+    $('plot').style.display = 'block';
+
+  }
+
+  function show_error_for(row, col) {
+    if((row == 0) || (col == 0)) {
+      return false;
+    }
+    var error_id = 'error_'+row+'_'+col;
+    if(!$(error_id)) {
+      return false;
+    }
+    $('error').innerHTML = $(error_id).innerHTML;
+
+    $('error').style.display = 'block';
   }
 
 </script>
@@ -26,6 +44,8 @@
     <h2>Plate: <%= @plate.name %></h2>
 
     <table class='plate_layout' style='float:left'>
+
+      <!-- TODO we don't want hardcoded plate sizes -->
 
       <% 9.times do |row| %>
         <tr id='<%= "row_#{row}" %>' <%= "class='topmost'" if row == 0 %>>
@@ -43,11 +63,13 @@
                <div class='mean'>NA</div>
              <% else %>
                <img id="<%= "img_#{row}_#{col}" %>" style='display:none' src="<%= well.file_by_type('plot').filepath %>" />
+               <div id="<%= "error_#{row}_#{col}" %>" style='display:none'><%=h well.replicate.characterization_description('error') %></div>
+
                <div class='mean'>
-                 <%= well.replicate.characterization_with_type_name('mean').value.round(2) %>
+                 <%= well.replicate.characterization_value('mean') %>
                </div>
                <div class='sd'>
-                 <%= well.replicate.characterization_with_type_name('standard_deviation').value.round(2) %>
+                 <%= well.replicate.characterization_value('standard_deviation') %>
                </div>
              <% end %>
            <% end %>
@@ -61,6 +83,7 @@
     
     <div id='plot_container' style='float:left; padding-left:20px'>
       <img id='plot' />
+      <div id='error'></div>
     </div>
 
 </div>

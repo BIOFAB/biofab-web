@@ -146,7 +146,7 @@ class Plate < ActiveRecord::Base
   end
 
   def create_well_from_r_data(input_file_path, data, well=nil)
-    if !data
+    if !data || data['well_name'].blank?
       return nil
     end
     
