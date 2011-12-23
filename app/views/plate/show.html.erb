@@ -62,7 +62,10 @@
              <% if !well %>
                <div class='mean'>NA</div>
              <% else %>
-               <img id="<%= "img_#{row}_#{col}" %>" style='display:none' src="<%= well.file_by_type('plot').filepath %>" />
+               <% dfile = well.file_by_type('plot') %>
+               <% if dfile %>
+                 <img id="<%= "img_#{row}_#{col}" %>" style='display:none' src="<%= dfile.filepath  %>" />
+               <% end %>
                <div id="<%= "error_#{row}_#{col}" %>" style='display:none'><%=h well.replicate.characterization_description('error') %></div>
 
                <div class='mean'>

@@ -49,7 +49,7 @@ class PlateLayout < ActiveRecord::Base
         plates << self.analyze_replicate_dir(rep_dir, user)
       end
 
-      improve_cluster_selection
+#      improve_cluster_selection
 
       calculate_performances
 
@@ -62,75 +62,6 @@ class PlateLayout < ActiveRecord::Base
     end
   end
 
-  # for replicates with bi-modal results
-  # cluster selection is improved by comparing
-  # with other replicates and checking if
-  # it could be caused by contamination by surrounding wells
-  def improve_cluster_selection
-
-    # for each well in the plate layout, find all plate wells
-    wells.each do |layout_well|
-
-      replicates = Replicate.joins(:plate_wells => :plate).where(["plate_wells.row = ? AND plate_wells.column = ? AND plates.plate_layout_id = ?", layout_well.row, layout_well.column, id]).all
-
-      if replicates.length <= 0
-        next
-      end
-
-      bi_modals = [] # bi-modal replicates
-      mono_modals = [] # non-bi-modal replicates
-
-      replicates.each do |replicate|
-        num_clusters = replicate.characterization_with_type_name('cluster_count').value
-        if num_clusters > 1
-          bi_modals << replicate
-        else
-          mono_modals << replicate
-        end
-      end
-
-      # my work here is done
-      if bi_modals.length == 0
-        next
-      end
-
-      # less than half of the replicates are bi-modal
-      if bi_modals.length < (mono_modals.length / 2.0)
-
-        mono_modal_means = mono_modals.collect do |replicate|
-          replicate.characterization_with_type_name('mean').value
-        end
-
-        mean_of_means = StatisticsHelpers.mean(mono_modal_means)
-
-        bi_modals.each do |replicate|
-          mean_c1 = replicate.characterization_with_type_name('mean').value
-          mean_c2 = replicate.characterization_with_type_name('mean_c2').value
-
-          c1_mean_variance = StatisticsHelper.variance([mean_of_means, mean_c1])
-          c2_mean_variance = StatisticsHelper.variance([mean_of_means, mean_c2])
-
-          # check which cluster is closer to the mono-modal mean of means
-          if c2_mean_variance < c1_mean_variance
-            # TODO re-analyze while forcing cluster to as primary
-          else
-            # correct cluster was already selected. do nothing
-          end
-        end
-
-      else # more than, or exactly, half of the replicates are bi-modal
-
-        # TODO
-        # Find means of all clusters 
-        #   (e.g. 4 clusters total if there are 3 replicates and one is bi-modal).
-        #
-        # Find combination of means with lowest standard deviation of means.
-        # 
-        # Select the clusters from this combination.
- 
-      end
-    end
-  end
 
   # first delete all performances, then calculate them again
   def re_calculate_performances
