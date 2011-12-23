@@ -154,16 +154,24 @@ class Plate < ActiveRecord::Base
       well = PlateWell.new
       self.wells << well
     else
-      if data['error'].blank?
-        well.files = []
+      well.files = []
+    end
+   
+    well.row, well.column = PlateWell.well_name_to_row_col(data['well_name'])
+    well.replicate = Replicate.new
+ 
+    if !data['error'].blank?
+
+      c = Characterization.new_with_type('error')
+      c.description = data['error']
+      if data['fluo_channel']
+        c.fluo_channel = data['fluo_channel']
       end
-    end
-    
-    if data['error'].blank?
-      
+      well.replicate.characterizations << c
 
+      well.save!
+      return well
     end
-
 
     original_fcs_file = DataFile.from_local_file(input_file_path, 'original_fcs_file')
     well.files << original_fcs_file
@@ -173,9 +181,6 @@ class Plate < ActiveRecord::Base
     
     cleaned_fcs_file = DataFile.from_local_file(data['outfile_fcs'], 'cleaned_fcs_file')
     well.files << cleaned_fcs_file
-    
-    well.row, well.column = PlateWell.well_name_to_row_col(data['well_name'])
-    well.replicate = Replicate.new
     
     c = Characterization.new_with_type('mean')
     c.value = data['mean']
