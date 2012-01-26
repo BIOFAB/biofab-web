@@ -6,6 +6,21 @@ class ProcessMailer < ActionMailer::Base
   default :from => Settings['admin_email']
 
 
+  def file_ready_for_download(user, zip_name)
+    @zip_name = zip_name
+
+    if system("which fortune > /dev/null")
+      @fortune = `fortune`
+    else
+      @fortune = nil
+    end
+
+    mail(:to => user.email, 
+         :subject => "[FabIO] File ready for download!")
+
+  end
+
+
   def performance_calculations_completed(user, layout_id)
     @layout_id = layout_id
 

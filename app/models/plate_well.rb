@@ -3,6 +3,27 @@ class PlateWell < ActiveRecord::Base
   belongs_to :replicate
   has_and_belongs_to_many :files, :class_name => 'DataFile'
 
+  after_destroy :destroy_files
+
+  def destroy_files
+    files.each do |file|
+      file.destroy
+    end
+  end
+
+  def self.destroy_orphans
+    wells = self.includes(:plate).all
+    deleted = []
+    wells.each do |well|
+      if !well.plate
+        deleted << well
+        well.destroy
+      end
+    end
+    deleted
+  end
+
+
 
   def delete_but_keep_files
     old_files = []

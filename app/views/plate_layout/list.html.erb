@@ -1,6 +1,11 @@
 
 <h1>Plate layouts </h1>
 
+<h3>Actions</h3>
+<ul>
+  <li><%= link_to "Generate zip-file with all characterizations", :action => 'download_all_characterizations' %></li>
+</ul>
+
 <h3>Your layouts</h3>
 <% if @mine.empty? %>
   <p>You don't have any layouts.</p>

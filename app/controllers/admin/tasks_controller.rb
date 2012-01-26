@@ -6,6 +6,28 @@ class Admin::TasksController < ApplicationController
 
   end
 
+  def deorphanize
+    # has no orphans:
+    #  parts
+    #  strains (though it would be nice to list the ones that don't have a project)
+   
+
+    # has orphans:
+    #  data_files (if no plate_wells are associated)
+    #  plate_wells (if no plate is associated (or coming soon, if no replicate is associated))
+    #  plate_layout_well (if no plate_layout is associated)
+    #  characterization (if no replicate)
+    # 
+
+    # eou will just be cleaned out
+
+    Plate.destroy_orphans
+    PlateWell.destroy_orphans
+    DataFile.destroy_orphans
+    DataFile.delete_lost_files
+
+  end
+
   def eta
     num_jobs = DelayedJob.where("failed_at is NULL").length
     

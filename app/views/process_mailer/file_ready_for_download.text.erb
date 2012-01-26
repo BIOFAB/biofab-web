@@ -1,0 +1,19 @@
+Hello fellow worker drone.
+
+The file you requested is ready for download here:
+
+  <%=raw absolute_url_for("/#{@zip_name}") %>
+
+This link will remain valid for seven days.
+
+-- 
+FabIO
+
+<% if @fortune %>
+<%=raw @fortune %>
+<% end %>
+
+FabIO suggests: If you're tired of analyzing, take a bollywood song break.
+
+  <%= "https://www.youtube.com/results?search_query=bollywood+#{Time.now.strftime('%B+%Y').gsub(/\s+/,'%20')}" %>
+

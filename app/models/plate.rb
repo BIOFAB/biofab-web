@@ -2,6 +2,19 @@ class Plate < ActiveRecord::Base
   has_many :wells, :class_name => 'PlateWell', :dependent => :destroy
   belongs_to :plate_layout
 
+  def self.destroy_orphans
+    
+    plates = self.includes(:plate_layout).all
+    deleted = []
+    plates.each do |plate|
+      if !plate.plate_layout
+        deleted << plate
+        plate.destroy
+      end
+    end
+    deleted
+  end
+
   def self.foo()
     # TODO move path to settings.rb
     input_path = File.join(Rails.root, 'public', 'flow_cytometer_input_data')
@@ -283,7 +296,7 @@ class Plate < ActiveRecord::Base
     sheet
   end
 
-  def get_characterization_xls
+  def get_characterization_xls(out_path=nil)
     workbook = Spreadsheet::Workbook.new
 
     layout_sheet = xls_add_plate_layout_sheet(workbook)
@@ -296,8 +309,10 @@ class Plate < ActiveRecord::Base
       sd_sheet[well.row.to_i, well.column.to_i] = well.replicate.characterization_with_type_name('standard_deviation').value
       var_sheet[well.row.to_i, well.column.to_i] = well.replicate.characterization_with_type_name('variance').value
     end
+    if !out_path
+      out_path = File.join(Rails.root, 'public', "plate_#{id}_characterization.xls")
+    end
 
-    out_path = File.join(Rails.root, 'public', "plate_#{id}_characterization.xls")
     workbook.write(out_path)
     out_path
   end
