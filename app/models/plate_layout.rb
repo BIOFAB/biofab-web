@@ -46,9 +46,7 @@ class PlateLayout < ActiveRecord::Base
         paths << plate.get_characterization_xls(File.join(tmpdir, filename))
 #        send_file(path, :type => "application/vnd.ms-excel")
         replicate_count += 1
-        break
       end
-      break
     end
 
     zip_dir = File.join(Rails.root, 'public')
