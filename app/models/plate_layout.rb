@@ -38,14 +38,21 @@ class PlateLayout < ActiveRecord::Base
 
     PlateLayout.all.each do |plate_layout|
       replicate_count = 1
-      plate_layout.plates.each do |plate|
-
-        safe_layout_name = plate_layout.name.gsub(/[^\w\d]+/, '_')
-        filename = "#{safe_layout_name}_replicate_#{replicate_count}.xls"
-        
-        paths << plate.get_characterization_xls(File.join(tmpdir, filename))
-#        send_file(path, :type => "application/vnd.ms-excel")
-        replicate_count += 1
+      begin
+        plate_layout.plates.each do |plate|
+          begin
+            safe_layout_name = plate_layout.name.gsub(/[^\w\d]+/, '_')
+            filename = "#{safe_layout_name}_replicate_#{replicate_count}.xls"
+            
+            paths << plate.get_characterization_xls(File.join(tmpdir, filename))
+            #        send_file(path, :type => "application/vnd.ms-excel")
+            replicate_count += 1
+          rescue Exception => e
+            next # skip to next plate on error
+          end
+        end
+      rescue Exception => e
+        next # skip to next plate_layout on error
       end
     end
 
@@ -70,6 +77,7 @@ class PlateLayout < ActiveRecord::Base
     Zip::ZipFile.open(zip_path, Zip::ZipFile::CREATE) do |zipfile|
     
       paths.each do |path|
+        next if !path || (path == '')
         zipfile.add(File.basename(path), path)
       end
     end
