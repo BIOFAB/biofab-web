@@ -305,9 +305,20 @@ class Plate < ActiveRecord::Base
     var_sheet = xls_add_plate_sheet(workbook, 'Variance')
 
     wells.each do |well|
-      value_sheet[well.row.to_i, well.column.to_i] = well.replicate.characterization_with_type_name('mean').value
-      sd_sheet[well.row.to_i, well.column.to_i] = well.replicate.characterization_with_type_name('standard_deviation').value
-      var_sheet[well.row.to_i, well.column.to_i] = well.replicate.characterization_with_type_name('variance').value
+      mean = well.replicate.characterization_with_type_name('mean')
+      if mean
+        value_sheet[well.row.to_i, well.column.to_i] = mean.value
+      end
+      
+      sd = well.replicate.characterization_with_type_name('standard_deviation')
+      if sd
+        sd_sheet[well.row.to_i, well.column.to_i] = sd.value
+      end
+      
+      variance = well.replicate.characterization_with_type_name('variance')
+      if variance
+        var_sheet[well.row.to_i, well.column.to_i] = variance.value
+      end
     end
     if !out_path
       out_path = File.join(Rails.root, 'public', "plate_#{id}_characterization.xls")
