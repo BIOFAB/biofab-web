@@ -6,6 +6,20 @@ class Admin::TasksController < ApplicationController
 
   end
 
+  def remove_old_plates
+    
+    older_than = '2012-01-01'
+
+    plates = Plate.where(["created_at < ?", older_than])
+
+    plates.each do |plate|
+      plate.destroy
+    end
+
+    render :text => "removed #{plates.length} plates"
+
+  end
+
   def deorphanize
     # has no orphans:
     #  parts

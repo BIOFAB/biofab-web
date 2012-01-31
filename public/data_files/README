@@ -1,0 +1,8 @@
+The dirs named dir1, dir2, etc. are there because filesystems have limits 
+on the number of sub-dirs in a dir. E.g. for EXT3 the limit is 31998,
+which is the lowest I have encountered so far.
+
+The system will create a new subdir when the number of files in the current
+dir reaches 31900.
+
+
