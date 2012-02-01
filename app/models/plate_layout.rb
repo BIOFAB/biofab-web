@@ -36,8 +36,7 @@ class PlateLayout < ActiveRecord::Base
 
     paths = []
 
-#    PlateLayout.all.each do |plate_layout|
-    plate_layout = PlateLayout.find(51)
+    PlateLayout.all.each do |plate_layout|
       puts "generating performance for plate layout"
       begin
         safe_layout_name = plate_layout.name.gsub(/[^\w\d]+/, '_')
@@ -45,11 +44,13 @@ class PlateLayout < ActiveRecord::Base
         
         paths << plate_layout.get_performance_xls(File.join(tmpdir, filename))
 
+        puts "-- completed plate layout"
+
       rescue Exception => e
         puts "-- skipping due to error: #{e.inspect}"
         next # skip to next plate_layout on error
       end
-#    end
+    end
 
     zip_dir = File.join(Rails.root, 'public')
 
