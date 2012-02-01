@@ -37,22 +37,13 @@ class PlateLayout < ActiveRecord::Base
     paths = []
 
     PlateLayout.all.each do |plate_layout|
-      replicate_count = 1
       puts "generating performance for plate layout"
       begin
-        plate_layout.plates.each do |plate|
-          begin
-            puts "  replicate #{replicate_count}"
-            safe_layout_name = plate_layout.name.gsub(/[^\w\d]+/, '_')
-            filename = "performance_#{safe_layout_name}_replicate_#{replicate_count}.xls"
-            
-            paths << plate.get_performance_xls(File.join(tmpdir, filename))
+        safe_layout_name = plate_layout.name.gsub(/[^\w\d]+/, '_')
+        filename = "#{safe_layout_name}_performance.xls"
+        
+        paths << plate_layout.get_performance_xls(File.join(tmpdir, filename))
 
-            replicate_count += 1
-          rescue Exception => e
-            next # skip to next plate on error
-          end
-        end
       rescue Exception => e
         next # skip to next plate_layout on error
       end
@@ -71,7 +62,7 @@ class PlateLayout < ActiveRecord::Base
         File.delete(zip_path)
         break
       end
-      zip_name = "all_characterizations_#{count}.zip"
+      zip_name = "all_performances_#{count}.zip"
       zip_path = File.join(zip_dir, zip_name)
       count += 1
     end
