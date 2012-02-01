@@ -44,8 +44,6 @@ class PlateLayout < ActiveRecord::Base
         
         paths << plate_layout.get_performance_xls(File.join(tmpdir, filename))
 
-        puts "-- #{paths}"
-
       rescue Exception => e
         puts "-- skipping due to error: #{e.inspect}"
         next # skip to next plate_layout on error
