@@ -576,7 +576,7 @@ class PlateLayout < ActiveRecord::Base
 
 
   # TODO this could definitely be better
-  def get_performance_xls
+  def get_performance_xls(out_path=nil)
     workbook = Spreadsheet::Workbook.new
 
     layout_sheet = xls_add_plate_layout_sheet(workbook)
@@ -633,7 +633,9 @@ class PlateLayout < ActiveRecord::Base
       end
     end
 
-    out_path = File.join(Rails.root, 'public', "plate_layout_#{id}_performance.xls")
+    if !out_path
+      out_path = File.join(Rails.root, 'public', "plate_layout_#{id}_performance.xls")
+    end
     workbook.write(out_path)
     out_path
   end
