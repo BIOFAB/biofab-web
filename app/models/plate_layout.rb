@@ -6,7 +6,87 @@ class PlateLayout < ActiveRecord::Base
   has_many :wells, :class_name => 'PlateLayoutWell', :dependent => :destroy
   has_many :plates
 
+
+  # mail wrapper for download_all_performances
+  def self.download_all_performances_mail(user)
+    begin
+
+      puts "generating zip file with all performances"
+
+      zip_path = download_all_performances
+
+      puts "  sending email"
+
+      ProcessMailer.file_ready_for_download(user, zip_path).deliver
+
+    rescue Exception => e
+      puts "  error occurred: sending error email"
+      ProcessMailer.error(user, e).deliver
+    end
+  end
   
+  # make a zip of all performance xls files
+  # and return the
+  def self.download_all_performances
+    require 'tmpdir'
+    require 'fileutils'
+    require 'zip'
+
+    tmpdir = Dir.mktmpdir('plate_layout_performances')
+
+    paths = []
+
+    PlateLayout.all.each do |plate_layout|
+      replicate_count = 1
+      begin
+        plate_layout.plates.each do |plate|
+          begin
+            safe_layout_name = plate_layout.name.gsub(/[^\w\d]+/, '_')
+            filename = "performance_#{safe_layout_name}_replicate_#{replicate_count}.xls"
+            
+            paths << plate.get_performance_xls(File.join(tmpdir, filename))
+
+            replicate_count += 1
+          rescue Exception => e
+            next # skip to next plate on error
+          end
+        end
+      rescue Exception => e
+        next # skip to next plate_layout on error
+      end
+      break # TODO debug
+    end
+
+    zip_dir = File.join(Rails.root, 'public')
+
+    zip_name = "all_performances.zip"
+    zip_path = File.join(zip_dir, zip_name)
+
+    count = 2
+    while File.exists?(zip_path)
+      
+      if File.mtime(zip_path) < Time.now - 60 * 60 * 24 * 7 # if file is more than 7 days old
+        # delete old file and use that name for new file
+        File.delete(zip_path)
+        break
+      end
+      zip_name = "all_characterizations_#{count}.zip"
+      zip_path = File.join(zip_dir, zip_name)
+      count += 1
+    end
+
+    Zip::ZipFile.open(zip_path, Zip::ZipFile::CREATE) do |zipfile|
+    
+      paths.each do |path|
+        next if !path || (path == '')
+        zipfile.add(File.basename(path), path)
+      end
+    end
+
+    return zip_name
+  end
+
+
   # mail wrapper for download_all_characterizations
   def self.download_all_characterizations_mail(user)
     begin

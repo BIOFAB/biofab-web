@@ -1,5 +1,17 @@
 class PlateLayoutController < ApplicationController
 
+  def download_all_performances
+    if !current_user
+      flash[:notice] = 'Please log in'
+      redirect_to '/login'
+      return
+    end
+
+    PlateLayout.delay.download_all_performances_mail(current_user)
+
+    render :text => "Job started. You will receive an email at #{current_user.email} when the file is ready for download."
+  end
+
 
   def download_all_characterizations
     if !current_user
