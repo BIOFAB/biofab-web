@@ -11,7 +11,7 @@
       <td>Started at</td>
       <td>Queued at</td>
     </tr>
-    <% @runnning.each do |job| %>
+    <% @running.each do |job| %>
       <tr>
         <td><%= job.status %></td>
         <td><%= job.locked_at %></td>
