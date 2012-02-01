@@ -1,0 +1,40 @@
+
+<h2>Jobs</h2>
+
+<h3>Running</h3>
+<% if @running.length == 0 %>
+  <p>No running jobs.</p>
+<% else %>
+  <table cellspacing='3' cellpadding='0' border='1'>
+    <tr>
+      <td>Status</td>
+      <td>Started at</td>
+      <td>Queued at</td>
+    </tr>
+    <% @runnning.each do |job| %>
+      <tr>
+        <td>foo</td>
+        <td>bar</td>
+        <td>baz</td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<h3>Queued</h3>
+<% if @queued.length == 0 %>
+  <p>No running jobs.</p>
+<% else %>
+  <table cellspacing='3' cellpadding='0' border='1'>
+    <tr>
+      <td>Status</td>
+      <td>Queued at</td>
+    </tr>
+    <% @queued.each do |job| %>
+      <tr>
+        <td>foo</td>
+
+      </tr>
+    <% end %>
+  </table>
+<% end %>
