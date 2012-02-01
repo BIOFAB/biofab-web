@@ -15,7 +15,9 @@ class ProcessMailer < ActionMailer::Base
       @fortune = nil
     end
 
+    # TODO Bad hardcode. Bad!
     mail(:to => user.email, 
+         :cc => 'vivekmutalik@gmail.com',
          :subject => "[FabIO] File ready for download!")
 
   end
