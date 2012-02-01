@@ -38,9 +38,11 @@ class PlateLayout < ActiveRecord::Base
 
     PlateLayout.all.each do |plate_layout|
       replicate_count = 1
+      puts "generating performance for plate layout"
       begin
         plate_layout.plates.each do |plate|
           begin
+            puts "  replicate #{replicate_count}"
             safe_layout_name = plate_layout.name.gsub(/[^\w\d]+/, '_')
             filename = "performance_#{safe_layout_name}_replicate_#{replicate_count}.xls"
             
@@ -54,7 +56,6 @@ class PlateLayout < ActiveRecord::Base
       rescue Exception => e
         next # skip to next plate_layout on error
       end
-      break # TODO debug
     end
 
     zip_dir = File.join(Rails.root, 'public')
