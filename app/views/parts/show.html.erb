@@ -19,6 +19,14 @@
 </ol>
 
 
+<% if @part.part_type.name == 'Promoter' %>
+  <h3>Promoter visualization</h3>
+  <%= render :partial => 'diagram' %>
+<% else %>
+  <h3>unable to visualize part type</h3>
+<% end %>
+
+
 
 <%= link_to 'Edit', edit_part_path(@part) %> |
 <%= link_to 'Back', parts_path %>

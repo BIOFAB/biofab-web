@@ -52,3 +52,5 @@ gem 'spreadsheet' # xls file output
 
 gem 'zip' # required by roo
 gem 'roo' # google docs import
+
+gem 'haml' # some widgets are in haml
