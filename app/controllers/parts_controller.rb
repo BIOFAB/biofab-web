@@ -13,7 +13,7 @@ class PartsController < ApplicationController
   # GET /parts/1
   # GET /parts/1.json
   def show
-    @part = Part.find(params[:id])
+    @part = Part.find(params[:id], :include => {:annotations => :annotation_type})
 
     respond_to do |format|
       format.html # show.html.erb

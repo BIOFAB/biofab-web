@@ -1,0 +1,191 @@
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.constraint_slider {
+    position: relative;
+    width: 700px;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+}
+
+.constraint_slider .bar_container {
+    position: relative;
+    height: 30px;
+    border: 1px solid black;
+    z-index: 1000;
+    border: 1px solid #aaa;
+    border-radius: 3px;    
+    box-shadow: 1px 1px 7px #ccc inset;
+    background-color: white;
+}
+
+.constraint_slider .constrained_area {
+    position: absolute;
+    top: 0;
+    left: 200px;
+    width: 200px;
+    bottom: 0;
+    
+}
+
+.constrained_hilight {
+    position: absolute;
+	  top: -3px;
+	  bottom: -3px;
+    left: 0px;
+	  right: 0px;
+	  background-color: #8EEB00;
+    box-shadow: 0px 0px 5px #8EEB00;
+	  opacity: 0.3;
+	
+}
+
+.constraint_slider .slider {
+    position: absolute;
+    top: -9px;
+    bottom: -9px;
+    width: 11px;
+    background-color: white;
+    border: 1px solid #aaa;
+    border-radius: 3px;    
+    box-shadow: 1px 1px 3px #ccc, 0px -1px 2px #ccc inset;
+    z-index: 1;
+}
+
+.constraint_slider .slider:hover {
+	background-color: #fafafa;
+}
+
+.constraint_slider .slider:active {
+	box-shadow: 0px -1px 2px #ccc inset;
+	
+}
+.constraint_slider .left_slider {
+    left: 0;
+}
+
+.constraint_slider .right_slider {
+    right: 0;
+}
+
+.constraint_slider .angle_line .vertical_line {
+    position: absolute;
+    bottom: -9px;
+    left: 7px;
+    width: 1px;
+    height: 7px;
+    background-color: black;
+}
+
+.constraint_slider .left_slider .angle_line .horizontal_line {
+    position: absolute;
+    bottom: -9px;
+    left: 0;
+    width: 7px;
+    height: 1px;
+    background-color: black;
+}
+
+.constraint_slider .right_slider .angle_line .horizontal_line {
+    position: absolute;
+    bottom: -9px;
+    left: 7px;
+    width: 7px;
+    height: 1px;
+    background-color: black;
+}
+
+.constraint_slider .left_slider .label {
+    position: absolute;
+    bottom: -13px;
+    left: -22px;
+    font-size: 8px;
+}
+
+.constraint_slider .right_slider .label {
+    position: absolute;
+    bottom: -13px;
+    left: 17px;
+    font-size: 8px;
+}
+
+.constraint_slider .tree {
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    background-color: gray;
+    z-index: 100;
+}
+
+.constraint_slider .forest_of_divs .active {
+    background-color: red;
+    z-index: 90;
+}
+
+.constraint_slider .histogram_container {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+}
+
+.constraint_slider .total_histogram_container {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.constraint_slider .total_histogram_container .bar {
+    position: absolute;
+    bottom: 32px;
+    left: 0;
+    width: 10px;
+
+    background-color: #1a82f7;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(orange), to(orange));
+    background-image: -webkit-linear-gradient(top, orange, orange);
+    background-image:    -moz-linear-gradient(top, orange, orange);
+    background-image:     -ms-linear-gradient(top, orange, orange);
+    background-image:      -o-linear-gradient(top, orange, orange);
+    opacity: 0.4;
+}
+
+.constraint_slider .constrained_histogram_container {
+    position: absolute;
+    top: 0;
+    left: 1px;
+}
+
+.constraint_slider .constrained_histogram_container .bar {
+    position: absolute;
+    bottom: 32px;
+    left: 0;
+    width: 10px;
+    background-color: green;
+    opacity: 0.3;
+}
+
+.horizontal_lines {
+    position: absolute;
+    width: 100%;
+}
+
+.horizontal_lines .line {
+    position: absolute;
+    bottom: 0;
+    left: -4px;
+    height: 1px;
+    right: -4px;
+    background-color: black;
+	  opacity: 0.1;
+}
+

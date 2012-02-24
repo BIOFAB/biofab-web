@@ -1,0 +1,118 @@
+
+<div class='eou_widget open'>
+  <div class='eou'>
+    <div class='label'>EOU Identifier: DF34-56B</div>
+  </div>
+  <div class='performance'>
+    <div class='label'>Performance</div>
+    <div class='bar'>
+      <div class='overall'>
+        <div class='sd'></div>
+        <div class='pointer'></div>
+      </div>
+      <div class='promoter'>
+        <div class='pointer'></div>
+      </div>
+      <div class='fiveutr'>
+        <div class='pointer'></div>
+      </div>
+    </div>
+    <div class='ruler'>
+      <div class='tic'>
+        <div class='label first'>0%</div>
+      </div>
+      
+      <div class='tic'>
+        <div class='label'>10%</div>
+      </div>
+      
+      <div class='tic'>
+        <div class='label'>20%</div>
+      </div>
+      
+      <div class='tic'>
+        <div class='label'>30%</div>
+      </div>
+      
+      <div class='tic'>
+        <div class='label'>40%</div>
+      </div>
+      
+      <div class='tic'>
+        <div class='label'>50%</div>
+      </div>
+      
+      <div class='tic'>
+        <div class='label'>60%</div>
+      </div>
+      
+      <div class='tic'>
+        <div class='label'>70%</div>
+      </div>
+      
+      <div class='tic'>
+        <div class='label'>80%</div>
+      </div>
+      
+      <div class='tic'>
+        <div class='label'>90%</div>
+      </div>
+      
+      <div class='tic'>
+        <div class='label last'>100%</div>
+      </div>
+    </div>  
+  </div>
+  <div class='reliability'>
+    <div class='label'>Reliability</div>
+    <div class='ruler'>
+      <div class='tic'>
+        <div class='dot'></div>
+      </div>
+      
+      <div class='tic'>
+        <div class='dot'></div>
+      </div>
+      
+      <div class='tic'>
+        <div class='dot'></div>
+      </div>
+      
+      <div class='tic'>
+        <div class='dot'></div>
+      </div>
+      
+      <div class='tic'>
+        <div class='dot'></div>
+      </div>
+      
+      <div class='tic'>
+        <div class='dot'></div>
+      </div>
+      
+      <div class='tic'>
+        <div class='dot'></div>
+      </div>
+      
+      <div class='tic'>
+        <div class='dot'></div>
+      </div>
+      
+      <div class='tic'>
+        <div class='dot'></div>
+      </div>
+      
+      <div class='tic'>
+        <div class='dot'></div>
+      </div>
+    </div>
+  </div>
+
+  <div class='diagrams'>
+    <%= render :partial => '/parts/diagram', :locals => {:part => promoter, :classes => 'promoter'} %>
+    <%= render :partial => '/parts/diagram', :locals => {:part => promoter, :classes => 'fiveutr'} %>
+  </div>
+
+</div>
+
+

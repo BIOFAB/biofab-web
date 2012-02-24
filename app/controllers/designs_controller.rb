@@ -1,0 +1,66 @@
+class DesignsController < ApplicationController
+  layout 'designer' #, :only => [:index]
+
+  # GET /designs
+  # GET /designs.json
+  def index
+    if params['from'] && params['to']
+      @designs = Design.in_performance_range(params['from'].to_f, params['to'].to_f)
+    else
+      @designs = Design.all
+    end
+
+    @values_json = @designs.collect {|design| design.performance}.to_json
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.json { render :json => @designs }
+    end
+  end
+
+
+  def widgets
+
+    if !params['from'] || !params['to']
+      render :text => "missing parameters", :status => 404
+      return
+    end
+
+    @designs = Design.in_performance_range(params['from'].to_f, params['to'].to_f, 10)
+
+    render :partial => 'widgets'
+  end
+
+
+  # GET /designs/1
+  # GET /designs/1.json
+  def show
+
+    @design = Design.includes({:promoter => {:annotations => :annotation_type}, :fpu => {:annotations => :annotation_type}}).find(params[:id])
+    if !@design
+      render :text => 'NOT FOUND'
+      return
+    end
+
+    @promoter = @design.promoter
+    @utr = @design.fpu
+    @terminator = nil
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.json { render :json => @design }
+    end
+  end
+
+  def eou
+
+    @promoter = Part.find(42, :include => {:annotations => :annotation_type})
+    @utr = Part.find(420, :include => {:annotations => :annotation_type})
+    @terminator = nil
+
+  end
+
+  def flash_test
+
+  end
+end

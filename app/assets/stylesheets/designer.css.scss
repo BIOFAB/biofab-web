@@ -1,0 +1,63 @@
+/*
+         *= require_self 
+         *= require ConstraintSlider
+         *= require part_diagram
+         *= require eou_widget
+*/  
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+#container {
+    position: relative;
+    padding: 0;
+    width: 1000px;
+    margin-top: 160px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#top {
+  position: absolute;
+  top: -60px;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  border-bottom: 1px solid gray;
+}
+
+#right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 200px;
+  border-left: 1px solid gray;
+  border-right: 1px solid gray;
+}
+
+#right_content {
+  position: relative;
+  margin: 10px;
+}
+
+#left {
+  position: relative;
+  padding: 0;
+  margin-top: 10px;
+  margin-left: 0;
+  margin-right: 300px;
+  border-left: 1px solid gray;
+}
+
+#left_content {
+  margin: 10px;
+}
+
+#debug {
+display: none;
+}
+

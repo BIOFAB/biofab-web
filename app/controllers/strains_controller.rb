@@ -14,6 +14,7 @@ class StrainsController < ApplicationController
 
   # GET /strains/1
   # GET /strains/1.json
+  # GET /strains/1.sbol
   def show
     @strain = Strain.find(params[:id])
 

@@ -11,6 +11,10 @@ BiofabWeb::Application.routes.draw do
 #  ActiveAdmin.routes(self)
 #  devise_for :admin_users, ActiveAdmin::Devise.config
 
+  # TODO fix this uncleanliness!
+  get 'design_widgets' => 'designs#widgets', :as => 'design_widgets'
+
+  resources :designs
   resources :strains
   resources :organisms
   resources :collections

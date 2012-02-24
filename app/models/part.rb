@@ -1,19 +1,22 @@
 class Part < ActiveRecord::Base
+
   has_many :annotations
   # only if this is a plasmid or chromosomally integrated sequence
   belongs_to :plasmid_info 
   belongs_to :part_type
   belongs_to :project
 
+
   before_validation do
-    self.sequence = sequence.upcase.gsub(/[^ATGC]+/, '')
-    if sequence == ''
+    if !self.sequence.blank?
+      self.sequence = sequence.upcase.gsub(/[^ATGC]+/, '')
+    else
       self.sequence = nil
     end
   end
 
   validates :biofab_id, :presence => true, :uniqueness => true
-  validates :sequence, :uniqueness => true
+#  validates :sequence, :uniqueness => true
 
 
   def self.promoters
@@ -62,6 +65,10 @@ class Part < ActiveRecord::Base
 
   def to_s
     biofab_id
+  end
+
+  def annotations_with_type(type_name)
+    annotations.joins(:annotation_type).where(["annotation_types.name = ?", type_name])
   end
 
 end
