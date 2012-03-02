@@ -43,20 +43,26 @@
   font-size: 13px;
   font-family: sans-serif; }
 
-@mixin paren_border($orient) {
+@mixin paren_border_left($orient) {
   border-#{$orient}: solid 2px #aaaaaa;
   border-left: solid 1px #aaaaaa;
-  border-right: solid 1px #aaaaaa;
   -webkit-border-#{$orient}-left-radius: 5px;
-  -webkit-border-#{$orient}-right-radius: 5px;
   -moz-border-radius-#{$orient}left: 5px;
-  -moz-border-radius-#{$orient}right: 5px;
   border-#{$orient}-left-radius: 5px;
-  border-#{$orient}-right-radius: 5px; }
+}
+
+@mixin paren_border_right($orient) {
+  border-#{$orient}: solid 2px #aaaaaa;
+  border-right: solid 1px #aaaaaa;
+  -webkit-border-#{$orient}-right-radius: 5px;
+  -moz-border-radius-#{$orient}right: 5px;
+  border-#{$orient}-right-radius: 5px; 
+}
+
 
 @mixin paren_label {
   @include smallfont;
-  background: white;
+  background: none;
   text-align: center;
   display: inline-block;
   margin-left: auto;
@@ -237,6 +243,16 @@ $sd_opacity: 0.3;
   display: inline-block;
   position: relative;
   padding: 2px 6px;
+  .performance {
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    height: 100%;
+    width: 0;
+    background-color: #CCDDFF; 
+    z-index:1;
+    /* opacity: 0.3; */
+  }
   .seq {
     position: relative;
     float:left;
@@ -265,28 +281,50 @@ $sd_opacity: 0.3;
     position: relative;
     padding: 0px 5px;
     margin: 8px 0px;
-    margin-top: 20px;
+    margin-top: 34px;
     display: inline-block;
     z-index: 2; }
 
   .bottomparen {
-    @include paren_border(bottom);
     display: inline-block;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 2px;
+    padding-right: 2px;
     margin-top: 4px;
     height: 8px;
     float: left;
-    z-index: 1;
+    z-index: 50;
+    .bottomparen_left {
+      @include paren_border_left(bottom);
+      height: 100%;
+      width: 4px;
+      float: left;
+    }
     .parenlabel {
       @include paren_label;
       position: relative;
-      bottom: 2px; } }
+      bottom: -1px;
+      float: left;
+      padding-left: 1px;
+      padding-right: 1px;
+    }
+    .bottomparen_right {
+      @include paren_border_right(bottom);
+      height: 100%;
+      width: 4px;
+      float: left;
+    }
+  }
 
   .widgetlabel {
     @include medfont;
+    position: absolute;
+    top: 3px;
+    left: 5px;
     font-size: 10px;
-    background: white; } }
+    background: none;
+    z-index: 100;
+  }
+}
 
 #slider_rent {
   width: 400px; }

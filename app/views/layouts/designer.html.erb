@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Slider widget</title>
+    <title>Expression Level Picker</title>
 
     <!-- dot templates -->
     <script id='constraint_slider_template' type='text/x-dot-template'>
@@ -58,6 +58,7 @@
 
     <script type='text/javascript'>
 
+/*
       function move_right_box(e) {
         var container_top = Element.cumulativeOffset('container').top;
         
@@ -77,9 +78,10 @@
         $('right').style.height = height + 'px';
 
       }
+*/
 
       function got_results(transport) {
-        $('left_content').innerHTML = transport.responseText;
+        $('eou_list').innerHTML = transport.responseText;
       }
       
       function slider_changed(from, to) {
@@ -116,7 +118,7 @@
         var slider = ConstraintSlider.create('dynamic_slider', {
           data: data,
           bin_count: 25,
-          histogram_max_height: 60,
+          histogram_max_height: 40,
           y_axis_max: 'dynamic', // Can also be 'dynamic'. If you specify this, then you _must_not_ have any bins with more entries than y_axis_max. If you do, the widget will exceed histogram_max_height.
           horizontal_lines: true,
           log_scale: true
@@ -124,8 +126,8 @@
     
         slider.on_change = slider_changed;
 
-        window.onscroll = move_right_box;
-        move_right_box();
+//        window.onscroll = move_right_box;
+//        move_right_box();
 
       }
 

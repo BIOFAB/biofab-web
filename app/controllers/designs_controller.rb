@@ -43,8 +43,14 @@ class DesignsController < ApplicationController
     end
 
     @promoter = @design.promoter
-    @utr = @design.fpu
+    @fpu = @design.fpu
     @terminator = nil
+
+    @promoter_performance = 0.6
+    @fpu_performance = 0.3
+    @performance = 0.5
+    @performance_deviation = 0.05
+    @reliability = 7
 
     respond_to do |format|
       format.html # show.html.erb

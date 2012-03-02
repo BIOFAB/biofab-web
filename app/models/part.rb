@@ -1,6 +1,6 @@
 class Part < ActiveRecord::Base
 
-  has_many :annotations
+  has_many :annotations, :foreign_key => :parent_part_id
   # only if this is a plasmid or chromosomally integrated sequence
   belongs_to :plasmid_info 
   belongs_to :part_type
@@ -15,7 +15,7 @@ class Part < ActiveRecord::Base
     end
   end
 
-  validates :biofab_id, :presence => true, :uniqueness => true
+  validates :biofab_id, :uniqueness => true
 #  validates :sequence, :uniqueness => true
 
 
@@ -67,8 +67,27 @@ class Part < ActiveRecord::Base
     biofab_id
   end
 
+  # TODO this require be needing some optimizin' fool!
+  def annotations_with_type_recursive(type_name, annots=nil, offset=0)
+    annots = annots || annotations.includes(:annotation_type)
+    matches = []
+    annots.each do |anno|
+      next if !anno.part
+      next if anno.part.annotations.length == 0
+      matches += annotations_with_type_recursive(type_name, anno.part.annotations.includes(:annotation_type), anno.from)
+    end
+    annots.each do |anno|
+      if anno.annotation_type.name == type_name
+        anno.offset = offset
+        matches << anno
+      end
+    end
+    matches.sort {|a,b| a.from_offset <=> b.from_offset}
+  end
+
   def annotations_with_type(type_name)
     annotations.joins(:annotation_type).where(["annotation_types.name = ?", type_name])
   end
+
 
 end

@@ -1,3 +1,5 @@
 
 
-<%= render :partial => 'eou' %>
+<div style='margin:20px; width:660px;'>
+  <%= render :partial => 'eou', :locals => {:biofab_id => @design.strain_biofab_id, :reliability => @reliability, :performance => @performance, :performance_deviation => @performance_deviation, :promoter => @promoter, :fpu => @fpu, :promoter_performance => @promoter_performance, :fpu_performance => @fpu_performance} %>
+</div>

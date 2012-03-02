@@ -1,12 +1,16 @@
 
 <div class='eou_widget open'>
   <div class='eou'>
-    <div class='label'>EOU Identifier: DF34-56B</div>
+    <div class='label'>Strain ID: <%= biofab_id %></div>
   </div>
   <div class='performance'>
     <div class='label'>Performance</div>
     <div class='bar'>
-      <div class='overall'>
+      <%
+         sd_start = (performance - (performance_deviation / 2.0)) * 100
+         sd_width = performance_deviation * 100
+      %>
+      <div class='overall' style='left:<%= sd_start %>%; width:<%= sd_width %>%;'>
         <div class='sd'></div>
         <div class='pointer'></div>
       </div>
@@ -63,56 +67,42 @@
       </div>
     </div>  
   </div>
-  <div class='reliability'>
-    <div class='label'>Reliability</div>
-    <div class='ruler'>
-      <div class='tic'>
-        <div class='dot'></div>
-      </div>
-      
-      <div class='tic'>
-        <div class='dot'></div>
-      </div>
-      
-      <div class='tic'>
-        <div class='dot'></div>
-      </div>
-      
-      <div class='tic'>
-        <div class='dot'></div>
-      </div>
-      
-      <div class='tic'>
-        <div class='dot'></div>
-      </div>
-      
-      <div class='tic'>
-        <div class='dot'></div>
-      </div>
-      
-      <div class='tic'>
-        <div class='dot'></div>
-      </div>
-      
-      <div class='tic'>
-        <div class='dot'></div>
-      </div>
-      
-      <div class='tic'>
-        <div class='dot'></div>
-      </div>
-      
-      <div class='tic'>
-        <div class='dot'></div>
-      </div>
+  <div class='eou_reliability'>
+    <div class='reliability_label'>Reliability</div>
+    <div class='dotgauge'>
+      <% reliability.round.times do |i| %>
+        <div class='step'>
+          <div class='dot filled'></div>
+        </div>
+      <% end %>
+      <% (10 - reliability).round.times do |i| %>
+        <div class='step'>
+          <div class='dot'></div>
+        </div>
+      <% end %>
     </div>
   </div>
 
   <div class='diagrams'>
-    <%= render :partial => '/parts/diagram', :locals => {:part => promoter, :classes => 'promoter'} %>
-    <%= render :partial => '/parts/diagram', :locals => {:part => promoter, :classes => 'fiveutr'} %>
+    <%= render :partial => '/parts/diagram', :locals => {:part => promoter, :annotations => promoter.annotations_with_type_recursive('Promoter transcription'), :classes => 'promoter', :performance => promoter_performance} %>
+    <%= render :partial => '/parts/diagram', :locals => {:part => fpu, :annotations => [], :classes => 'fpu', :performance => fpu_performance} %>
   </div>
 
+  <!--
+  <table width='100%' cellspacing='0' cellpadding='10' border='1'>
+    <tr>
+      <td>
+        Promoter: apFAB123
+      </td>
+      <td>
+        5' UTR: apFAB234
+      </td>
+      <td>
+        Terminator: apFAB345
+      </td>
+    </tr>
+  </table>
+  -->
 </div>
 
 

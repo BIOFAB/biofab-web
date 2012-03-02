@@ -1,0 +1,27 @@
+#!script/rails runner
+
+require 'find'
+
+DataFile.all.each do |dfile|
+
+  if !File.file?(dfile.absolute_filepath)
+    puts "missing #{dfile.absolute_filepath}"
+  end
+
+end
+
+Find.find(File.join(Rails.root, 'public', 'data_files')) do |path|
+  next if File.directory?(path)
+
+  m = File.dirname(path).match(/(\d+)\/?$/)
+  next if !m
+
+  id = m[0].to_i
+  filename = File.basename(path)
+
+  if !DataFile.where(["filename = ? AND id = ?", filename, id]).first
+
+    puts "--------------------" + path
+
+  end
+end

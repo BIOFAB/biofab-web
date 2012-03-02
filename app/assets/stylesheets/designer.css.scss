@@ -5,59 +5,282 @@
          *= require eou_widget
 */  
 
+@mixin noshadow {
+  -moz-box-shadow: 0px 0px 0px #eeeeee inset;
+  -webkit-box-shadow: 0px 0px 0px #eeeeee inset;
+  box-shadow: 0px 0px 0px #eeeeee inset; }
+
+@mixin intinyshadow {
+  -moz-box-shadow: 0px 1px 1px #eeeeee inset;
+  -webkit-box-shadow: 0px 1px 1px #eeeeee inset;
+  box-shadow: 0px 1px 1px #eeeeee inset; }
+
+@mixin smallshadow {
+  -moz-box-shadow: 1px 1px 3px #dddddd;
+  -webkit-box-shadow: 1px 1px 3px #dddddd;
+  box-shadow: 1px 1px 3px #dddddd; }
+
+@mixin medshadow {
+  -moz-box-shadow: 1px 1px 7px #dddddd;
+  -webkit-box-shadow: 1px 1px 7px #dddddd;
+  box-shadow: 1px 1px 7px #dddddd; }
+
+@mixin inshadow {
+  -moz-box-shadow: 1px 1px 3px #dddddd inset;
+  -webkit-box-shadow: 1px 1px 3px #dddddd inset;
+  box-shadow: 1px 1px 3px #dddddd inset; }
+
+@mixin border_a {
+  border: 1px solid #aaaaaa; }
+
+@mixin tinybox_border {
+  @include border_a;
+  border-radius: 3px;
+  background: white;
+  text-align: center;
+  padding: 0 0.1em;
+  line-height: 0.9em; }
+
+@mixin smallbox_border {
+  @include border_a;
+  border-bottom-right-radius: 5px;
+  background: white; }
+
+@mixin medbox_border {
+  @include border_a;
+  border-bottom-right-radius: 8px;
+  background: #fdfdf0; }
+
+@mixin gauge_bar_border {
+  @include inshadow;
+  @include border_a;
+  background: white; }
+
+@mixin circle {
+  @include inshadow;
+  @include border_a;
+  border-radius: 500px; }
+
+@mixin smallfont {
+  font-size: 12px;
+  font-family: sans-serif; }
+
+@mixin medfont {
+  font-size: 14px;
+  font-family: sans-serif; }
+
+
 html, body {
     margin: 0;
     padding: 0;
     font-family: sans-serif;
 }
 
-#container {
-    position: relative;
-    padding: 0;
-    width: 1000px;
-    margin-top: 160px;
-    margin-left: auto;
-    margin-right: auto;
-}
+// GAUGE INDICATORS
+$ov_color: #8eeb00;
+$utr_color: #4e5a66;
+$prm_color: #43ee9a;
+$sd_blur: 5px;
+$sd_opacity: 0.3;
 
-#top {
-  position: absolute;
-  top: -60px;
-  left: 0;
-  height: 60px;
+.gauge_pointer {
+  height: 100%;
+  margin: {
+    left: auto;
+    right: auto; };
+  vertical-align: baseline; }
+
+.gauge_sd {
+  opacity: $sd_opacity;
+  height: 100%;
   width: 100%;
-  border-bottom: 1px solid gray;
-}
+  position: absolute; }
 
-#right {
+@mixin ov_indicator {
+  height: 100%;
   position: absolute;
+  .gauge_pointer {
+    background-color: $ov_color; }
+  .gauge_sd {
+    background-color: $ov_color;
+    box-shadow: 0px 0px 5px $ov_color; } }
+
+@mixin prm_indicator {
+  @include ov_indicator;
+  .gauge_pointer {
+    background-color: $prm_color; }
+  .gauge_sd {
+    background-color: $prm_color;
+    box-shadow: 0px 0px 5px $prm_color; } }
+
+@mixin utr_indicator {
+  @include ov_indicator;
+  .gauge_pointer {
+    background-color: $utr_color; }
+  .gauge_sd {
+    background-color: $utr_color;
+    box-shadow: 0px 0px 5px $utr_color; } }
+
+
+
+// PAGE LAYOUT
+#container {
+  position: relative;
+  padding-left: 10px;
+  padding-right: 10px;
+  overflow: auto;
+  width: 1000px;
+  margin-left: auto;
+  margin-right: auto; }
+
+.list {
+  margin-top: 100px;
+  width: 640px;
+  padding: 10px; }
+
+.fixed {
+  position: fixed;
+  height: 100%;
+  z-index: 10000;
+  .inner_fixed {
+    position: absolute;
+    height: 100%; } }
+
+.header {
+  background-color: white;
+  z-index: 100;
+  position: relative;
   top: 0;
-  right: 0;
-  width: 300px;
-  height: 200px;
-  border-left: 1px solid gray;
-  border-right: 1px solid gray;
+  height: 102px;
+  width: 1000px;
+  left: auto;
+  right: auto;
+  border-bottom: dotted 1px; }
+
+.constraint_panel {
+  height: 100%;
+  width: 320px;
+  float: right;
+  border-left: 1px dotted black;
+  overflow: auto;
+  .container {
+    padding: 10px; }
+  .menu_bar {
+    position: relative;
+    padding: 2px 5px;
+    border-bottom: 1px dotted black;
+    font-size: 15px;
+    .menu_bar_label {
+      display: inline-block; }
+    .dropdown {
+      float: right;
+      display: inline-block; } } }
+
+.cart {
+  position: absolute;
+  bottom: 0;
+  height: 120px;
+  width: 100%;
+  border-top: 1px dotted black;
+  background-color: white;
+  z-index: 10000;
 }
 
-#right_content {
+
+
+// BAR GAUGES
+.gauge_bar {
+  @include inshadow;
+  @include border_a;
   position: relative;
-  margin: 10px;
-}
+  .gauge_bar_label {
+    position: absolute;
+    top: 0.2em;
+    left: 0.5em;
+    color: #666666; } }
 
-#left {
+// DOT GAUGES
+.dotgauge {
+  .step {
+    float: left;
+    width: 10%;
+    top: 50%;
+    .dot {
+      @include circle;
+      margin: auto;
+      &.filled {
+        background: #f5ce33;
+        @include noshadow; } } } }
+
+
+
+
+// MINI WIDGETS
+.mini_widget {
+  @include smallbox_border;
+  @include medshadow;
+  width: 100px;
+  padding: 5px;
+  margin: 8px;
   position: relative;
-  padding: 0;
-  margin-top: 10px;
-  margin-left: 0;
-  margin-right: 300px;
-  border-left: 1px solid gray;
+  display: inline-block;
+  .top {
+    clear: both;
+    display: inline-block;
+    width: 100%;
+    .mini_widget_label {
+      @include smallfont;
+      margin-bottom: 0px;
+      float: left; } }
+  .performance {
+    height: 10px;
+    clear: both;
+    margin: 3px 0;
+    .gauge_bar {
+      height: 100%;
+      .overall {
+        @include ov_indicator;
+        .gauge_pointer {
+          width: 6px; } }
+      .promoter {
+        @include prm_indicator;
+        .gauge_pointer {
+          width: 3px; } }
+      .utr {
+        @include utr_indicator;
+        .gauge_pointer {
+          width: 3px; } } } }
+  .reliability {
+    height: 8px;
+    .dotgauge {
+      .dot {
+        height: 7px;
+        width: 7px; } } }
+  .tinybox {
+    @include tinybox_border;
+    @include smallshadow;
+    @include smallfont;
+    padding: 2px;
+    margin: 3px 0;
+    float: left; } }
+
+
+// MINI EOU WIDGET
+.mini_eou {
+  @extend .mini_widget; 
+  background-color: white;
 }
 
-#left_content {
-  margin: 10px;
+// MINI DIAGRAM WIDGET
+.mini_diagram {
+  @extend .mini_widget;
 }
 
-#debug {
-display: none;
-}
 
+
+// DYNAMIC SLIDER
+.dynamic_slider {
+  position: absolute;
+  top: 45px;
+  left: 0;
+}

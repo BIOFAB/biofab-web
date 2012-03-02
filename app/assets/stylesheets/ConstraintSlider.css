@@ -107,7 +107,7 @@ html, body {
 .constraint_slider .left_slider .label {
     position: absolute;
     bottom: -13px;
-    left: -22px;
+    right: 14px;
     font-size: 8px;
 }
 
