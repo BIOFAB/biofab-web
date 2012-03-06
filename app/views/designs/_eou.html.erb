@@ -1,7 +1,22 @@
 
 <div class='eou_widget open'>
-  <div class='eou'>
+  <div class='top'>
     <div class='label'>Strain ID: <%= biofab_id %></div>
+    <div class='reliability'>
+      <div class='label'>Reliability</div>
+      <div class='dotgauge'>
+        <% reliability.round.times do |i| %>
+        <div class='step'>
+          <div class='dot filled'></div>
+        </div>
+        <% end %>
+        <% (10 - reliability).round.times do |i| %>
+        <div class='step'>
+          <div class='dot'></div>
+        </div>
+        <% end %>
+      </div>
+    </div>
   </div>
   <div class='performance'>
     <div class='label'>Performance</div>
@@ -67,42 +82,20 @@
       </div>
     </div>  
   </div>
-  <div class='eou_reliability'>
-    <div class='reliability_label'>Reliability</div>
-    <div class='dotgauge'>
-      <% reliability.round.times do |i| %>
-        <div class='step'>
-          <div class='dot filled'></div>
-        </div>
-      <% end %>
-      <% (10 - reliability).round.times do |i| %>
-        <div class='step'>
-          <div class='dot'></div>
-        </div>
-      <% end %>
+
+  <div class='diagrams'>
+    <div class='half_width'>
+      <div class='inline_centerwrap_diagram'>
+        <%= render :partial => '/parts/diagram', :locals => {:part => promoter, :annotations => promoter.annotations_with_type_recursive('Promoter transcription'), :classes => 'promoter', :performance => promoter_performance} %>
+      </div>
+    </div>
+    <div class='half_width'>
+      <div class='inline_centerwrap_diagram'>
+        <%= render :partial => '/parts/diagram', :locals => {:part => fpu, :annotations => [], :classes => 'fpu', :performance => fpu_performance} %>
+      </div>
     </div>
   </div>
 
-  <div class='diagrams'>
-    <%= render :partial => '/parts/diagram', :locals => {:part => promoter, :annotations => promoter.annotations_with_type_recursive('Promoter transcription'), :classes => 'promoter', :performance => promoter_performance} %>
-    <%= render :partial => '/parts/diagram', :locals => {:part => fpu, :annotations => [], :classes => 'fpu', :performance => fpu_performance} %>
-  </div>
-
-  <!--
-  <table width='100%' cellspacing='0' cellpadding='10' border='1'>
-    <tr>
-      <td>
-        Promoter: apFAB123
-      </td>
-      <td>
-        5' UTR: apFAB234
-      </td>
-      <td>
-        Terminator: apFAB345
-      </td>
-    </tr>
-  </table>
-  -->
 </div>
 
 
