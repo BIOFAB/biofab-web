@@ -1,5 +1,12 @@
 
-<div class='eou_widget open'>
+<div class='eou_widget open' onclick="StrainDetails.toggle(this)">
+
+  <!-- only for interfacing to external GUIs -->
+  <div class='external_interface'>
+    <div class='id'><%=h id %></div>
+    <div class='right_arrow'></div>
+  </div>
+
   <div class='top'>
     <div class='label'>Strain ID: <%= biofab_id %></div>
     <div class='reliability'>

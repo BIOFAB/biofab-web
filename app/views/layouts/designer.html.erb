@@ -16,6 +16,9 @@
         </div>
         <div class='bar_container'>
           <div class='constrained_area'>
+            <div class='result_count_container'>
+              <div class='result_count'>0</div>
+            </div>
             <div class='constrained_hilight'></div>
 			      <div class='slider left_slider'>
               <div class='label_container'>
@@ -38,6 +41,16 @@
           </div>
         </div>
       </div>      
+    </script>
+
+    <script id='spinner_pseudo_widget' type='text/x-dot-template'>
+      <div class='spinner_container'>
+        <div class='spinner'>
+          <img src='/assets/spinner.gif' />
+          <br />
+          Retrieving results.
+        </div>
+      </div>
     </script>
 
     <%= stylesheet_link_tag 'jquery-ui-1.8.16.custom' %>
@@ -103,7 +116,9 @@
 
         ConstraintSlider.init();
 
-        console.log('got here');
+        Designer.init();
+
+        console.log('initalized');
 /*
         var data_count = 1000;
         var data = []
@@ -124,7 +139,7 @@
           log_scale: true
 });
     
-        slider.on_change = slider_changed;
+        slider.on_change = Designer.retrieve_results.bind(Designer);
 
 //        window.onscroll = move_right_box;
 //        move_right_box();

@@ -1,7 +1,34 @@
 
+<% if @designs.length == 0 %>
 
-<% @designs.each do |design| %>
+  <% if @offset == 0 %>
+    <div id='all_results_shown' class='widget_message'>
+      No results found given selected constraints.
+    </div>
+  <% else %>
+    <div id='all_results_shown' class='widget_message'>
+      All results shown above.
+    </div>
+  <% end %>
 
-  <%= render :partial => 'eou', :locals => {:biofab_id => design.strain_biofab_id, :reliability => design.reliability, :performance => design.performance_normalized, :performance_deviation => design.performance_sd_normalized, :promoter => design.promoter, :fpu => design.fpu, :promoter_performance => 0.3, :fpu_performance => 0.7} %>
+<% else %>
+  <% @designs.each do |design| %>
 
+    <%= render :partial => 'eou', :locals => {:id => design.id, :biofab_id => design.strain_biofab_id, :reliability => design.reliability, :performance => design.performance_normalized, :performance_deviation => design.performance_sd_normalized, :promoter => design.promoter, :fpu => design.fpu, :promoter_performance => 0.3, :fpu_performance => 0.7} %>
+
+  <% end %>
+
+  <% if @designs.length < @limit %>
+    <div id='all_results_shown' class='widget_message'>
+      All results shown above.
+    </div>
+  <% else %>
+    <div class='spinner_container'>
+      <div class='spinner'>
+        <img src='/assets/spinner.gif' />
+        <br />
+        Retrieving more results.
+      </div>
+    </div>
+  <% end %>
 <% end %>

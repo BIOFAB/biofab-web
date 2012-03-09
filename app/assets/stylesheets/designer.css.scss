@@ -5,6 +5,36 @@
          *= require eou_widget
 */  
 
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+body {
+  overflow: scroll;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+a:hover {
+  color: black;
+  text-decoration: underline;
+}
+
+a:active {
+  color: gray;
+  text-decoration: underline;
+}
+
+a:visited {
+  color: black;
+  text-decoration: none;
+}
+
 @mixin noshadow {
   -moz-box-shadow: 0px 0px 0px #eeeeee inset;
   -webkit-box-shadow: 0px 0px 0px #eeeeee inset;
@@ -70,11 +100,25 @@
   font-family: sans-serif; }
 
 
-html, body {
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
+// MIXINS
+
+$short_opacity_transition_time: 0.5s;
+
+@mixin short_opacity_transition {
+  -webkit-transition-property: opacity;
+  -webkit-transition-duration: $short_opacity_transition_time;
+
+  -moz-transition-property: opacity;
+  -moz-transition-duration: $short_opacity_transition_time;
+
+  -o-transition-property: opacity;
+  -o-transition-duration: $short_opacity_transition_time;
+
+  transition-property: opacity;
+  transition-ducation: $short_opacity_transition_time;
 }
+
+
 
 // GAUGE INDICATORS
 $ov_color: #8eeb00;
@@ -129,61 +173,196 @@ $sd_opacity: 0.3;
   padding-left: 10px;
   padding-right: 10px;
   overflow: auto;
-  width: 1000px;
+  width: 980px;
   margin-left: auto;
   margin-right: auto; }
 
 .list {
+  position: relative;
   margin-top: 100px;
+  margin-bottom: 121px;
   width: 640px;
-  padding: 10px; }
-
-.fixed {
-  position: fixed;
-  height: 100%;
-  z-index: 10000;
-  .inner_fixed {
-    position: absolute;
-    height: 100%; } }
+  padding: 10px;
+  z-index: 101;
+}
 
 .header {
   background-color: white;
-  z-index: 100;
-  position: relative;
+  z-index: 3500;
+  position: fixed;
   top: 0;
-  height: 102px;
-  width: 1000px;
+  height: 112px;
+  width: 980px;
   left: auto;
   right: auto;
-  border-bottom: dotted 1px; }
+  border-bottom: dotted 1px;
+}
 
-.constraint_panel {
+.fixed {
+  position: fixed;
+  top: 113px;
+  bottom: 121px;
+  width: 980px;
+  left: auto;
+  right: auto;
+  z-index: 100;
+
+}
+
+.overlay {
+
+  display: none;
+  opacity: 1.0;
+
+  .grayout {
+    @include short_opacity_transition;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: black;
+    opacity: 0;
+    z-index: 60000;
+  }
+
+  .box {
+    @include short_opacity_transition;
+    position: fixed;
+    top: 10%;
+    bottom: 10%;
+    width: 860px;
+    left: 50%;
+    margin-left: -430px;
+    background-color: white;
+    z-index: 60001;
+    box-shadow: 7px 7px 10px 5px #666; 
+    border-radius: 15px;
+    opacity: 0;
+
+    .close_button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      padding-right: 16px;
+      padding-left: 10px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 18px;
+      a {
+        color: black;
+        text-decoration: none;
+      }
+      a:hover {
+        color: red;
+        text-decoration: none;
+      }
+    }
+
+    .content {
+      background-color: white;
+      position: absolute;
+      padding: 30px;
+      z-index: 60002;
+      border-radius: 15px;
+      overflow: auto;
+    }
+  }
+}
+
+.right_panel {
+  z-index: 100;
+  position: absolute;
+  top: 0;
   height: 100%;
+  right: 0;
   width: 320px;
-  float: right;
   border-left: 1px dotted black;
+  border-right: 1px dotted black;
   overflow: auto;
-  .container {
-    padding: 10px; }
-  .menu_bar {
-    position: relative;
-    padding: 2px 5px;
-    border-bottom: 1px dotted black;
-    font-size: 15px;
-    .menu_bar_label {
-      display: inline-block; }
-    .dropdown {
-      float: right;
-      display: inline-block; } } }
+
+  // shown by default
+  .constraints_panel {
+    display: block;
+
+    .container {
+      padding: 10px;
+    }
+    .menu_bar {
+      position: relative;
+      padding: 2px 5px;
+      border-bottom: 1px dotted black;
+      font-size: 15px;
+      .menu_bar_label {
+        display: inline-block;
+      }
+      .dropdown {
+        float: right;
+        display: inline-block;
+      }
+    }
+  }
+
+  // used for EOU details view
+  .details_panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: none;
+
+    .container {
+      padding: 10px;
+    }
+
+    .close_link {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 30px;
+      width: 30px;
+      .link {
+        text-align: center;
+        padding: 5px;
+        text-decoration: none;
+        border-left: 1px dotted #CCC;
+        border-bottom: 1px dotted #CCC;
+      }
+    }
+
+    .bottom_links {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      .add_to_cart {
+        float: right;
+        padding-right: 8px;
+        text-decoration: underline;
+        border-left: 1px dotted black;
+        border-top: 1px dotted black;
+        padding: 8px
+      }
+    }
+  }
+}
+
+
 
 .cart {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   height: 120px;
-  width: 100%;
+  width: 980px;
+  left: auto;
+  right: auto;
   border-top: 1px dotted black;
   background-color: white;
-  z-index: 10000;
+  z-index: 50000;
 }
 
 
@@ -281,6 +460,46 @@ $sd_opacity: 0.3;
 // DYNAMIC SLIDER
 .dynamic_slider {
   position: absolute;
-  top: 45px;
-  left: 0;
+  top: 55px;
+  left: 20px;
+  .constraint_slider {
+    width: 700px;
+
+  }
+}
+
+
+.selected_bg {
+ background-color: #FDFDF0;
+}
+
+
+// SPINNER for "loading more results" for EOU list
+
+.spinner_container {
+  position: relative;
+  width: 100%;
+  border-bottom-right-radius:5px;
+  border: 1px solid #aaa;
+  box-shadow: 2px 2px 3px #eee;
+  padding: 10px 0;
+  margin-bottom: 8px;
+  text-align: center;
+
+  spinner {
+    position: relative;
+    display: inline-block
+  }
+}
+
+// "no results / no more results" for EOU list
+.widget_message {
+  position: relative;
+  width: 100%;
+  border-bottom-right-radius:5px;
+  border: 1px solid #aaa;
+  box-shadow: 2px 2px 3px #eee;
+  padding: 10px 0;
+  margin-bottom: 8px;
+  text-align: center;
 }

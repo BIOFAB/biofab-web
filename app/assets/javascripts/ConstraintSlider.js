@@ -54,7 +54,7 @@ var ConstraintSlider = {
         this.parent = parent;
         this.unique = Math.floor(Math.random() * 100000000);
         this.changed = false;
-
+        
         if(!$(container_id)) {
             return null;
         }
@@ -153,6 +153,15 @@ var ConstraintSlider = {
                 }
             }
 
+            // TODO remove debug code
+/*
+            var in_each_bin = [];
+            for(i=0; i < bins.length; i++) {
+                in_each_bin.push(bins[i].data.length);
+            }
+
+            console.log('in each bin: ' + in_each_bin);
+*/
             return bins;
         };
 
@@ -320,6 +329,7 @@ var ConstraintSlider = {
 
         this.slider_mouseup = function(e) {
             if(this.changed) {
+                console.log('slider says: ' + this.constrain_data_min + ' - ' + this.constrain_data_max);
                 this.on_change(this.constrain_data_min, this.constrain_data_max);
                 this.changed = false;
             }
@@ -378,6 +388,15 @@ var ConstraintSlider = {
 
         };
  
+        this.update_result_count = function(result_count) {
+            var nodes = $$('#'+this.container_id + ' .result_count');
+            if(nodes.length == 0) {
+                return false;
+            }
+            nodes[0].innerHTML = result_count;
+            return true;
+        }
+
         this.update_constrained_histogram = function() {
 
 
@@ -394,7 +413,7 @@ var ConstraintSlider = {
 
             $(this.params.constrained_histogram_id).innerHTML = '';
             this.init_histogram(this.params.constrained_histogram_id, this.constrained_bins, this.constrained_data.length);
-
+            this.update_result_count(this.constrained_data.length);
         };
 
         this.draw_axis_lines = function() {

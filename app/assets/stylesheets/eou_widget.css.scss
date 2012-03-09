@@ -6,12 +6,34 @@
 
 .eou_widget {
   position: relative;
-  background-color: white;
   border-bottom-right-radius:5px;
   border: 1px solid #aaa;
   box-shadow: 2px 2px 3px #eee;
   padding: 10px;
   margin-bottom: 8px;
+
+  .external_interface {
+    display: none;
+    position: absolute;
+    top: -1px;
+    right: -11px;
+    bottom: -1px;
+    width: 15px;
+    z-index: 102;
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+
+    .id {
+      display: none;
+    }
+    .right_arrow {
+      position: relative;
+      width: 100%;
+      height: 100%;
+/*      background-color: white; */
+      z-index: 103;
+    }
+  }
 
   .top {
     margin-bottom: 6px;
@@ -51,7 +73,7 @@
     }
 
     .bar {
-      width: 100%;
+      width: 90%;
       height: 10px;
       position: relative;
       top: 3px;
@@ -163,3 +185,4 @@ left: -5px;
 .eou_widget .performance .ruler .label.last {
 left: -20px;
 }
+

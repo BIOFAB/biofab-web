@@ -26,7 +26,10 @@ class DesignsController < ApplicationController
       return
     end
 
-    @designs = Design.in_performance_range(params['from'].to_f, params['to'].to_f, 10)
+    @limit = [(params['limit'] || 20).to_i, 50].min
+    @offset = (params['offset'] || 0).to_i
+
+    @designs = Design.in_performance_range(params['from'].to_f, params['to'].to_f, @limit, @offset)
 
     render :partial => 'widgets'
   end
