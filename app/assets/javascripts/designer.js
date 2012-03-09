@@ -8,28 +8,53 @@ var Designer = {
     constrain_from: null,
     constrain_to: null,
 
-    init: function() {
+    constraint_slider_container_id: 'dynamic_slider',
+    constraint_slider: null,
+
+    init: function(data) {
+
+        ConstraintSlider.init();
+
+        this.constraint_slider = ConstraintSlider.create(this.constraint_slider_container_id, {
+          data: data,
+          bin_count: 25,
+          histogram_max_height: 40,
+          y_axis_max: 'dynamic', // Can also be 'dynamic'. If you specify this, then you _must_not_ have any bins with more entries than y_axis_max. If you do, the widget will exceed histogram_max_height.
+          horizontal_lines: true,
+          log_scale: true
+        });
+
+        this.constraint_slider.on_change = this.retrieve_results.bind(this);
 
         this.spinner_template = doT.template($('spinner_pseudo_widget').text, null, null);
 
         this.list.init(this);
     },
 
-    retrieve_results: function(from, to) {
+    foo: function() {
+        this.retrieve_results(null, null, 'TTG');
+    },
+
+    retrieve_results: function(from, to, promoter_cannot_contain) {
 
         $(this.eou_list_id).innerHTML = this.spinner_template();
 
-        this.constrain_from = from;
-        this.constrain_to = to;
+        this.constrain_from = from || this.constrain_from;
+        this.constrain_to = to || this.constrain_to;
+
+        if(promoter_cannot_contain) {
+            this.promoter_cannot_contain = promoter_cannot_contain;
+        }
 
         console.log('getting first: ' + from + ' - ' + to);
         
         new Ajax.Request('/design_widgets', {
             method: 'get',
             parameters: {
-                from: from,
-                to: to,
+                from: this.constrain_from,
+                to: this.constrain_to,
                 offset: 0,
+                promoter_cannot_contain: this.promoter_cannot_contain,
                 limit: this.results_per_query
             },
             onSuccess: this.got_results.bindAsEventListener(this)
@@ -37,7 +62,15 @@ var Designer = {
     },
 
     got_results: function(transport) {
-        $(this.eou_list_id).innerHTML = transport.responseText;
+        var data = transport.responseText.evalJSON(true);
+
+        // update the constraint-slider's constrained histogram
+        // TODO figure out how only to run if it has changed
+        if(data.designs) {
+            this.constraint_slider.set_externally_filtered_data(data.designs); 
+        }
+
+        $(this.eou_list_id).innerHTML = data.html;
         this.results_displayed = this.results_per_query;
         this.list.on_new_results();
     },
@@ -68,10 +101,19 @@ var Designer = {
         }
 
         // Then add  the new results (that includes a spinner at the end)
-        $(this.eou_list_id).innerHTML += transport.responseText;
+        var data = transport.responseText.evalJSON(true);
+        $(this.eou_list_id).innerHTML += data.html;
         this.results_displayed += this.results_per_query;
 
     },
+
+
+    constrain: {
+
+
+    },
+
+
 
     list: {
 
@@ -126,6 +168,8 @@ var Designer = {
 
         init: function() { return false },
 
+        status: 'hidden',
+
         show_partial: function(url) {
             // TODO not implemented
             this.show();
@@ -137,10 +181,13 @@ var Designer = {
         },
 
         show: function() {
+//            console.log('showing');
+            this.status = 'showing';
             $('overlay').style.display = 'block';
 
-            Event.observe($('overlay_grayout'), 'transitionend', this.shown);
-            Event.observe($('overlay_grayout'), 'webkitTransitionEnd', this.shown); // webkit compatibility
+            this.shown_bound = this.shown.bindAsEventListener(this);
+            Event.observe($('overlay_grayout'), 'transitionend', this.shown_bound);
+            Event.observe($('overlay_grayout'), 'webkitTransitionEnd', this.shown_bound); // webkit compatibility
 
             // bug-workaround for firefox 10.0.2 (possibly others)
             setTimeout(this.show2, 10);
@@ -153,13 +200,23 @@ var Designer = {
 
         // called when fade-in complete
         shown: function(e) {
-            Event.stopObserving($('overlay_grayout'), 'transitionend', this.shown);
-            Event.stopObserving($('overlay_grayout'), 'webkitTransitionEnd', this.shown); // webkit compatibility
+            this.status = 'shown';
+            Event.stopObserving($('overlay_grayout'), 'transitionend', this.shown_bound);
+            Event.stopObserving($('overlay_grayout'), 'webkitTransitionEnd', this.shown_bound); // webkit compatibility
+//            console.log('shown');
         },
 
         hide: function() {
-            Event.observe($('overlay_grayout'), 'transitionend', this.hidden);
-            Event.observe($('overlay_grayout'), 'webkitTransitionEnd', this.hidden); // webkit compatibility
+            if(this.status != 'shown') {
+//                console.log('cannot hide');
+                return false;
+            }
+//            console.log('hiding');
+
+            this.status = 'hiding';
+            this.hidden_bound = this.hidden.bindAsEventListener(this)
+            Event.observe($('overlay_grayout'), 'transitionend', this.hidden_bound);
+            Event.observe($('overlay_grayout'), 'webkitTransitionEnd', this.hidden_bound); // webkit compatibility
 
             $('overlay_grayout').style.opacity = 0;
             $('overlay_box').style.opacity = 0;
@@ -167,9 +224,11 @@ var Designer = {
 
         // called when fade-out completed
         hidden: function(e) {
-            Event.stopObserving($('overlay_grayout'), 'transitionend', this.hidden);
-            Event.stopObserving($('overlay_grayout'), 'webkitTransitionEnd', this.hidden); // webkit compatibility
+            this.status = 'hidden';
+            Event.stopObserving($('overlay_grayout'), 'transitionend', this.hidden_bound);
+            Event.stopObserving($('overlay_grayout'), 'webkitTransitionEnd', this.hidden_bound); // webkit compatibility
             $('overlay').style.display = 'none';
+//            console.log('hidden');
         }
 
     }

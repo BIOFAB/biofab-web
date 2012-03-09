@@ -4,11 +4,8 @@ class DesignsController < ApplicationController
   # GET /designs
   # GET /designs.json
   def index
-    if params['from'] && params['to']
-      @designs = Design.in_performance_range(params['from'].to_f, params['to'].to_f)
-    else
-      @designs = Design.all
-    end
+
+    @designs = Design.all
 
     @values_json = @designs.collect {|design| design.performance}.to_json
 
@@ -29,9 +26,29 @@ class DesignsController < ApplicationController
     @limit = [(params['limit'] || 20).to_i, 50].min
     @offset = (params['offset'] || 0).to_i
 
-    @designs = Design.in_performance_range(params['from'].to_f, params['to'].to_f, @limit, @offset)
+    from = params['from'].to_f
+    to = params['to'].to_f
 
-    render :partial => 'widgets'
+    if params['promoter_cannot_contain'].blank?
+      @designs = Design.in_performance_range(from, to, @limit, @offset)
+      @designs_all = Design.all
+    else
+      subseq = '%'+params['promoter_cannot_contain'].upcase.gsub(/[^ATGC]+/, '')+'%'
+
+      @designs = Design.where(["performance >= ? AND performance <= ? AND promoter_sequence NOT LIKE ?", from, to, subseq]).includes({:promoter => {:annotations => :annotation_type}, :fpu => {:annotations => :annotation_type}}).limit(@limit).offset(@offset)
+
+      @designs_all = Design.where(["promoter_sequence NOT LIKE ?", subseq])
+
+    end
+
+    # TODO maaan we should probably be rendering the template client side if we're gonna send the data anyway
+    # except we're actually doing two separate queries, so maybe not :-/
+    output = {
+      :html => render_to_string(:partial => 'widgets'),
+      :designs => @designs_all ? @designs_all.collect(&:performance) : nil
+    }
+
+    render :json => output
   end
 
 

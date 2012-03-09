@@ -329,7 +329,6 @@ var ConstraintSlider = {
 
         this.slider_mouseup = function(e) {
             if(this.changed) {
-                console.log('slider says: ' + this.constrain_data_min + ' - ' + this.constrain_data_max);
                 this.on_change(this.constrain_data_min, this.constrain_data_max);
                 this.changed = false;
             }
@@ -397,18 +396,34 @@ var ConstraintSlider = {
             return true;
         }
 
-        this.update_constrained_histogram = function() {
+        this.set_externally_filtered_data = function(data) {
+            this.externally_filtered_data = data;
+            this.update_constrained_histogram();
+        },
 
+        // Get the externally filtered data, if present
+        // else return the unfiltered data
+        this.get_data_for_filtering = function() {
+            if(this.externally_filtered_data) {
+                return this.externally_filtered_data;
+            } else {
+                return this.params.data;
+            }
+        },
 
-
+        this.filter_constrained_data = function() {
+            var data = this.get_data_for_filtering();
             this.constrained_data = [];
             var i;
-            for(i=0; i < this.params.data.length; i++) {
-                if((this.params.data[i] >= this.constrain_data_min) && (this.params.data[i] <= this.constrain_data_max)) {
-                    this.constrained_data.push(this.params.data[i]);
+            for(i=0; i < data.length; i++) {
+                if((data[i] >= this.constrain_data_min) && (data[i] <= this.constrain_data_max)) {
+                    this.constrained_data.push(data[i]);
                 }
             }
+        },
 
+        this.update_constrained_histogram = function() {
+            this.filter_constrained_data();
             this.constrained_bins = this.make_histogram_bins(this.constrained_data, this.params.bin_count, this.bins);
 
             $(this.params.constrained_histogram_id).innerHTML = '';

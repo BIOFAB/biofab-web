@@ -43,6 +43,10 @@
       </div>      
     </script>
 
+    <script id='eou_template' type='text/x-dot-template'>
+
+    </script>
+
     <script id='spinner_pseudo_widget' type='text/x-dot-template'>
       <div class='spinner_container'>
         <div class='spinner'>
@@ -52,6 +56,7 @@
         </div>
       </div>
     </script>
+    <!-- end dot templates -->
 
     <%= stylesheet_link_tag 'jquery-ui-1.8.16.custom' %>
     <%= stylesheet_link_tag 'designer' %>
@@ -111,15 +116,10 @@
       }
 
 
-
       function page_init() {
 
-        ConstraintSlider.init();
-
-        Designer.init();
-
-        console.log('initalized');
 /*
+        // random data
         var data_count = 1000;
         var data = []
         var i;
@@ -129,21 +129,10 @@
 */
 
         var data = <%= @values_json %>;
-      
-        var slider = ConstraintSlider.create('dynamic_slider', {
-          data: data,
-          bin_count: 25,
-          histogram_max_height: 40,
-          y_axis_max: 'dynamic', // Can also be 'dynamic'. If you specify this, then you _must_not_ have any bins with more entries than y_axis_max. If you do, the widget will exceed histogram_max_height.
-          horizontal_lines: true,
-          log_scale: true
-});
-    
-        slider.on_change = Designer.retrieve_results.bind(Designer);
+        Designer.init(data);
 
-//        window.onscroll = move_right_box;
-//        move_right_box();
-
+        console.log('initalized');                    
+         
       }
 
     </script>
