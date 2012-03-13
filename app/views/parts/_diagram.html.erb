@@ -4,47 +4,60 @@
   </div>
   <div class='performance' style='width:<%= performance * 100 %>%'></div>
   <div class='line'>
-    <% prev_annotation = nil %>
-    <% annotations.each_index do |i| %>
-      <% annotation = annotations[i] %>
-      <% if prev_annotation %>
-        <div class='bottomparen'>
-          <div class='bottomparen_left'></div>
-          <div class='parenlabel'><%= annotation.from_offset - prev_annotation.to_offset %></div>
-          <div class='bottomparen_right'></div>
-        </div>
-      <% elsif annotation.from_offset > 1 %>
-        <% if false %>
-          <div class='bottomparen'>
-            <div class='bottomparen_left'></div>
-            <div class='parenlabel'><%= annotation.from_offset - 1%></div>
-            <div class='bottomparen_right'></div>
-          </div>
-        <% end %>
-      <% end %>
+    <% if (annotations == nil) || (annotations.length == 0) %>
       <div class='seq'>
-        <div class='label_container'>
-          <div class='label'>
-            <%= annotation.label || annotation.part.part_type.name %>
-          </div>
+        <div class='label'>
+          <%= part.description %>
         </div>
         <div class='box'>
-          <% seq = annotation.sequence || 'GATAC' # TODO fix %>
-          <% seq.each_char do |nt| %>
+          <% part.sequence.each_char do |nt| %>
             <div class='<%= nt.downcase %>'>
               <%= nt.upcase %>
             </div>
           <% end %>
         </div>
-      </div>
-      <% if (i >= annotations.length - 1) && (annotation.to < part.sequence.length) %>
-        <div class='bottomparen'>
-          <div class='bottomparen_left'></div>
-          <div class='parenlabel'><%= part.sequence.length - annotation.to %></div>
-          <div class='bottomparen_right'></div>
+      </div>    
+    <% else %>
+      <% prev_annotation = nil %>
+      <% annotations.each_index do |i| %>
+        <% annotation = annotations[i] %>
+        <% if prev_annotation %>
+          <div class='bottomparen'>
+            <div class='bottomparen_left'></div>
+            <div class='parenlabel'><%= annotation.from_offset - prev_annotation.to_offset %></div>
+            <div class='bottomparen_right'></div>
+          </div>
+        <% elsif annotation.from_offset > 1 %>
+          <% if true %>
+            <div class='bottomparen'>
+              <div class='bottomparen_left'></div>
+              <div class='parenlabel'><%= annotation.from_offset - 1%></div>
+              <div class='bottomparen_right'></div>
+            </div>
+          <% end %>
+        <% end %>
+        <div class='seq'>
+          <div class='label'>
+            <%= annotation.label || annotation.part.part_type.name %>
+          </div>
+          <div class='box'>
+            <% seq = annotation.sequence || '' %>
+            <% seq.each_char do |nt| %>
+              <div class='<%= nt.downcase %>'>
+                <%= nt.upcase %>
+              </div>
+            <% end %>
+          </div>
         </div>
+        <% if (i >= annotations.length - 1) && (annotation.to < part.sequence.length - 1) %>
+          <div class='bottomparen'>
+            <div class='bottomparen_left'></div>
+            <div class='parenlabel'><%= part.sequence.length - 1 - annotation.to %></div>
+            <div class='bottomparen_right'></div>
+          </div>
+        <% end %>
+        <% prev_annotation = annotation %>
       <% end %>
-      <% prev_annotation = annotation %>
     <% end %>
   </div>
 </div>

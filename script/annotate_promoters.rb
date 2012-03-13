@@ -14,7 +14,7 @@ def create_annotation(part, sub_part, annot_type, range=nil)
       return nil
     end
     from = m.begin(0)
-    to = m.end(0)
+    to = m.end(0) - 1
     puts "  found #{sub_part.part_type.name} [#{sub_part.sequence}] at #{from}:#{to} in #{part.sequence}"
   elsif range
     from = range.begin
@@ -23,18 +23,19 @@ def create_annotation(part, sub_part, annot_type, range=nil)
   else
     raise "need either sub_part or range"
   end
-    
-  annot = Annotation.new
-  annot.parent_part = part
-  annot.part = sub_part
-  annot.annotation_type = annot_type
-  annot.from = from
-  annot.to = to
 
-  # don't create if it already exists
-  if Annotation.where(["part_id = ? AND parent_part_id = ? AND `from` = ?", annot.part.id, annot.parent_part.id, annot.from]).length > 0 #"
-    return nil
+  annots = Annotation.where(["part_id = ? AND parent_part_id = ? AND `from` = ?", sub_part.id, part.id, from]) # "
+  if annots.length > 0
+    annot = annots[0]
+  else
+    annot = Annotation.new
+    annot.parent_part = part
+    annot.part = sub_part
+    annot.from = from
   end
+
+  annot.annotation_type = annot_type
+  annot.to = to
 
   annot
 end
@@ -129,7 +130,7 @@ if !minus35type
 end
 
 minus10type = PartType.find_by_name("-10")
-if !minut10type
+if !minus10type
   raise "could not find -10 type"
 end
 
@@ -296,17 +297,13 @@ random_promoters.each do |part|
   annot = create_annotation(part, m35, promoter_annot_type)
   if annot
     annot.save!
-    puts "  -35 adding annotation #{annot.id}"
-  else
-    puts "  -35 skipping annotation"
+    puts "  -35 adding/updating annotation #{annot.id}"
   end
 
   annot = create_annotation(part, m10, promoter_annot_type)
   if annot
     annot.save!
-    puts "  -10 adding annotation #{annot.id}"
-  else
-    puts "  -10 skipping annotation"
+    puts "  -10 adding/updating annotation"
   end
 
   from = part.sequence.length - 1
@@ -315,9 +312,7 @@ random_promoters.each do |part|
   annot = create_annotation(part, plus1part, promoter_annot_type, from..to)
   if annot
     annot.save!
-    puts "  +1 adding annotation #{annot.id}"
-  else
-    puts "  +1 skipping annotation"
+    puts "  +1 adding/updating annotation #{annot.id}"
   end
 
 end
