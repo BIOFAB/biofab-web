@@ -68,7 +68,7 @@ class Part < ActiveRecord::Base
   end
 
   # TODO this require be needing some optimizin' fool!
-  def annotations_with_type_recursive(type_name, annots=nil, offset=0)
+  def annotations_with_type_recursive(type_name=nil, annots=nil, offset=0)
     annots = annots || annotations.includes(:annotation_type)
     matches = []
     annots.each do |anno|
@@ -77,7 +77,24 @@ class Part < ActiveRecord::Base
       matches += annotations_with_type_recursive(type_name, anno.part.annotations.includes(:annotation_type), anno.from)
     end
     annots.each do |anno|
-      if anno.annotation_type.name == type_name
+      if !type_name || (anno.annotation_type.name == type_name)
+        anno.offset = offset
+        matches << anno
+      end
+    end
+    matches.sort {|a,b| a.from_offset <=> b.from_offset}
+  end
+
+  def annotations_with_part_types_recursive(type_names, annots=nil, offset=0)
+    annots = annots || annotations.includes(:part => :part_type)
+    matches = []
+    annots.each do |anno|
+      next if !anno.part
+      next if anno.part.annotations.length == 0
+      matches += annotations_with_part_types_recursive(type_name, anno.part.annotations.includes(:part => :part_type), anno.from)
+    end
+    annots.each do |anno|
+      if type_names.include?(anno.part.part_type.name)
         anno.offset = offset
         matches << anno
       end

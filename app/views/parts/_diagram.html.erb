@@ -24,7 +24,7 @@
       <% end %>
       <div class='seq'>
         <div class='label'>
-          <%= annotation.part.part_type.name %>
+          <%= annotation.label || annotation.part.part_type.name %>
         </div>
         <div class='box'>
           <% seq = annotation.sequence || 'GATAC' # TODO fix %>

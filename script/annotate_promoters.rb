@@ -39,8 +39,6 @@ def create_annotation(part, sub_part, annot_type, range=nil)
   annot
 end
 
-
-
 mpl_names = ['Pt7a1',
              'pTrc',
              'T5 N25',
@@ -81,26 +79,64 @@ rpl35 = 0..5
 rpl10 = 23..28
 
 modular = Project.find_by_name("Modular Promoter Library")
+if !modular
+  raise "no modular promoter project found"
+end
 random = Project.find_by_name("Random Promoter Library")
+if !random
+  raise "no random promoter project found"
+end
 
 raise "could not find projects" if !modular || !random
 
 # Annotation types
 mod_annot_type = AnnotationType.find_by_name("Modular Promoter Library modules")
+if !mod_annot_type
+  raise "could not find modular promoter type"
+end
+
 promoter_annot_type = AnnotationType.find_by_name("Promoter transcription")
+if !mod_annot_type
+  raise "could not find promoter transcription type"
+end
 
 # Promoter part type
 promoter_type = PartType.find_by_name("Promoter")
+if !mod_annot_type
+  raise "could not find promoter part type"
+end
 
 # MPL part types
 five_type = PartType.find_by_name("Modular Promoter Library 5' module")
+if !five_type
+  raise "could not find MPL type"
+end
+
 mid_type = PartType.find_by_name("Modular Promoter Library middle module")
+if !mid_type
+  raise "could not find MPL type"
+end
+
 three_type = PartType.find_by_name("Modular Promoter Library 3' module")
+if !three_type
+  raise "could not find MPL type"
+end
 
 # Promoter part types
 minus35type = PartType.find_by_name("-35")
+if !minus35type
+  raise "could not find -35 type"
+end
+
 minus10type = PartType.find_by_name("-10")
+if !minut10type
+  raise "could not find -10 type"
+end
+
 plus1type = PartType.find_by_name("+1")
+if !plus1type
+  raise "could not find +1 type"
+end
 
 # Create plus1part if it dosn't exist
 puts "== Creating +1 part =="

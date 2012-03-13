@@ -91,14 +91,16 @@
   </div>
 
   <div class='diagrams'>
+
     <div class='half_width'>
       <div class='inline_centerwrap_diagram'>
         <%= render :partial => '/parts/diagram', :locals => {:part => promoter, :annotations => promoter.annotations_with_type_recursive('Promoter transcription'), :classes => 'promoter', :performance => promoter_performance} %>
       </div>
     </div>
+
     <div class='half_width'>
       <div class='inline_centerwrap_diagram'>
-        <%= render :partial => '/parts/diagram', :locals => {:part => fpu, :annotations => [], :classes => 'fpu', :performance => fpu_performance} %>
+        <%= render :partial => '/parts/diagram', :locals => {:part => fpu, :annotations => fpu.annotations_with_part_types_recursive(["SD"]), :classes => 'fpu', :performance => fpu_performance} %>
       </div>
     </div>
   </div>

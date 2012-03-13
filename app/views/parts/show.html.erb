@@ -19,12 +19,15 @@
 </ol>
 
 
-<% if @part.part_type.name == 'Promoter' %>
-  <h3>Promoter visualization</h3>
-  <%= render :partial => 'diagram', :locals => {:part => @part, :classes => nil, :performance => @performance} %>
+<% if @part.annotations.length > 0 %>
+  <h3>Part diagram (performance is not real)</h3>
+
+  <%= render :partial => '/parts/diagram', :locals => {:part => @part, :annotations => @part.annotations_with_type_recursive, :performance => 0.5, :classes => ''} %>
 <% else %>
-  <h3>unable to visualize part type</h3>
+  <h3>Part diagram not available: Part has no annotations. </h3>
 <% end %>
 
-<%= link_to 'Edit', edit_part_path(@part) %> |
-<%= link_to 'Back', parts_path %>
+<div class='links'>
+  <%= link_to 'Edit', edit_part_path(@part) %> |
+  <%= link_to 'Back', parts_path %>
+</div>

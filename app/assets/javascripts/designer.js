@@ -84,7 +84,8 @@ var Designer = {
                 from: this.constrain_from,
                 to: this.constrain_to,
                 offset: this.results_displayed,
-                limit: this.results_per_query
+                limit: this.results_per_query,
+                promoter_cannot_contain: this.promoter_cannot_contain,
                 
             },
             onSuccess: callback_func.bindAsEventListener(this)

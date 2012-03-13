@@ -1,0 +1,125 @@
+
+
+Fix data:
+
+  Questions for Vivek:
+
+    1. Can I compare the BD-GOI measurements? It doesn't look like it!
+      Comparing a value between BD-GOI and PBD:
+        BD-GOI: pTrc + BCD1 + GFP. Performance and std_dev: 462.95	68.40
+        PBD: pTrc + BCD1 + GFP. Performance and std_dev: 124.41	13.63
+
+    2. Are the FC averages in the spreadsheet log-scale?
+
+    3. Should we use "advanced" performance measures for the 12 BCDs that have been tested more?
+       Or should we just use the GFP performance from the "Randomized SD2 lib og BCD-GFP"-sheet for all?
+
+  Questions for Joao:
+
+    1. Can I mean-center the standard deviations in the same way as the performances?
+
+    2. Should I calculate separate scale-factors for GFP and RFP (between PBD and BD-GOI sets)
+       or should I just make an average scale-factor.
+
+  Fact: BD-GOI combinations all use pTrc promoter.
+
+=== Maybe it's a good idea to do all of this in excel and just import after the fact! ===
+
+  Designs imports both GFP and RFP values. Fix this:
+    Import only all GFP. Skip performance values.
+
+  Calculate normalized performance and standard deviation across GOIs (reliability):
+    Calculate average performance of GOI across all BCDs.
+    For each BCD-GOI combination, divide performance with the appropriate GOI-average.
+      (if it is in log-space, subtract instead of divide)
+      This will give the mean-centered performance for each BCD-GOI combination.
+    Calculate the average of mean-centered performance for each BCD across all GOIs.
+    Normalize the mean-centered performances to a scale of 0 to 100%.
+      This will be the performance of a BCD (used when displaying the part diagram (OR NOT see Vivek question #3).
+    Calculate the standard deviation of normalized mean-centered performance for each BCD across all GOIs (include GFP and RFP).
+      This will be the reliability of a BCD.
+
+  PBD calculations:
+    Make the PBD values comparable to BD-GOI values:
+      Two overlapping values (pTrc + BCD1 + GFP) and (pTrc + BCD1 + RFP).
+      We want the BD-GOI equivalent for each of the two PBD values so:
+        PBD_value * scale_factor = BD_GOI_value
+        so: BD_GOI_value / PBD_value = scale_factor
+      Calculate scale factor for GFP and for RFP and get average.
+        (remember to use the non-mean-centered values when calculating scale factor)
+      Multiply each PBD performance with scale_factor to get comparable values.
+
+    Calculate the GOI-mean-centered performances of the Promoter-BCD combinations.
+      (by dividing each of the performances with the appropriate GOI-average for the GOI used (either RFP or GFP))
+
+    For each PBD calculate the average of the GOI-mean-centered performance of GFP and RFP (average of two).
+      This is the per-PBD performance.
+
+    Normalize the per-PBD performance to fit in a 0..100 range based on highest and lowest PBD performances.
+        
+
+
+
+
+
+
+
+Friday:
+
+  Write script to cache annotations as JSON.
+ 
+  Fix HTML+CSS for /designs
+
+  Write script to import GOIs into new goi_designs table.
+
+  Write script to calculate performance (standard error across GOIs) and save to designs table.
+
+  Add a "must not contain" text-box constraint.
+  Prototype of "extended info" on EOU widget click.
+
+Weekend:
+
+  Prototype the three views for the three bicistronic sub-projects.
+  
+Next week:
+
+  Talk to Vivek to get 5' UTR annotations and make annotation-script.
+  Talk to Guillaume about Terminator project view.
+  Make one prototype view for bicistronic per two days.
+
+Final week:
+
+  Put up raw view for terminators and 5' UTR (1 day)
+
+  Fix welcome screen (half day)
+  
+  Finish up expression picker (two days)
+
+  Complete bicistronic design pages (1 days)
+
+Last week before SynBERC:
+
+  Get it running on the server (1 day)
+  Testing and bugfixing (1 day)
+
+----
+
+Total todo:
+
+  Create table for, and import, last sheet from Vivek's spreadsheet.
+
+  Make three views for bicistronic sub-projects.
+
+  Make simple "raw data" view (just copy pilot project view) for:
+    5' UTRs (will likely need new table combining all three current tables)
+    Terminators
+
+  Fix welcome screen (look at drew's notes).
+
+If time:
+
+  Make nicer view for Terminator project.
+
+  Make nicer view for pilot project.  
+
+
