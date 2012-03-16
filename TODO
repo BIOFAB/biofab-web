@@ -4,15 +4,19 @@ Fix data:
 
   Questions for Vivek:
 
-    1. Can I compare the BD-GOI measurements? It doesn't look like it!
+    1. Can I compare the BD-GOI measurements?
       Comparing a value between BD-GOI and PBD:
-        BD-GOI: pTrc + BCD1 + GFP. Performance and std_dev: 462.95	68.40
-        PBD: pTrc + BCD1 + GFP. Performance and std_dev: 124.41	13.63
+        BD-GOI: pTrc + BCD1 + GFP. Performance and std_dev: 365.98	34.77
+        PBD: pTrc + BCD1 + GFP. Performance and std_dev: 462.95	68.40
 
     2. Are the FC averages in the spreadsheet log-scale?
 
     3. Should we use "advanced" performance measures for the 12 BCDs that have been tested more?
        Or should we just use the GFP performance from the "Randomized SD2 lib og BCD-GFP"-sheet for all?
+
+    4. Why are there half-bicistronic designs in the PBD datasheet? (such as apFAB704)
+
+    5. What's wrong with apFAB703 and apFAB704 in the google docs?
 
   Questions for Joao:
 

@@ -14,7 +14,6 @@ BiofabWeb::Application.routes.draw do
   # TODO fix this uncleanliness!
   get 'design_widgets' => 'designs#widgets', :as => 'design_widgets'
 
-  resources :designs
   resources :strains
   resources :organisms
   resources :collections

@@ -1,8 +1,22 @@
 class DesignsController < ApplicationController
   layout 'designer' #, :only => [:index]
 
-  # GET /designs
-  # GET /designs.json
+  def bd_library
+
+    @annotations = [20,
+                    {:sequence => 'AGGAGA',
+                     :label => 'Static SD'},
+                    44,
+                   {:sequence => 'NNNGGANNN',
+                     :label => 'Variable SD'},
+                   9]
+
+    @label = "Template for bi-cistronic 5' UTR library"
+
+
+  end
+
+
   def index
 
     @designs = Design.all
@@ -14,7 +28,6 @@ class DesignsController < ApplicationController
       format.json { render :json => @designs }
     end
   end
-
 
   def widgets
 

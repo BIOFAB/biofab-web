@@ -54,7 +54,7 @@
   margin-right: auto; }
 
 
-.t, .c, .a, .g {
+.t, .c, .a, .g, .n {
   float: left;
   text-align: center;
   padding: 0 0.1em;
@@ -72,6 +72,9 @@
 
 .g {
   background-color: #e4fbbf; }
+
+.g {
+  background-color: #ccc; }
 
 .floatclear {
   clear: both; }
@@ -170,3 +173,9 @@
   }
 }
 
+.nolabel {
+  height: 45px;
+  .line {
+    margin-top: 23px;
+  }
+}

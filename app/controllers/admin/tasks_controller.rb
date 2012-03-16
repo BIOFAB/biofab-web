@@ -7,6 +7,8 @@ class Admin::TasksController < ApplicationController
   end
 
 
+
+
   def remove_old_plates
     render :text => 'disabled'
     return

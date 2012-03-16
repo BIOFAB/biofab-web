@@ -132,7 +132,7 @@
         }
 */
 
-        var data = <%= @values_json %>;
+        var data = <%= @values_json || 'null' %>;
         Designer.init(data);
 
         console.log('initalized');                    

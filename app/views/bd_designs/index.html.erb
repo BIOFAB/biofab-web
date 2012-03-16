@@ -1,0 +1,16 @@
+
+<h3><%= @label %></h3>
+<%= 
+  render(:partial => '/parts/diagram_simple', 
+           :locals => {
+             :classes => 'nolabel', 
+             :label => nil, 
+             :performance => 0,
+             :annotations => @annotations})
+
+%>
+
+
+<p>...</p>
+
+<div id='my_histogram'></div>
