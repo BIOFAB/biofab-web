@@ -254,6 +254,13 @@ var Histogram = {
 
 
         this.call_callback_for_node = function(node, callback) {
+            if(!node.histogram_index) {
+                if(node.parentNode) {
+                    return this.call_callback_for_node(node.parentNode, callback);
+                } else {
+                    return null;
+                }
+            }
             var i = node.histogram_index;
             if(this.params.data_is_bar_heights) {
                 // bar_node, bar_index, value, error, label
