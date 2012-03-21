@@ -7,15 +7,91 @@
 */  
 
 html, body {
-    margin: 30px;
+    margin-left: 20px;
+    margin-top: 10px;
     padding: 0;
     font-family: sans-serif;
 }
 
+h3 {
+   font-size: 18px;
+   font-weight: bold;
+}
 
-#my_histogram {
+#container {
   position: relative;
-  width: 500px;
-  height: 160px;
+  padding-left: 10px;
+  padding-right: 10px;
+  overflow: auto;
+  width: 980px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.histogram {
   border-bottom: 1px solid black;
+}
+
+.hist {
+  position: relative;
+  width: 400px;
+  height: 160px;
+  margin-bottom: 50px;
+  padding-left: 15px;
+  margin-left: 15px;
+}
+
+.dia {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  .diagram {
+    display: inline-block;
+  }
+
+}
+
+.column1 {
+  position: relative;
+  width: 450px;
+  float: left;
+  .bcd_histogram {
+
+  }
+
+  .goi_histogram_container {
+
+  }
+}
+
+.column2 {
+  position: relative;
+  width: 450px;
+  float: left;
+
+
+  .mcd_histogram {
+
+  }
+
+  .goi_histogram_container {
+
+  }
+}
+
+.goi_hist {
+  position: relative;
+  width: 400px;
+  height: 160px;
+  margin-top: 20px;
+  margin-bottom: 110px;
+  padding-left: 15px;
+  margin-left: 15px;
+}
+
+
+/* change default bar color for the GOI histograms */
+.goi_histogram_container .histogram .total_histogram_container .bar {
+    background-color: green;
+    opacity: 0.6;
 }

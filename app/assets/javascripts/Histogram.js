@@ -118,7 +118,6 @@ var Histogram = {
         this.make_histogram_bars = function() {
             if(this.params.data_is_bar_heights) {
                 this.bars = this.params.data;
-                console.log('bar heights');
             } else {
                 var i;
                 this.bars = [];
@@ -195,6 +194,8 @@ var Histogram = {
             if(!this.bars || (this.bars.length == 0)) {
                 return null;
             }
+
+            this.bar_nodes = [];
             
             this.widget_width = $(this.params.node_id).getDimensions().width;
 
@@ -244,6 +245,7 @@ var Histogram = {
                 }
                 node = this.make_histogram_bar(i, this.histogram_bar_width, height, error_size);
                 node.style.left = (i * this.histogram_bar_width) + (i * this.params.bar_spacing) + 'px';
+                this.bar_nodes.push(node);
                 $(container_id).appendChild(node);
             }
         };
@@ -253,40 +255,92 @@ var Histogram = {
         };
 
 
-        this.call_callback_for_node = function(node, callback) {
-            if(!node.histogram_index) {
+        this.get_actual_target = function(node) {
+            if(node.histogram_index === undefined) {
                 if(node.parentNode) {
-                    return this.call_callback_for_node(node.parentNode, callback);
+                    return this.get_actual_target(node.parentNode);
                 } else {
                     return null;
                 }
             }
+            return node;
+        };
+
+        this.call_callback_for_node = function(node, callback, from_simulated_event) {
             var i = node.histogram_index;
             if(this.params.data_is_bar_heights) {
                 // bar_node, bar_index, value, error, label
-                callback(node, i, this.bars[i], this.params.errors[i], this.params.bar_labels[i]);
+                return callback(node, i, from_simulated_event, this.bars[i], this.params.errors[i], this.params.bar_labels[i]);
             } else {
                 // bar_node, bin_index, bin_from, bin_to, data, error, label
-                callback(node, i, this.bins[i].from, this.bins[i].to, this.bins[i].data, this.params.errors[i], this.params.bar_labels[i]);
+                return callback(node, i, from_simulated_event, this.bins[i].from, this.bins[i].to, this.bins[i].data, this.params.errors[i], this.params.bar_labels[i]);
             }
         };
 
         this.on_bar_mouseover = function(e) {
-            if(this.params.on_mouseover) {
-                this.call_callback_for_node(e.target, this.params.on_mouseover);
+            this.handle_callback(e.target, this.params.on_mouseover, 'hover');
+        };
+        this.simulate_mouseover = function(bar_index) {
+            if(!this.bar_nodes[bar_index]) {
+                return false;
             }
+            this.handle_callback(this.bar_nodes[bar_index], this.params.on_mouseover, 'hover', false, true);
         };
 
         this.on_bar_mouseout = function(e) {
-            if(this.params.on_mouseout) {
-                this.call_callback_for_node(e.target, this.params.on_mouseout);
+            this.handle_callback(e.target, this.params.on_mouseout, 'hover', true);
+        };
+        this.simulate_mouseout = function(bar_index) {
+            if(!this.bar_nodes[bar_index]) {
+                return false;
             }
+            this.handle_callback(this.bar_nodes[bar_index], this.params.on_mouseout, 'hover', true, true);
         };
 
+
         this.on_bar_click = function(e) {
-            if(this.params.on_click) {
-                this.call_callback_for_node(e.target, this.params.on_click);
+            this.handle_callback(e.target, this.params.on_click, 'active');
+        };
+        this.simulate_click = function(bar_index) {
+            if(!this.bar_nodes[bar_index]) {
+                return false;
             }
+            this.handle_callback(this.bar_nodes[bar_index], this.params.on_click, 'active', false, true);
+        };
+
+        this.handle_callback = function(target, callback, class_name, no_class_set, from_simulated_event) {
+            var actual_target = this.get_actual_target(target);
+            if(!actual_target) {
+                return false;
+            }
+            if(callback) {
+                var retval = this.call_callback_for_node(actual_target, callback, from_simulated_event);
+                if(retval) {
+                    if(no_class_set) {
+                        actual_target = null;
+                    }
+                    this.bar_set_class(actual_target, class_name, no_class_set);
+                }
+            }            
+        };
+
+        // Set a hover or active class for only one bar node
+        // set default for all others
+        this.bar_set_class = function(node, to_set_class) {
+            Element.addClassName(cur, to_set_class);
+            if(!this.bar_nodes) {
+                return 0;
+            }
+
+            var i, cur;
+            for(i=0; i < this.bar_nodes.length; i++) {
+                cur = this.bar_nodes[i];
+                Element.removeClassName(cur, to_set_class);
+                if(cur == node) {
+                    Element.addClassName(cur, to_set_class);
+                }
+            }
+            return this.bar_nodes.length;
         };
 
         this.make_histogram_bar = function(index, width, height, error_size) {

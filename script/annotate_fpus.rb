@@ -15,6 +15,10 @@ $cistron1_start = 32..34
 $sd2 = 70..78
 $stopstart = 83..87
 
+# TODO implement for mono-cistronic
+$msd1 = 12..20
+$mstart = 27..29
+
 puts "starting!"
 
 type_name = 'SD'
@@ -174,6 +178,65 @@ def create_parts_and_annotations(part)
 
 end
 
+
+# Mono-cistronic version of above function
+def create_parts_and_annotations_mcd(part)
+  
+  puts
+  puts "== Creating/finding SD part for #{part.biofab_id} =="
+
+  sd_sequence = part.sequence[$msd1]
+  sd_part = Part.find_by_sequence(sd_sequence)
+  if !sd_part
+    sd_part = Part.new
+    sd_part.sequence = sd_sequence
+    sd_part.description = "The Shine-Dalgarno / RBS sequence in a mono-cistronic design."
+    sd_part.part_type = $sd_type
+    sd_part.save!
+    puts "--created sd part"
+  else
+    puts "--found sd part"
+  end
+  puts "---- #{sd_part.sequence}"
+
+  puts
+  puts "== Creating start part for #{part.biofab_id} =="
+
+  start_sequence = part.sequence[$mstart]
+  start_part = Part.find_by_sequence(start_sequence)
+  if !start_part
+    start_part = Part.new
+    start_part.sequence = start_sequence
+    start_part.description = "Start codon."
+    start_part.part_type = $start_type
+    start_part.save!
+    puts "--created start part"
+  else
+    puts "--found start part"
+  end
+  
+  puts
+  puts "== Annotating #{part.biofab_id} =="
+
+  annot_type_name = "Mono-cistronic 5' UTRs"
+  annot_type = AnnotationType.find_by_name(annot_type_name)
+  if !annot_type
+    annot_type = AnnotationType.new
+    annot_type.name = annot_type_name
+    annot_type.save!
+    puts "-- created annotation type for mono-cistronic 5' UTRs"
+  else
+    puts "-- found annotation type for mono-cistronic 5' UTRs"
+  end
+    
+  sd_label = "Mutated SD"
+  start_label = "Start"
+
+  create_annotation(part, sd_part, annot_type, $msd1.begin, $msd1.end, sd_label)
+  create_annotation(part, start_part, annot_type, $mstart.begin, $mstart.end, start_label)
+
+end
+
 def create_annotation(parent_part, sub_part, annot_type, from, to, label=nil)
   if parent_part.blank? || sub_part.blank? || annot_type.blank? || from.blank? || to.blank?
     raise "problem with annotation!"
@@ -230,6 +293,20 @@ def fetch_bcds
 end
 
 
+def fetch_mcds
+
+  fpu_type = PartType.find_by_name("5' UTR")
+  raise "could not find 5' UTR part type" if !fpu_type
+  
+  # fetch the 22 mono-cistronic makoff designs
+  parts = fpu_type.parts.where("description like 'Chosen 22 BD Makoff%Half%'").all
+
+  # there are only the aboved-fetched 22 makoff designs
+
+  parts
+end
+
+
 parts = fetch_bcds
 
 puts "Fixing sequences (adding ATG where missing): "
@@ -240,5 +317,18 @@ end
 puts "Creating sub-parts and annotations"
 parts.each do |part|
   create_parts_and_annotations(part)
+end
+
+
+parts = fetch_mcds
+
+puts "Fixing sequences (adding ATG where missing): "
+parts.each do |part|
+  fix_sequence(part)
+end
+
+puts "Creating sub-parts and annotations"
+parts.each do |part|
+  create_parts_and_annotations_mcd(part)
 end
 

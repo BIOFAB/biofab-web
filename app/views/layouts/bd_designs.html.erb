@@ -48,85 +48,11 @@
 
     <script type='text/javascript'>
 
-      function bin_mouseover(node, index, value, error, label) {
-        console.log('Over: ' + index + ', ' + value + ', ' + error + ', ' + label);
-      }
-
-      function bin_mouseout(node, index, value, error, label) {
-        console.log('Over: ' + index + ', ' + value + ', ' + error + ', ' + label);
-      }
-
-      function bin_click(node, index, value, error, label) {
-        console.log('Over: ' + index + ', ' + value + ', ' + error + ', ' + label);
-      }
-
-
       function page_init() {
 
-/*
-        // random data
-        var data_count = 1000;
-        var data = [];
-        var error_data = [];
-        var i;
-        for(i=0; i < data_count; i++) {
-          data.push(Math.random() * 100);
-          error_data.push(Math.random() * 10);
-        }
-*/
-
-        // random data
-        var data_count = 22;
-        var data = [];
-        var error_data = [];
-        var i;
-        for(i=0; i < data_count; i++) {
-          data.push(Math.random() * 100);
-          error_data.push(Math.random() * 10);
-        }
-
-        var bar_labels = [
-          'GFP',
-          'coPMK-36-GFP',
-          'coCellulase-36-GFP',
-          'PA-36-GFP',
-          'sfGFP-36-GFP',
-          'RFP-36-GFP',
-          'Lacl-36-GFP',
-          'TetR-36-GFP',
-          'AraC-36-GFP',
-          'RFP',
-          'coPMK-36-RFP',
-          'coCellulase-36-RFP',
-          'PA-36-RFP',
-          'sfGFP-36-RFP',
-          'RFP-36-RFP',
-          'Lacl-36-RFP',
-          'TetR-36-RFP',
-          'AraC-36-RFP'
-        ];
-
-        Histogram.init();
-
-        this.constraint_slider = Histogram.create('my_histogram', {
-          data_is_bar_heights: true,
-          data: data,
-          errors: error_data,
-          bar_labels: bar_labels,
-          bar_spacing: 10,
-          histogram_max_height: 'inherit',
-          y_axis_max: 'dynamic', // Can also be 'dynamic'. If you specify this, then you _must_not_ have any bins with more entries than y_axis_max. If you do, the widget will exceed histogram_max_height.
-          horizontal_lines: true,
-          log_scale: false,
-          on_mouseover: bin_mouseover,
-          on_mouseout: bin_mouseout,
-          on_click: bin_click
-        });
-
-        console.log(data);
-
+        var bcd_design = BCDDesign.init();
+      
         console.log('initialized');
-
       }
 
     </script>

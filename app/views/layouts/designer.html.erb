@@ -51,12 +51,22 @@
 
     </script>
 
-    <script id='spinner_pseudo_widget' type='text/x-dot-template'>
+    <script id='boxed_spinner_template' type='text/x-dot-template'>
+      <div class='boxed_spinner_container'>
+        <div class='spinner'>
+          <img src='/assets/spinner.gif' />
+          <br />
+          {{=it.message}}
+        </div>
+      </div>
+    </script>
+
+    <script id='spinner_template' type='text/x-dot-template'>
       <div class='spinner_container'>
         <div class='spinner'>
           <img src='/assets/spinner.gif' />
           <br />
-          Retrieving results.
+          {{=it.message}}
         </div>
       </div>
     </script>

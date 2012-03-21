@@ -25,13 +25,32 @@
       </div>
     </div>
   </div>
-  <div class='performance'>
+  <%
+    sd_start = (performance - (performance_deviation / 2.0)) * 100
+    sd_width = performance_deviation * 100
+  %>
+  <div class='eou_performance'>
+
+    <div class='gauge_bar'>
+      <div class='gauge_bar_label'>Performance</div>
+      <div class='overall' style='left: <%= sd_start %>%; width: <%= sd_width %>%;'>
+        <div class='gauge_sd'></div>
+        <div class='gauge_pointer'></div>
+      </div>
+      <div class='promoter' style='left: 72%; width: 11%; display:none'>
+        <div class='gauge_sd'></div>
+        <div class='gauge_pointer'></div>
+      </div>
+      <div class='utr' style='left: 94%; width: 7%; display:none'>
+        <div class='gauge_sd'></div>
+        <div class='gauge_pointer'></div>
+      </div>
+    </div>
+
+<!--
     <div class='label'>Performance</div>
     <div class='bar'>
-      <%
-         sd_start = (performance - (performance_deviation / 2.0)) * 100
-         sd_width = performance_deviation * 100
-      %>
+
       <div class='overall' style='left:<%= sd_start %>%; width:<%= sd_width %>%;'>
         <div class='sd'></div>
         <div class='pointer'></div>
@@ -43,50 +62,19 @@
         <div class='pointer'></div>
       </div>
     </div>
-    <div class='ruler'>
-      <div class='tic'>
-        <div class='label first'>0%</div>
-      </div>
-      
-      <div class='tic'>
-        <div class='label'>10%</div>
-      </div>
-      
-      <div class='tic'>
-        <div class='label'>20%</div>
-      </div>
-      
-      <div class='tic'>
-        <div class='label'>30%</div>
-      </div>
-      
-      <div class='tic'>
-        <div class='label'>40%</div>
-      </div>
-      
-      <div class='tic'>
-        <div class='label'>50%</div>
-      </div>
-      
-      <div class='tic'>
-        <div class='label'>60%</div>
-      </div>
-      
-      <div class='tic'>
-        <div class='label'>70%</div>
-      </div>
-      
-      <div class='tic'>
-        <div class='label'>80%</div>
-      </div>
-      
-      <div class='tic'>
-        <div class='label'>90%</div>
-      </div>
-      
-      <div class='tic'>
-        <div class='label last'>100%</div>
-      </div>
+-->
+  <div class='ruler'>
+      <% 0.upto(10) do |i| %>
+        <% if i == 0 %>
+          <div class='tic first'>
+        <% elsif i == 10 %>
+          <div class='tic last'>
+        <% else %>
+          <div class='tic'>
+        <% end %>
+          <div class='tic_label'><%= i*10 %>%</div>
+        </div>
+      <% end %>
     </div>  
   </div>
 

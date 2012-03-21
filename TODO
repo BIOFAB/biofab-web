@@ -1,5 +1,78 @@
 
 
+
+Tuesday:
+  Complete BD-GOI view.
+    Add secondary histogram on bar click.
+    Add overlay with plasmid viewer on secondary histogram bar click.
+
+    Import all plasmids as parts:
+      script: import_google_doc_plasmids
+
+    Annotate all plasmids:
+      modify script: biofab-web-pilot/scripts/pilot_annotate
+        Make it only run for plasmid parts.
+        Make it delete existing annotations before running, for each part (plasmid).
+        Make it only search for parts of type promoter, 5' UTR, GOI and terminator.
+        Make it create real annotations instead of pilot-annotations.
+
+    Make the plasmid viewer actually display the annotated plasmids.
+
+
+  Create BD-Makoff-randomization view:
+    Histogram of 120 EOUs binned into n bins.
+    Sequence logo.
+    
+Thursday:
+
+  Add a parts_values table and populate with values:
+    performance
+    performance_sd
+    reliability
+    reliability_sd
+  
+  Terminator view:
+    Bar-chart with one bar per terminator.
+    Ask Guillaume what to show if one is clicked.
+
+Friday and Saturday
+
+  Complete the Expression Selector!
+
+    Show actual data in right-hand side.
+    Order by stuff.
+    Remove "add to cart" feature.
+    Download as Genbank, plain text and SBOL.
+    Add relevant links to top right side.
+
+  Complete the Expression Selector!
+
+Sunday:
+
+  Make simple data-views for everything:
+    Pilot [x]
+    PBD [ ]
+    BD-GOI [ ]
+    Bicistronic library [ ]
+    Terminator project [ ]
+    
+Monday:
+
+  Whatever I didn't have time for.
+
+Tuesday:
+
+  Put it in production mode.
+
+
+
+
+
+------------------------------------------------------
+
+
+
+
 Fix data:
 
   Questions for Vivek:

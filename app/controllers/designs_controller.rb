@@ -1,21 +1,19 @@
 class DesignsController < ApplicationController
   layout 'designer' #, :only => [:index]
 
-  def bd_library
+  def details
 
-    @annotations = [20,
-                    {:sequence => 'AGGAGA',
-                     :label => 'Static SD'},
-                    44,
-                   {:sequence => 'NNNGGANNN',
-                     :label => 'Variable SD'},
-                   9]
+    @design = Design.find(params['id'])
 
-    @label = "Template for bi-cistronic 5' UTR library"
-
-
+    render :partial => 'details'
   end
 
+  # partial
+  def plasmid
+
+    
+    render :partial => 'plasmid'
+  end
 
   def index
 

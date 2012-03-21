@@ -10,8 +10,8 @@
     -o-user-select: none;
     user-select: none;
     font-family: sans-serif;
-    margin-bottom: 40%;
-    margin-top: 20%;
+    margin-bottom: 0;
+    margin-top: 10px;
 }
 
 
@@ -25,7 +25,7 @@
 .histogram .bar_label_container .offset {
   position: absolute;
   top: 44px;
-  left: -88px;
+  left: -97px; /* TODO should not be hard-coded as it varies with width of bar chart */
 
 }
 
@@ -63,14 +63,22 @@
     bottom: 0;
     left: 0;
     width: 10px;
-
-    background-color: #1a82f7;
-    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(orange), to(orange));
-    background-image: -webkit-linear-gradient(top, orange, orange);
-    background-image:    -moz-linear-gradient(top, orange, orange);
-    background-image:     -ms-linear-gradient(top, orange, orange);
-    background-image:      -o-linear-gradient(top, orange, orange);
+    background-color: orange;
     opacity: 0.6;
+    cursor: pointer;
+}
+
+/* the default color of an active (usually clicked) bar 
+    only applied if the onclick handler returns something that evaluates to true */
+.histogram .total_histogram_container .active {
+   background-color: green;
+   opacity: 0.6;
+}
+
+/* the default color of a bar when hovering over it 
+    only applied if the onmouseover handler returns something that evaluates to true */
+.histogram .total_histogram_container .hover {
+    opacity: 1.0;
 }
 
 .histogram .total_histogram_container .bar .error_bar {

@@ -13,6 +13,8 @@ BiofabWeb::Application.routes.draw do
 
   # TODO fix this uncleanliness!
   get 'design_widgets' => 'designs#widgets', :as => 'design_widgets'
+  get 'design_details' => 'designs#details', :as => 'design_details'
+  get 'design_plasmid' => 'designs#plasmid', :as => 'design_plasmid'
 
   resources :strains
   resources :organisms

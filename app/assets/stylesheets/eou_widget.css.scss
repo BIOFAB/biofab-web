@@ -1,188 +1,262 @@
-
-@mixin smallfont {
-  font-size: 12px;
-  font-family: sans-serif; }
-
-
+/* line 6, /home/juul/biofab/biofab-web/app/assets/stylesheets/eou_widget.css.scss */
 .eou_widget {
   position: relative;
-  border-bottom-right-radius:5px;
+  border-bottom-right-radius: 5px;
   border: 1px solid #aaa;
   box-shadow: 2px 2px 3px #eee;
   padding: 10px;
   margin-bottom: 8px;
-
-  .external_interface {
-    display: none;
-    position: absolute;
-    top: -1px;
-    right: -11px;
-    bottom: -1px;
-    width: 15px;
-    z-index: 102;
-    border-top: 1px solid #aaa;
-    border-bottom: 1px solid #aaa;
-
-    .id {
-      display: none;
-    }
-    .right_arrow {
-      position: relative;
-      width: 100%;
-      height: 100%;
-/*      background-color: white; */
-      z-index: 103;
-    }
-  }
-
-  .top {
-    margin-bottom: 6px;
-
-    .label {
-      display: block;
-      float: left;
-      font-size: 14px;
-    }
-
-    .reliability {    
-      float: right;
-      margin-bottom: 8px;
-      .label {
-        @include smallfont;
-        float: left;
-        margin-right: 0.5em; }
-      .dotgauge {
-        width: 140px;
-        float: left;
-        .dot {
-          height: 10px;
-          width: 10px;
-        }
-      }
-    }
-  }
-
-  .performance {
-    width: 100%;
-    float: left;
-    clear: both;
-    font-size: 10px;
-
-    .label {
-
-    }
-
-    .bar {
-      width: 90%;
-      height: 10px;
-      position: relative;
-      top: 3px;
-      border: 1px solid #aaa;
-      border-radius: 0px;    
-      box-shadow: 1px 1px 3px #eee inset;
-    }
-
-    .ruler {
-      .tic {
-        width: 9%;
-        height:10px;
-        margin-right: -2px;
-        border-left: solid 2px #bbb;
-        float: left;
-      }
-    }
-  }
 }
 
-.eou_widget .diagrams {
-  display: block;
+/* line 14, /home/juul/biofab/biofab-web/app/assets/stylesheets/eou_widget.css.scss */
+.eou_widget .external_interface {
+  display: none;
+  position: absolute;
+  top: -1px;
+  right: -11px;
+  bottom: -1px;
+  width: 15px;
+  z-index: 102;
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+}
+/* line 25, /home/juul/biofab/biofab-web/app/assets/stylesheets/eou_widget.css.scss */
+.eou_widget .external_interface .id {
+  display: none;
+
+}
+/* line 28, /home/juul/biofab/biofab-web/app/assets/stylesheets/eou_widget.css.scss */
+.eou_widget .external_interface .right_arrow {
   position: relative;
-  overflow: auto;
-  float: left;
-  clear: both;
-  margin-top: 10px;
   width: 100%;
+  height: 100%;
+  background-color: #f7f8f0;
+  border-bottom: 1px solid #aaa;
+  z-index: 103;
 }
 
-.eou_widget .inline_centerwrap_diagram {
+/* line 218, site.css.sass */
+.ruler {
+  height: 20px;
+  margin-top: -10px;
+  margin-bottom: 5px; }
+  /* line 222, site.css.sass */
+  .ruler .tic {
+    border-left: 2px solid #aaaaaa;
+    margin-right: -2px;
+    margin-top: -2px;
+    height: 5px;
+    float: left;
+    width: 10%; }
+    /* line 230, site.css.sass */
+    .ruler .tic .tic_label {
+      font-size: 12px;
+      font-family: sans-serif;
+      color: #999999;
+      position: relative;
+      bottom: -0.5em;
+      margin-left: -1em; }
+    /* line 238, site.css.sass */
+    .ruler .tic.first .tic_label {
+      margin-left: -0.2em; }
+    /* line 240, site.css.sass */
+    .ruler .tic.last {
+      width: 0;
+      margin-left: -2px; }
+      /* line 243, site.css.sass */
+      .ruler .tic.last .tic_label {
+        margin-left: -2.3em; }
+
+/* line 247, site.css.sass */
+.gauge_bar {
+  -moz-box-shadow: 1px 1px 3px #dddddd inset;
+  -webkit-box-shadow: 1px 1px 3px #dddddd inset;
+  box-shadow: 1px 1px 3px #dddddd inset;
+  border: 1px solid #aaaaaa;
+  background: white;
+  position: relative; }
+  /* line 251, site.css.sass */
+  .gauge_bar .gauge_bar_label {
+    position: absolute;
+    top: 0.2em;
+    left: 0.5em;
+    color: #666666; }
+
+/* line 260, site.css.sass */
+.dotgauge .step {
+  float: left;
+  width: 10%;
+  top: 50%; }
+  /* line 264, site.css.sass */
+  .dotgauge .step .dot {
+    -moz-box-shadow: 1px 1px 3px #dddddd inset;
+    -webkit-box-shadow: 1px 1px 3px #dddddd inset;
+    box-shadow: 1px 1px 3px #dddddd inset;
+    border: 1px solid #aaaaaa;
+    background: white;
+    border-radius: 500px;
+    margin: auto; }
+    /* line 267, site.css.sass */
+    .dotgauge .step .dot.filled {
+      background: #f5ce33;
+      -moz-box-shadow: 0px 0px 0px #eeeeee inset;
+      -webkit-box-shadow: 0px 0px 0px #eeeeee inset;
+      box-shadow: 0px 0px 0px #eeeeee inset; }
+
+/* line 272, site.css.sass */
+.list_widget, .eou_widget {
+  border: 1px solid #aaaaaa;
+  border-bottom-right-radius: 8px;
+  background: #f7f8f0;
+  -moz-box-shadow: 1px 1px 7px #dddddd;
+  -webkit-box-shadow: 1px 1px 7px #dddddd;
+  box-shadow: 1px 1px 7px #dddddd;
+  padding: 8px;
+  box-sizing: border-box; 
+  -moz-box-sizing: border-box; 
+  }
+  /* line 276, site.css.sass */
+  .list_widget .list_widget_top, .eou_widget .top {
+    clear: both;
+    display: inline-block;
+    width: 100%;
+    height: 20px }
+    /* line 280, site.css.sass */
+    .list_widget .list_widget_top .label, .eou_widget .top .label {
+      font-size: 14px;
+      font-family: sans-serif;
+      margin-bottom: 8px;
+      float: left; }
+
+/* line 286, site.css.sass */
+.eou_widget {
+  width: 100%;
+  margin-bottom: 10px;
+  }
+  /* line 291, site.css.sass */
+  .eou_widget .reliability {
+    float: right;
+    margin-bottom: 8px; }
+    /* line 294, site.css.sass */
+    .eou_widget .reliability .label {
+      font-size: 12px;
+      font-family: sans-serif;
+      float: left;
+      margin-right: 0.5em; }
+    /* line 298, site.css.sass */
+    .eou_widget .reliability .dotgauge {
+      width: 140px;
+      float: left; }
+      /* line 301, site.css.sass */
+      .eou_widget .reliability .dotgauge .dot {
+        height: 10px;
+        width: 10px; }
+  /* line 306, site.css.sass */
+  .eou_widget .eou_performance .gauge_bar {
+    height: 20px;
+    margin-bottom: 10px; }
+    /* line 309, site.css.sass */
+    .eou_widget .eou_performance .gauge_bar .gauge_bar_label {
+      font-size: 14px;
+      font-family: sans-serif; }
+    /* line 311, site.css.sass */
+    .eou_widget .eou_performance .gauge_bar .overall {
+      height: 100%;
+      position: absolute;
+      left: 20%;
+      width: 5%; }
+      /* line 109, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .overall .gauge_pointer {
+        background-color: #009d91; }
+      /* line 111, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .overall .gauge_sd {
+        background-color: #009d91;
+        box-shadow: 0px 0px 5px #009d91; }
+      /* line 315, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .overall .gauge_pointer {
+        width: 6px; }
+    /* line 317, site.css.sass */
+    .eou_widget .eou_performance .gauge_bar .promoter {
+      height: 100%;
+      position: absolute;
+      left: 10%;
+      width: 10%; }
+      /* line 109, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .promoter .gauge_pointer {
+        background-color: #009d91; }
+      /* line 111, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .promoter .gauge_sd {
+        background-color: #009d91;
+        box-shadow: 0px 0px 5px #009d91; }
+      /* line 117, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .promoter .gauge_pointer {
+        background-color: #104ba9; }
+      /* line 119, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .promoter .gauge_sd {
+        background-color: #104ba9;
+        box-shadow: 0px 0px 5px #104ba9; }
+      /* line 321, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .promoter .gauge_pointer {
+        width: 3px; }
+    /* line 323, site.css.sass */
+    .eou_widget .eou_performance .gauge_bar .fpu {
+      height: 100%;
+      position: absolute;
+      left: 56%;
+      width: 15%; }
+      /* line 109, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .fpu .gauge_pointer {
+        background-color: #009d91; }
+      /* line 111, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .fpu .gauge_sd {
+        background-color: #009d91;
+        box-shadow: 0px 0px 5px #009d91; }
+      /* line 125, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .fpu .gauge_pointer {
+        background-color: #00c90d; }
+      /* line 127, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .fpu .gauge_sd {
+        background-color: #00c90d;
+        box-shadow: 0px 0px 5px #00c90d; }
+      /* line 327, site.css.sass */
+      .eou_widget .eou_performance .gauge_bar .fpu .gauge_pointer {
+        width: 3px; }
+        
+        /* line 331, site.css.sass */
+.inline_centerwrap_diagram {
   text-align: center;
-}
-
+  margin-bottom: 4px; }
+  /* line 334, site.css.sass */
+  .inline_centerwrap_diagram .diagram {
+    border: 1px solid #aaaaaa;
+    border-bottom-right-radius: 5px;
+    background: white;
+    -moz-box-shadow: 1px 1px 7px #dddddd;
+    -webkit-box-shadow: 1px 1px 7px #dddddd;
+    box-shadow: 1px 1px 7px #dddddd;
+    display: inline-block;
+    padding: 2px 6px; }
+    
+    /* line 111, /home/juul/biofab/biofab-web/app/assets/stylesheets/eou_widget.css.scss */
 .eou_widget .half_width {
   width: 49%;
   float: left;
 }
 
-
-.eou_widget .performance .overall {
-position: absolute;
-height: 100%;
-left: 60%;
-width: 5%;
-}
-
-.eou_widget .performance .overall .pointer {
-position: relative;
-margin-left:auto;
-margin-right:auto;
-width: 6px;
-height: 100%;
-vertical-align: baseline;
-background-color: #8EEB00;
-opacity: 1.5;
-}
-
-.eou_widget .performance .overall .sd {
-position: absolute;
-background-color: #8EEB00;
-box-shadow: 0px 0px 5px #8EEB00;
-opacity: 0.3;
-top: 0;
-left: 0;
-height: 100%;
-width: 100%;
-}
-
-
-
 /*EOU WIDGET OPEN*/
-
+/* line 150, /home/juul/biofab/biofab-web/app/assets/stylesheets/eou_widget.css.scss */
 .eou_widget.open {
-height: 138px
+  height: 155px;
 }
 
-.promoter {
-  .performance {
-    background-color: #C7D8FF;
-  }
+/* line 155, /home/juul/biofab/biofab-web/app/assets/stylesheets/eou_widget.css.scss */
+.promoter .performance {
+  background-color: #104BA9;
+  opacity: .2;
 }
 
-.fpu {
-  .performance {
-    background-color: #FFD8C0;
-  }
+/* line 161, /home/juul/biofab/biofab-web/app/assets/stylesheets/eou_widget.css.scss */
+.fpu .performance {
+  background-color: #00C90D;
+  opacity: .2;
 }
-
-
-
-
-
-
-
-
-.eou_widget .performance .ruler .label {
-position: relative;
-background: white;
-left: -10px;
-bottom: -5px;
-width: 50%;
-}
-
-.eou_widget .performance .ruler .label.first {
-left: -5px;
-}
-
-.eou_widget .performance .ruler .label.last {
-left: -20px;
-}
-

@@ -26,9 +26,10 @@ var Designer = {
 
         this.constraint_slider.on_change = this.retrieve_results.bind(this);
 
-        this.spinner_template = doT.template($('spinner_pseudo_widget').text, null, null);
+        this.boxed_spinner_template = doT.template($('boxed_spinner_template').text, null, null);
 
         this.list.init(this);
+        StrainDetails.init();
     },
 
     foo: function() {
@@ -37,7 +38,7 @@ var Designer = {
 
     retrieve_results: function(from, to, promoter_cannot_contain) {
 
-        $(this.eou_list_id).innerHTML = this.spinner_template();
+        $(this.eou_list_id).innerHTML = this.boxed_spinner_template({message: "Retrieving results."});
 
         this.constrain_from = from || this.constrain_from;
         this.constrain_to = to || this.constrain_to;
@@ -171,10 +172,24 @@ var Designer = {
 
         status: 'hidden',
 
-        show_partial: function(url) {
+        show_partial: function(url, params) {
             // TODO not implemented
+            new Ajax.Request(url, {
+                method: 'get',
+                parameters: params,
+                onSuccess: this.show_partial_callback.bindAsEventListener(this)
+            });
+            
+            $('overlay_content').innerHTML = 'loading...';
             this.show();
         },
+
+
+        // show details in right-hand panel
+        show_partial_callback: function(transport) {
+            $('overlay_content').innerHTML = transport.responseText;
+        },
+
 
         show_html: function(html) {
             $('overlay_content').innerHTML = html;
@@ -242,6 +257,12 @@ var StrainDetails = {
 
     now_showing: null,
 
+    init: function() {
+
+        this.spinner_template = doT.template($('spinner_template').text, null, null);
+
+    },
+
     toggle: function(node) {
         if(this.now_showing == node) {
             this.hide();
@@ -272,12 +293,25 @@ var StrainDetails = {
         if(nodes.length < 1) {
             return false;
         }
-
         var id = nodes[0].innerHTML;
 
-        $('details_container').innerHTML = 'details for ' + id;
+        // Show "loading" spinner
+        $('details_container').innerHTML = this.spinner_template({message: "Fetching details."});
+
+        new Ajax.Request('/design_details', {
+            method: 'get',
+            parameters: {
+                id: id
+            },
+            onSuccess: this.details_callback.bindAsEventListener(this)
+        });
         
         return false;
+    },
+
+    // show details in right-hand panel
+    details_callback: function(transport) {
+        $('details_container').innerHTML = transport.responseText;
     },
 
     hide: function() {
@@ -304,7 +338,7 @@ var StrainDetails = {
         return false;
     }
 
-}
+} // end StrainDetails
 
 
 // -----------------------
