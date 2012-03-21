@@ -94,6 +94,8 @@ var BCDDesign = {
 
     init: function() {
 
+        this.spinner_template = doT.template($('spinner_template').text, null, null);
+
         Histogram.init();
         
         this.bcd_histogram = Histogram.create('bcd_histogram', {
@@ -208,13 +210,48 @@ var BCDDesign = {
     },
 
     bcd_goi_histogram_click: function(e) {
-        console.log('BCD GOOOOOI?');
+        this.show_goi_overlay();
     },
 
     mcd_goi_histogram_click: function(e) {
         console.log('MCD GOOOOOI?');
-    }
+    },
 
+
+    show_goi_overlay: function() {
+
+        var loading_html = this.spinner_template({message: "Fetching annotated plasmid sequence."});
+
+        Overlay.show_html(loading_html);
+
+        new Ajax.Request('/bd_designs/get_plasmid_json', {
+            method: 'get',
+            parameters: {
+                foo: 'bar'
+            },
+            onSuccess: this.goi_overlay_callback.bindAsEventListener(this)
+        });        
+    },
+
+    goi_overlay_callback: function(transport) {
+        if(!FlashWidgets) {
+            console.log("Error: FlashWidgets.js does not appear to be loaded.");
+            return false;
+        }
+        var obj = transport.responseText.evalJSON(true);
+
+        // TODO kinda hackish
+        var html = "<h3>Plasmid sequence for pFAB123</h3><div id='flash_widgets_container'></div>";
+
+        Overlay.show_html(html, this.overlay_hide_callback.bind(this));
+
+        FlashWidgets.show_and_load_obj('flash_widgets_container', obj);
+        console.log("showing plasmid sequence");
+    },
+
+    overlay_hide_callback: function() {
+        FlashWidgets.hide();
+    }
 
 }
 

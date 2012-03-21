@@ -3,7 +3,6 @@
 
 Tuesday:
   Complete BD-GOI view.
-    Add secondary histogram on bar click.
     Add overlay with plasmid viewer on secondary histogram bar click.
 
     Import all plasmids as parts:

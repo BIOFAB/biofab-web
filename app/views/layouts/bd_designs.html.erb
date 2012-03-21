@@ -19,12 +19,12 @@
       </div>      
     </script>
 
-    <script id='spinner_pseudo_widget' type='text/x-dot-template'>
+    <script id='spinner_template' type='text/x-dot-template'>
       <div class='spinner_container'>
         <div class='spinner'>
           <img src='/assets/spinner.gif' />
           <br />
-          Retrieving results.
+          {{=it.message}}
         </div>
       </div>
     </script>
@@ -43,6 +43,8 @@
 
     <%= javascript_include_tag 'doT' %>
     <%= javascript_include_tag 'Histogram' %>
+    <%= javascript_include_tag 'Overlay' %>
+    <%= javascript_include_tag 'FlashWidgets' %>
 
     <%= javascript_include_tag 'bd_designs' %>
 

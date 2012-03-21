@@ -31,4 +31,20 @@ class BdDesignsController < ApplicationController
 #    @performance = 0.6 # expression level (optional)
 
   end
+
+
+  def get_plasmid_json
+
+    render :text => {
+      :name => "Foo plasmid",
+      :sequence => "GATTATATCACACCATATTATAAAAAAAAAATTT",
+      :features => [{
+                      :name => "Some annotation",
+                      :type => "Some annotation type",
+                      :from => 10,
+                      :to => 30}]
+    }.to_json
+
+  end
+
 end

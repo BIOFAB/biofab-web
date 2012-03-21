@@ -4,6 +4,7 @@
          *= require part_diagram
          *= require eou_widget
          *= require Histogram
+         *= require Overlay
 */  
 
 html, body {
@@ -16,10 +17,13 @@ html, body {
 h3 {
    font-size: 18px;
    font-weight: bold;
+   margin-top: 0;
+   padding-top: 0;
 }
 
 #container {
   position: relative;
+  
   padding-left: 10px;
   padding-right: 10px;
   overflow: auto;
@@ -95,3 +99,53 @@ h3 {
     background-color: green;
     opacity: 0.6;
 }
+
+.overlay {
+  .content {
+    .spinner_container {
+      text-align: center;
+      .spinner {
+        display: inline-block;
+        margin-top: 100px;
+      }
+    }   
+  }
+}
+
+
+/* BEGIN flash widgets stuff */
+
+#flash_widgets_container {
+  position: relative;
+  height: 250px;
+  width: 100%;
+}
+
+#plasmid_viewer_container {
+  width: 50%; 
+  height: 100%;
+  float: left;
+}
+
+#sequence_viewer_container {
+  width: 50%; 
+  height: 100%;
+  float: left;
+}
+
+/*
+.flash_widget_hide {
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  visibility: hidden;
+}
+*
+
+#hidden {
+  display: none;
+}
+
+/* END flash widgets stuff */
