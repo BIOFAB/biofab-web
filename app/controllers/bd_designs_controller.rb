@@ -3,6 +3,32 @@ class BdDesignsController < ApplicationController
 
   def index
 
+    bcd_data = PartPerformance.where("name like 'BCD%'").all
+
+    # sort by BCD1, BCD2, etc. number
+    bcd_sorted = bcd_data.sort do |a,b|
+#      a.name.gsub(/[^\d]+/,'').to_i <=> b.name.gsub(/[^\d]+/,'').to_i
+      -a.goi_average <=> -b.goi_average
+    end
+
+    @bcd_data = bcd_sorted.collect(&:goi_average)
+    @bcd_sd = bcd_sorted.collect(&:goi_sd)
+
+
+    mcd_data = PartPerformance.where("name like 'MCD%'").all
+
+    mcd_order = bcd_sorted.collect do |bcd|
+      'MCD' + bcd.name.gsub(/[^\d]+/,'')
+    end
+
+    # sort by MCD1, MCD2, etc. number
+    mcd_sorted = mcd_data.sort_by do |mcd|
+      mcd_order.index(mcd.name)
+    end
+
+    @mcd_data = mcd_sorted.collect(&:goi_average)
+    @mcd_sd = mcd_sorted.collect(&:goi_sd)
+
     @bcd_annotations = [19,
                     {:sequence => 'AGGAGA',
                      :label => 'Static SD'},
@@ -32,17 +58,39 @@ class BdDesignsController < ApplicationController
 
   end
 
+  def get_per_goi_data
+
+    designs = BcDesign.where(["fpu_name = ?", params['fpu_name']])
+
+    cds_names = designs.collect(&:cds_name)
+    fc_averages = designs.collect(&:fc_average)
+    fc_sds = designs.collect(&:fc_sd)
+    params = designs.collect do |design|
+      {:bc_design_id => design.id}
+    end
+    
+
+    render :text => {
+
+      :labels => cds_names,
+      :data => fc_averages,
+      :errors => fc_sds,
+      :params => params
+
+    }.to_json
+    
+
+  end
+
 
   def get_plasmid_json
 
+    design = BcDesign.find(params['bc_design_id'])
+
     render :text => {
-      :name => "Foo plasmid",
-      :sequence => "GATTATATCACACCATATTATAAAAAAAAAATTT",
-      :features => [{
-                      :name => "Some annotation",
-                      :type => "Some annotation type",
-                      :from => 10,
-                      :to => 30}]
+      :name => design.plasmid.biofab_id,
+      :sequence => design.plasmid.sequence,
+      :features => design.plasmid.annotations_for_flash_widgets
     }.to_json
 
   end

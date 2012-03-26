@@ -65,7 +65,14 @@ while(true)
   design.promoter_upstream_sequence = x.cell(row, 8)
   design.fpu_downstream_sequence = x.cell(row, 9)
   design.plasmid_sequence = x.cell(row, 10)
-  design.reporter_gene = x.cell(row, 11)
+  design.reporter_gene = x.cell(row, 11).gsub(/\s+/, '').upcase
+
+  # skip non-GFP values
+  if design.reporter_gene != 'GFP'
+    row += 1
+    next
+  end
+
   design.plasmid_biofab_id = "pFAB#{x.cell(row, 12)}"
   design.strain_name = x.cell(row, 13)
   design.antibiotic_marker = x.cell(row, 14)

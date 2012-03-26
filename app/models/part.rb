@@ -106,5 +106,23 @@ class Part < ActiveRecord::Base
     annotations.joins(:annotation_type).where(["annotation_types.name = ?", type_name])
   end
 
+  def annotations_for_flash_widgets(type_name=nil)
+    annots = nil
+    if type_name
+      annots = annotations_with_type(type_name)
+    else
+      annots = annotations
+    end
+    annots = annots.includes(:part => :part_type).all
+
+    annots.collect do |annot|
+      {
+        :name => annot.label || annot.part.description,
+        :type => annot.part.part_type.name,
+        :from => annot.from,
+        :to => annot.to + 1
+      }
+    end
+  end
 
 end

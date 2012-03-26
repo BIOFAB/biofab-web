@@ -1,70 +1,107 @@
 
+Friday:
 
+- Talk to Vivek about:
 
-Tuesday:
-  Complete BD-GOI view.
-    Add overlay with plasmid viewer on secondary histogram bar click.
+    How should I calculate promoter and 5' UTR performance?
+      This is for display in Expression Designer.
 
-    Import all plasmids as parts:
-      script: import_google_doc_plasmids
+    Does the BCD vs. MCD view look ok?
+      No: Should be GOI-mean-centered, not reporter-mean-centered
+          Should be log2 before 0-100 normalization.
+          Needs Y axis numbers and units.
 
-    Annotate all plasmids:
-      modify script: biofab-web-pilot/scripts/pilot_annotate
-        Make it only run for plasmid parts.
-        Make it delete existing annotations before running, for each part (plasmid).
-        Make it only search for parts of type promoter, 5' UTR, GOI and terminator.
-        Make it create real annotations instead of pilot-annotations.
+    How should I calculate 5' UTR reliability?
+      Just normalize the standard deviation to 0-10?
+        meaning std_dev from BCD vs. MCD view?
 
-    Make the plasmid viewer actually display the annotated plasmids.
+- Import all plasmids as parts:
+    script: import_google_doc_plasmids
 
+- Annotate all plasmids:
+    modify script: biofab-web-pilot/scripts/pilot_annotate
+      Make it only run for plasmid parts.
+      Make it delete existing annotations before running, for each part (plasmid).
+      Make it only search for parts of type promoter, 5' UTR, GOI and terminator.
+      Make it create real annotations instead of pilot-annotations.
 
-  Create BD-Makoff-randomization view:
-    Histogram of 120 EOUs binned into n bins.
-    Sequence logo.
     
-Thursday:
+Saturday:
 
-  Add a parts_values table and populate with values:
-    performance
-    performance_sd
-    reliability
-    reliability_sd
-  
-  Terminator view:
-    Bar-chart with one bar per terminator.
-    Ask Guillaume what to show if one is clicked.
+- Calculate promoter and 5' UTR performance:
+    Add a parts_values table and populate with values:
+      performance
+      performance_sd
+      reliability (only for 
+      reliability_sd
 
-Friday and Saturday
+- Complete the Expression Selector!
 
-  Complete the Expression Selector!
-
-    Show actual data in right-hand side.
-    Order by stuff.
+    Fix data
+      re-import data
+      ensure no unwanted data is there
+    Fix histogram (definitely wrong)
+      add y-axis labels
+    Better data in right-hand side.
+    Show plasmid (copy code from bd_designs view).
+    Make text-box for "must not contain".
+    Remove "add constraint" button.
     Remove "add to cart" feature.
     Download as Genbank, plain text and SBOL.
-    Add relevant links to top right side.
+    Download vivek's excel sheet link.
 
-  Complete the Expression Selector!
+- Complete BCD vs. MCD view:
+    add y-axis labels
+    make it show actual sequence diagrams
 
 Sunday:
 
-  Make simple data-views for everything:
-    Pilot [x]
-    PBD [ ]
-    BD-GOI [ ]
-    Bicistronic library [ ]
-    Terminator project [ ]
-    
+  Complete the BCD-library view:
+    BCD template
+      copy from MCD vs. GOI view
+    Sequence logo
+    Straight bar chart.
+    Click more info (not overlay):
+      annotated plasmid
+      level and sd in numbers
+      BCD sequence diagram on mouse over bar chart
+        copy from MCD vs. GOI view
+
+  Add relevant links to top right side of pages
+
+  Make front page links work.
+  
 Monday:
 
-  Whatever I didn't have time for.
+  Only if time:          
+    Create PBD vs. BCD view
+      3D bar chart
+      Show EOU widget on click
+        re-use from expression selector
+
+  Add help information (do it in photoshop).
+
 
 Tuesday:
 
   Put it in production mode.
 
+  Make simple data-views for everything:
+    Pilot [x]
+    MPL and RPL [/]
+    Terminator project [/]
+    PBD [ ]
+    BD-GOI [ ]
+    Bicistronic library [ ]
 
+If there is time:
 
+  Terminator view:
+    Bar-chart with one bar per terminator.
+    Ask Guillaume what to show if one is clicked.
+
+  RPL and MPL views:
+    Copy BCD-library view.
 
 
 ------------------------------------------------------

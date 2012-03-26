@@ -52,7 +52,13 @@
 
       function page_init() {
 
-        var bcd_design = BCDDesign.init();
+        var bcd_data = <%= (@bcd_data) ? @bcd_data.to_json : 'null' %>;
+        var bcd_sd = <%= (@bcd_sd) ? @bcd_sd.to_json : 'null' %>;
+
+        var mcd_data = <%= (@mcd_data) ? @mcd_data.to_json : 'null' %>;
+        var mcd_sd = <%= (@mcd_sd) ? @mcd_sd.to_json : 'null' 
+%>;
+        var bcd_design = BCDDesign.init(bcd_data, bcd_sd, mcd_data, mcd_sd);
       
         console.log('initialized');
       }

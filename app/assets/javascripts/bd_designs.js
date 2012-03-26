@@ -5,8 +5,6 @@ var BCDDesign = {
     bcd_bar_labels: [
         'BCD1',
         'BCD2',
-        'BCD3',
-        'BCD4',
         'BCD5',
         'BCD6',
         'BCD7',
@@ -24,14 +22,14 @@ var BCDDesign = {
         'BCD19',
         'BCD20',
         'BCD21',
-        'BCD22'
+        'BCD22',
+        'BCD23',
+        'BCD24'
     ],
 
     mcd_bar_labels: [
         'MCD1',
         'MCD2',
-        'MCD3',
-        'MCD4',
         'MCD5',
         'MCD6',
         'MCD7',
@@ -49,7 +47,9 @@ var BCDDesign = {
         'MCD19',
         'MCD20',
         'MCD21',
-          'MCD22'
+        'MCD22',
+        'MCD23',
+        'MCD24'
     ],
     
     
@@ -92,7 +92,7 @@ var BCDDesign = {
         return data;
     },
 
-    init: function() {
+    init: function(bcd_data, bcd_sd, mcd_data, mcd_sd) {
 
         this.spinner_template = doT.template($('spinner_template').text, null, null);
 
@@ -100,8 +100,8 @@ var BCDDesign = {
         
         this.bcd_histogram = Histogram.create('bcd_histogram', {
             data_is_bar_heights: true,
-            data: this.gen_random_data(this.bcd_bar_labels.length, 100),
-            errors: this.gen_random_data(this.bcd_bar_labels.length, 10),
+            data: bcd_data, //this.gen_random_data(this.bcd_bar_labels.length, 100),
+            errors: bcd_sd, //this.gen_random_data(this.bcd_bar_labels.length, 10),
             bar_labels: this.bcd_bar_labels,
             bar_spacing: 10,
             histogram_max_height: 'inherit',
@@ -115,8 +115,8 @@ var BCDDesign = {
 
         this.mcd_histogram = Histogram.create('mcd_histogram', {
             data_is_bar_heights: true,
-            data: this.gen_random_data(this.mcd_bar_labels.length, 100),
-            errors: this.gen_random_data(this.mcd_bar_labels.length, 10),
+            data: mcd_data, //this.gen_random_data(this.mcd_bar_labels.length, 100),
+            errors: mcd_sd, //this.gen_random_data(this.mcd_bar_labels.length, 10),
             bar_labels: this.mcd_bar_labels,
             bar_spacing: 10,
             histogram_max_height: 'inherit',
@@ -130,14 +130,14 @@ var BCDDesign = {
         
     },
 
-    bcd_bin_mouseover: function(node, index, is_simulated, value, error, label) {
+    bcd_bin_mouseover: function(node, index, is_simulated, value, error, label, per_bar_param) {
 //        console.log('Over: ' + index + ', ' + value + ', ' + error + ', ' + label);
         if(!is_simulated) {
             this.mcd_histogram.simulate_mouseover(index);
         }
         return true;
     },
-    bcd_bin_mouseout: function(node, index, is_simulated, value, error, label) {
+    bcd_bin_mouseout: function(node, index, is_simulated, value, error, label, per_bar_param) {
 //        console.log('Over: ' + index + ', ' + value + ', ' + error + ', ' + label);
         if(!is_simulated) {
             this.mcd_histogram.simulate_mouseout(index);
@@ -145,28 +145,48 @@ var BCDDesign = {
         return true;
     },
 
-    bcd_bin_click: function(node, index, is_simulated, value, error, label) {
-        console.log('bcd bar click: ' + index + ', ' + value + ', ' + error + ', ' + label);
+    bcd_bin_click: function(node, index, is_simulated, value, error, label, per_bar_param) {
+//        console.log('bcd bar click: ' + index + ', ' + value + ', ' + error + ', ' + label);
 
-        var data = this.gen_random_data(this.goi_bar_labels.length, 100);
-        var error_data = this.gen_random_data(this.goi_bar_labels.length, 10);
-        
-        var histogram = this.make_goi_histogram('bcd_goi_histogram', data, error_data, this.bcd_goi_histogram_click.bind(this));
+        new Ajax.Request('/bd_designs/get_per_goi_data', {
+            method: 'get',
+            parameters: {
+                fpu_name: label
+            },
+            onSuccess: this.bcd_bin_click_callback.bindAsEventListener(this, index, label)
+        });        
 
         if(!is_simulated) {
             this.mcd_histogram.simulate_click(index);
         }
+
         return true; // return true tells the Histogram to set the 'active' class for the clicked bar
     },
 
-    mcd_bin_mouseover: function(node, index, is_simulated, value, error, label) {
+    bcd_bin_click_callback: function(transport, index, label) {
+
+//        var data = this.gen_random_data(this.goi_bar_labels.length, 100);
+//        var error_data = this.gen_random_data(this.goi_bar_labels.length, 10);
+
+        var obj = transport.responseText.evalJSON(true);
+        
+        var data = obj.data;
+        var error_data = obj.errors;
+        var labels = obj.labels;
+        var per_bar_params = obj.params;
+        
+        var histogram = this.make_goi_histogram('bcd_goi_histogram', labels, data, error_data, this.bcd_goi_histogram_click.bind(this), per_bar_params);
+    },
+
+
+    mcd_bin_mouseover: function(node, index, is_simulated, value, error, label, per_bar_param) {
 //        console.log('Over: ' + index + ', ' + value + ', ' + error + ', ' + label);
         if(!is_simulated) {
             this.bcd_histogram.simulate_mouseover(index);
         }
         return true;
     },
-    mcd_bin_mouseout: function(node, index, is_simulated, value, error, label) {
+    mcd_bin_mouseout: function(node, index, is_simulated, value, error, label, per_bar_param) {
 //        console.log('Over: ' + index + ', ' + value + ', ' + error + ', ' + label);
         if(!is_simulated) {
             this.bcd_histogram.simulate_mouseout(index);
@@ -174,28 +194,40 @@ var BCDDesign = {
         return true;
     },
 
-    mcd_bin_click: function(node, index, is_simulated, value, error, label) {
-//        console.log('mcd bar click: ' + index + ', ' + value + ', ' + error + ', ' + label);
+    mcd_bin_click: function(node, index, is_simulated, value, error, label, per_bar_param) {
+//        console.log('bcd bar click: ' + index + ', ' + value + ', ' + error + ', ' + label);
 
-        var data = this.gen_random_data(this.goi_bar_labels.length, 100);
-        var error_data = this.gen_random_data(this.goi_bar_labels.length, 10);
-        
-        var histogram = this.make_goi_histogram('mcd_goi_histogram', data, error_data, this.mcd_goi_histogram_click.bind(this));
+        new Ajax.Request('/bd_designs/get_per_goi_data', {
+            method: 'get',
+            parameters: {
+                fpu_name: label
+            },
+            onSuccess: this.mcd_bin_click_callback.bindAsEventListener(this, index, label)
+        });        
 
-        if(!is_simulated) {
-            this.bcd_histogram.simulate_click(index);
-        }
         return true; // return true tells the Histogram to set the 'active' class for the clicked bar
     },
 
 
-    make_goi_histogram: function(container_id, data, error_data, click_callback) {
+    mcd_bin_click_callback: function(transport, index, label) {
+
+        var obj = transport.responseText.evalJSON(true);
+        
+        var data = obj.data;
+        var error_data = obj.errors;
+        var labels = obj.labels;
+        
+        var histogram = this.make_goi_histogram('mcd_goi_histogram', labels, data, error_data, this.mcd_goi_histogram_click.bind(this));
+    },
+
+    make_goi_histogram: function(container_id, labels, data, error_data, click_callback, per_bar_params) {
 
         var goi_histogram = Histogram.create(container_id, {
             data_is_bar_heights: true,
             data: data,
             errors: error_data,
-            bar_labels: this.goi_bar_labels,
+            bar_labels: labels,
+            per_bar_params: per_bar_params,
             bar_spacing: 10,
             histogram_max_height: 'inherit',
             y_axis_max: 'dynamic', // Can also be 'dynamic'. If you specify this, then you _must_not_ have any bins with more entries than y_axis_max. If you do, the widget will exceed histogram_max_height.
@@ -209,8 +241,8 @@ var BCDDesign = {
         return goi_histogram;
     },
 
-    bcd_goi_histogram_click: function(e) {
-        this.show_goi_overlay();
+    bcd_goi_histogram_click:  function(node, index, is_simulated, value, error, label, per_bar_param) {
+        this.show_goi_overlay(per_bar_param);
     },
 
     mcd_goi_histogram_click: function(e) {
@@ -218,7 +250,12 @@ var BCDDesign = {
     },
 
 
-    show_goi_overlay: function() {
+    show_goi_overlay: function(per_bar_param) {
+        if(!per_bar_param || !per_bar_param.bc_design_id) {
+            console.log("show_goi_overlay did not receive a bc_design_id");
+            return false;
+        }
+
 
         var loading_html = this.spinner_template({message: "Fetching annotated plasmid sequence."});
 
@@ -227,7 +264,7 @@ var BCDDesign = {
         new Ajax.Request('/bd_designs/get_plasmid_json', {
             method: 'get',
             parameters: {
-                foo: 'bar'
+                bc_design_id: per_bar_param.bc_design_id
             },
             onSuccess: this.goi_overlay_callback.bindAsEventListener(this)
         });        

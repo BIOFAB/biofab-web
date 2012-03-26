@@ -53,6 +53,7 @@ var Histogram = {
 
         this.container_id = container_id;
         this.params = Object.extend({
+            per_bar_params: null, // an array of data to be associated with each bar (optional)
             data_is_bar_heights: false, // if true, data is the bin heights, not the raw data
             log_scale: false,
             histogram_max_height: 'inherit', // 'inherit' means expand to fill containing node (can also be a number)
@@ -268,12 +269,16 @@ var Histogram = {
 
         this.call_callback_for_node = function(node, callback, from_simulated_event) {
             var i = node.histogram_index;
+            var per_bar_param = null;
+            if(this.params.per_bar_params && this.params.per_bar_params[i]) {
+                per_bar_param = this.params.per_bar_params[i]; 
+            }
             if(this.params.data_is_bar_heights) {
                 // bar_node, bar_index, value, error, label
-                return callback(node, i, from_simulated_event, this.bars[i], this.params.errors[i], this.params.bar_labels[i]);
+                return callback(node, i, from_simulated_event, this.bars[i], this.params.errors[i], this.params.bar_labels[i], per_bar_param);
             } else {
                 // bar_node, bin_index, bin_from, bin_to, data, error, label
-                return callback(node, i, from_simulated_event, this.bins[i].from, this.bins[i].to, this.bins[i].data, this.params.errors[i], this.params.bar_labels[i]);
+                return callback(node, i, from_simulated_event, this.bins[i].from, this.bins[i].to, this.bins[i].data, this.params.errors[i], this.params.bar_labels[i], per_bar_param);
             }
         };
 
