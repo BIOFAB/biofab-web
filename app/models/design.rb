@@ -9,6 +9,4 @@ class Design < ActiveRecord::Base
     self.where(["performance >= ? AND performance <= ?", min, max]).includes({:promoter => {:annotations => :annotation_type}, :fpu => {:annotations => :annotation_type}}).limit(limit).offset(offset)
   end
 
-  
-
 end

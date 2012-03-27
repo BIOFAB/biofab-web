@@ -54,3 +54,7 @@ gem 'zip' # required by roo
 gem 'roo' # google docs import
 
 gem 'haml' # some widgets are in haml
+
+gem 'bio' # for genbank and fasta export
+
+gem 'xml-simple'

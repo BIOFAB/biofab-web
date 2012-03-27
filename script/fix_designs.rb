@@ -1,7 +1,7 @@
 #!script/rails runner
 
 
-=begin
+
 max_performance = 0
 Design.all.each do |design|
   if design.performance > max_performance
@@ -9,11 +9,11 @@ Design.all.each do |design|
   end
 
 end
-=end
+
 
 Design.all.each do |design|
-#  design.performance_normalized = design.performance / max_performance
-#  design.performance_sd_normalized = design.performance_sd / max_performance
+  design.performance_normalized = design.performance / max_performance
+  design.performance_sd_normalized = design.performance_sd / max_performance
   design.reliability = 7
   design.save!
 end

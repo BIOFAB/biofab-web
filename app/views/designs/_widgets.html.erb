@@ -14,7 +14,7 @@
 <% else %>
   <% @designs.each do |design| %>
 
-    <%= render :partial => 'eou', :locals => {:id => design.id, :biofab_id => design.strain_biofab_id, :reliability => design.reliability, :performance => design.performance_normalized, :performance_deviation => design.performance_sd_normalized, :promoter => design.promoter, :fpu => design.fpu, :promoter_performance => 0.3, :fpu_performance => 0.7} %>
+    <%= render :partial => 'eou', :locals => {:id => design.id, :biofab_id => design.strain_biofab_id, :reliability => design.fpu.part_performance.reliability, :performance => design.performance_normalized, :performance_deviation => design.performance_sd_normalized, :promoter => design.promoter, :fpu => design.fpu, :promoter_performance => design.promoter.part_performance.performance / 100, :fpu_performance => design.fpu.part_performance.performance / 100} %>
 
   <% end %>
 

@@ -46,7 +46,7 @@ class DesignsController < ApplicationController
     else
       subseq = '%'+params['promoter_cannot_contain'].upcase.gsub(/[^ATGC]+/, '')+'%'
 
-      @designs = Design.where(["performance >= ? AND performance <= ? AND promoter_sequence NOT LIKE ?", from, to, subseq]).includes({:promoter => {:annotations => :annotation_type}, :fpu => {:annotations => :annotation_type}}).limit(@limit).offset(@offset)
+      @designs = Design.where(["performance >= ? AND performance <= ? AND promoter_sequence NOT LIKE ?", from, to, subseq]).includes({:promoter => [:part_performance, {:annotations => :annotation_type}], :fpu => [:part_performance, {:annotations => :annotation_type}]}).limit(@limit).offset(@offset)
 
       @designs_all = Design.where(["promoter_sequence NOT LIKE ?", subseq])
 

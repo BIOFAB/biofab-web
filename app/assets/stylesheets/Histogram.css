@@ -118,12 +118,12 @@
 }
 
 
-.horizontal_lines {
+.histogram .horizontal_lines {
     position: absolute;
     width: 100%;
 }
 
-.horizontal_lines .line {
+.histogram .horizontal_lines .line {
     position: absolute;
     bottom: 0;
     left: -4px;
@@ -131,5 +131,35 @@
     right: -4px;
     background-color: black;
 	  opacity: 0.1;
+    overflow: visible;
 }
 
+.histogram .horizontal_lines .line .label {
+    position: absolute;
+    top: -5px;
+    right: 100%;
+    margin-right: 2px;
+    height: 10px;
+    font-size: 8px;
+    color: black;
+}
+
+.histogram .y_axis_label_container {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  font-size: 8px;
+  color: gray;
+  -webkit-transform: rotate(90deg); 
+  -moz-transform: rotate(90deg);	
+  text-align: left;
+  overflow: visible;
+  width: 1px;
+  margin-left: 10px;
+}
+
+.histogram .y_axis_label {
+    position: relative;
+    white-space: nowrap;
+    left: -10px;
+}

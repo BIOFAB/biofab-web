@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Part < ActiveRecord::Base
 
   has_many :annotations, :foreign_key => :parent_part_id
@@ -5,7 +6,7 @@ class Part < ActiveRecord::Base
   belongs_to :plasmid_info 
   belongs_to :part_type
   belongs_to :project
-
+  has_one :part_performance
 
   before_validation do
     if !self.sequence.blank?
@@ -16,8 +17,6 @@ class Part < ActiveRecord::Base
   end
 
   validates :biofab_id, :uniqueness => true
-#  validates :sequence, :uniqueness => true
-
 
   def self.promoters
     joins(:part_type).where("part_types.name = 'Promoter'")
@@ -123,6 +122,97 @@ class Part < ActiveRecord::Base
         :to => annot.to + 1
       }
     end
+  end
+
+
+  def to_fasta
+    seq = Bio::Sequence::NA.new(sequence)
+    seq.to_fasta(biofab_id)
+  end
+
+  def self.collection_to_sbol(parts)
+    xml = <<eos
+<?xml version="1.0" ?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:s="http://sbols.org/v1#"
+  xmlns:so="http://purl.obolibrary.org/obo/"
+  xmlns:d="http://sbols.org/data#">
+eos
+
+    xml += "<s:Collection>"
+
+    parts.each do |part|
+      xml += part.to_sbol_component
+    end
+
+    xml += "</s:Collection>"
+    xml += "</rdf:RDF>"
+  end
+
+
+  def to_sbol
+
+    xml = <<eos
+<?xml version="1.0" ?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:s="http://sbols.org/v1#"
+  xmlns:so="http://purl.obolibrary.org/obo/"
+  xmlns:d="http://sbols.org/data#">
+eos
+
+    component_xml = to_sbol_component
+    return nil if !component_xml 
+
+    xml += component_xml
+
+    xml += "</rdf:RDF>"
+
+  end
+
+  def to_sbol_component
+
+    return nil if !biofab_id
+
+    xml = "<s:DnaComponent rdf:about=\"#{biofab_id}\">"
+    
+    xml += "<s:displayId>#{biofab_id}</s:displayId>"
+    xml += "<s:name>#{biofab_id}</s:name>"
+    xml += "<s:description>BIOFAB part #{biofab_id} of type #{part_type.name}</s:description>"
+
+    xml += "<s:dnaSequence><s:DnaSequence rdf:about=\"#{biofab_id}\"><s:nucleotides>#{sequence}</s:nucleotides></s:DnaSequence></s:dnaSequence>"
+
+    annots_with_biofab_id = 0
+    annotations.each do |annot|
+      if !annot.part.biofab_id.blank?
+        annots_with_biofab_id += 1
+      end
+    end
+
+    if annots_with_biofab_id > 0
+      xml += "<s:annotation>"
+
+      annotations.each do |annotation|
+        next if annotation.part.biofab_id.blank?
+
+        xml += "<s:SequenceAnnotation rdf:about=\"#{annotation.part.biofab_id}\">"
+
+        xml += "<s:bioStart>#{annotation.from}</s:bioStart>"
+        xml += "<s:bioEnd>#{annotation.to}</s:bioEnd>"
+        xml += "<s:strand>+</s:strand>"
+        xml += "<s:subComponent>"
+        xml += annotation.part.to_sbol_component
+        xml += "</s:subComponent>"
+        xml += "</s:SequenceAnnotation>"
+      end
+      
+      xml += "</s:annotation>"
+    end
+
+    xml += "</s:DnaComponent>"
+
+    xml
   end
 
 end

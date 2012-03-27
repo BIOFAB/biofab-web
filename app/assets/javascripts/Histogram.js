@@ -55,12 +55,13 @@ var Histogram = {
         this.params = Object.extend({
             per_bar_params: null, // an array of data to be associated with each bar (optional)
             data_is_bar_heights: false, // if true, data is the bin heights, not the raw data
-            log_scale: false,
+            log_scale: false, // TODO still untested
             histogram_max_height: 'inherit', // 'inherit' means expand to fill containing node (can also be a number)
             errors: [], // an array of the error bar sizes
             bar_labels: [], // optional 45 degree text-labels for each bar
             bar_count: 10,
             bar_spacing: 5,
+            y_axis_label: null,
             total_histogram_id: 'total_histogram_'+this.unique,
             constrained_histogram_id: 'constrained_histogram_'+this.unique,
             node_id: 'histogram_'+this.unique
@@ -396,22 +397,47 @@ var Histogram = {
             this.changed = true;
         };
 */
+
+        this.draw_y_axis_label = function() {
+            if(!this.params.y_axis_label) {
+                return false;
+            }
+            var node = document.createElement('DIV');
+            var histogram_node = $$('#'+this.container_id + ' .histogram')[0];
+
+            node.className = 'y_axis_label_container';
+            node.innerHTML = "<div class='y_axis_label'>" + this.params.y_axis_label + "</div>";
+
+            histogram_node.appendChild(node);
+        },
+
         this.draw_axis_lines = function() {
             
             var horizontal_lines_node = $$('#'+this.container_id + ' .horizontal_lines')[0];
             
-            var line_spacing = this.params.histogram_max_height / 3; // TODO remove hard-coded 3
-            for(i=0; i < 3; i++) {
-                var line = this.make_horizontal_line(line_spacing * (i+1));
+            var num_lines = 3; // TODO should not be hard-coded
+            var val_per_line = this.params.y_axis_max / num_lines;
+
+            var line_spacing = this.params.histogram_max_height / num_lines;
+            var line, label;
+            for(i=0; i < num_lines; i++) {
+                label = String(Math.round((i+1) * val_per_line * 100) / 100);
+                line = this.make_horizontal_line(line_spacing * (i+1), label);
                 horizontal_lines_node.appendChild(line);
             }
 
         }
 
-        this.make_horizontal_line = function(bottom) {
+        this.make_horizontal_line = function(bottom, label) {
             var node = document.createElement('DIV');
             node.className = 'line';
             node.style.bottom = bottom + 'px';
+            if(label) {
+                var label_node = document.createElement('DIV');
+                label_node.className = 'label';
+                label_node.innerHTML = label;
+                node.appendChild(label_node);
+            }
             return node;
         };
 
@@ -446,6 +472,7 @@ var Histogram = {
         this.bars = this.make_histogram_bars();
         this.init_histogram(this.params.total_histogram_id, this.bars);
         this.draw_axis_lines();
+        this.draw_y_axis_label();
         this.make_histogram_labels();
     }
 

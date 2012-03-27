@@ -123,6 +123,7 @@ var BCDDesign = {
             y_axis_max: 'dynamic', // Can also be 'dynamic'. If you specify this, then you _must_not_ have any bins with more entries than y_axis_max. If you do, the widget will exceed histogram_max_height.
             horizontal_lines: true,
             log_scale: false,
+            y_axis_label: "log2 5'-UTR-mean of GOI-mean-centered fluos",
             on_mouseover: this.mcd_bin_mouseover.bind(this),
             on_mouseout: this.mcd_bin_mouseout.bind(this),
             on_click: this.mcd_bin_click.bind(this)
@@ -216,8 +217,9 @@ var BCDDesign = {
         var data = obj.data;
         var error_data = obj.errors;
         var labels = obj.labels;
+        var per_bar_params = obj.params;
         
-        var histogram = this.make_goi_histogram('mcd_goi_histogram', labels, data, error_data, this.mcd_goi_histogram_click.bind(this));
+        var histogram = this.make_goi_histogram('mcd_goi_histogram', labels, data, error_data, this.mcd_goi_histogram_click.bind(this), per_bar_params);
     },
 
     make_goi_histogram: function(container_id, labels, data, error_data, click_callback, per_bar_params) {
@@ -245,8 +247,8 @@ var BCDDesign = {
         this.show_goi_overlay(per_bar_param);
     },
 
-    mcd_goi_histogram_click: function(e) {
-        console.log('MCD GOOOOOI?');
+    mcd_goi_histogram_click: function(node, index, is_simulated, value, error, label, per_bar_param) {
+        this.show_goi_overlay(per_bar_param);
     },
 
 
@@ -256,6 +258,7 @@ var BCDDesign = {
             return false;
         }
 
+        console.log('foo: ' + per_bar_param.bc_design_id);
 
         var loading_html = this.spinner_template({message: "Fetching annotated plasmid sequence."});
 
