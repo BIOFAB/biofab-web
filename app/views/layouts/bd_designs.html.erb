@@ -28,6 +28,18 @@
         </div>
       </div>
     </script>
+
+    <script id='diagram_subseq' type='text/x-dot-template'>
+      {{
+        var i;
+        for(i=0; i < it.seq.length; i++) {
+      }} 
+         <div class='{{=it.seq[i].toLowerCase()}}'>{{=it.seq[i].toUpperCase()}}</div>
+      {{
+        }
+      }}
+    </script>
+
     <!-- end dot templates -->
 
     <%= stylesheet_link_tag 'jquery-ui-1.8.16.custom' %>
@@ -52,13 +64,17 @@
 
       function page_init() {
 
-        var bcd_data = <%= (@bcd_data) ? @bcd_data.to_json : 'null' %>;
-        var bcd_sd = <%= (@bcd_sd) ? @bcd_sd.to_json : 'null' %>;
+        var bcd_labels = <%=raw @bcd_labels.to_json %>;
+        var bcd_data = <%=raw @bcd_data.to_json %>;
+        var bcd_sd = <%=raw @bcd_sd.to_json %>;
+        var bcd_rbs2_seqs = <%=raw @bcd_rbs2_seqs.to_json %>;
 
-        var mcd_data = <%= (@mcd_data) ? @mcd_data.to_json : 'null' %>;
-        var mcd_sd = <%= (@mcd_sd) ? @mcd_sd.to_json : 'null' 
-%>;
-        var bcd_design = BCDDesign.init(bcd_data, bcd_sd, mcd_data, mcd_sd);
+        var mcd_labels = <%=raw @mcd_labels.to_json %>;
+        var mcd_data = <%=raw @mcd_data.to_json %>;
+        var mcd_sd = <%=raw @mcd_sd.to_json %>;
+        var mcd_rbs2_seqs = <%=raw @mcd_rbs2_seqs.to_json %>;
+
+        var bcd_design = BCDDesign.init(bcd_labels, bcd_data, bcd_sd, bcd_rbs2_seqs, mcd_labels, mcd_data, mcd_sd, mcd_rbs2_seqs);
       
         console.log('initialized');
       }

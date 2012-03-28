@@ -44,11 +44,31 @@ class DesignsController < ApplicationController
       @designs = Design.in_performance_range(from, to, @limit, @offset)
       @designs_all = Design.all
     else
-      subseq = '%'+params['promoter_cannot_contain'].upcase.gsub(/[^ATGC]+/, '')+'%'
 
-      @designs = Design.where(["performance >= ? AND performance <= ? AND promoter_sequence NOT LIKE ?", from, to, subseq]).includes({:promoter => [:part_performance, {:annotations => :annotation_type}], :fpu => [:part_performance, {:annotations => :annotation_type}]}).limit(@limit).offset(@offset)
+      seqs = params['promoter_cannot_contain'].split('-')
+      vals = []
+      sqls = []
+      seqs.each do |seq|
+        next if seq.blank?
+        sqls << "promoter_sequence NOT LIKE ? AND fpu_sequence NOT LIKE ?"
+        val = "%#{seq.upcase.gsub(/[^ATGC]+/, '')}%"
+        vals << val
+        vals << val
+      end
+      sql = sqls.join(' AND ')
+      if sql.blank?
+        sql_append = ''
+      else
+        sql_append = ' AND ' + sql
+      end
 
-      @designs_all = Design.where(["promoter_sequence NOT LIKE ?", subseq])
+#      raise (["performance >= ? AND performance <= ?" + sql_append, from, to] + vals).inspect
+
+      @designs = Design.where(["performance >= ? AND performance <= ?" + sql_append, from, to] + vals).includes({:promoter => [:part_performance, {:annotations => :annotation_type}], :fpu => [:part_performance, {:annotations => :annotation_type}]}).limit(@limit).offset(@offset)
+
+
+      @designs_all = Design.where([sql] + vals)
+#      @designs_all = Design.where(["promoter_sequence NOT LIKE ?", subseq])
 
     end
 

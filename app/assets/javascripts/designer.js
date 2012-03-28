@@ -32,8 +32,17 @@ var Designer = {
         StrainDetails.init();
     },
 
-    foo: function() {
-        this.retrieve_results(null, null, 'TTG');
+    constrain: function() {
+        var disallowed_seqs = $('seq_must_not_contain').value.split(/\n/);
+        var i;
+        for(i=0; i < disallowed_seqs.length; i++) {
+            disallowed_seqs[i] = disallowed_seqs[i].toUpperCase().replace(/[^GATC]/, '');
+        }
+        $('seq_must_not_contain').value = disallowed_seqs.join("\n");
+
+        console.log(disallowed_seqs);
+
+        this.retrieve_results(null, null, disallowed_seqs.join('-'));
     },
 
     retrieve_results: function(from, to, promoter_cannot_contain) {
@@ -108,13 +117,6 @@ var Designer = {
         this.results_displayed += this.results_per_query;
 
     },
-
-
-    constrain: {
-
-
-    },
-
 
 
     list: {

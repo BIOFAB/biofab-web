@@ -28,12 +28,14 @@
           <div class='dropdown'>Add New</div>
         </div>
         <div class='container'>
-          <h3>Constraints</h3>
           <p>
-            Constraints go here.
+            Sequence must not contain:
           </p>
           <p>
-            <button onclick='Designer.foo()'>Constrain!</button>
+            <textarea id='seq_must_not_contain' cols='20' rows='4'></textarea><br/>
+          </p>
+          <p>
+            <button onclick='Designer.constrain()'>Constrain</button>
           </p>
         </div>
       </div>

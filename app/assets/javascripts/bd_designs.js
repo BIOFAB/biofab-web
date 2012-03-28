@@ -2,80 +2,8 @@
 
 var BCDDesign = {
 
-    bcd_bar_labels: [
-        'BCD1',
-        'BCD2',
-        'BCD5',
-        'BCD6',
-        'BCD7',
-        'BCD8',
-        'BCD9',
-        'BCD10',
-        'BCD11',
-        'BCD12',
-        'BCD13',
-        'BCD14',
-        'BCD15',
-        'BCD16',
-        'BCD17',
-        'BCD18',
-        'BCD19',
-        'BCD20',
-        'BCD21',
-        'BCD22',
-        'BCD23',
-        'BCD24'
-    ],
-
-    mcd_bar_labels: [
-        'MCD1',
-        'MCD2',
-        'MCD5',
-        'MCD6',
-        'MCD7',
-        'MCD8',
-        'MCD9',
-        'MCD10',
-        'MCD11',
-        'MCD12',
-        'MCD13',
-        'MCD14',
-        'MCD15',
-        'MCD16',
-        'MCD17',
-        'MCD18',
-        'MCD19',
-        'MCD20',
-        'MCD21',
-        'MCD22',
-        'MCD23',
-        'MCD24'
-    ],
+    rbs_template_seq: 'NNNGGANNN',
     
-    
-    goi_bar_labels: [
-        'GFP',
-        'coPMK-36-GFP',
-        'coCellulase-36-GFP',
-        'PA-36-GFP',
-        'sfGFP-36-GFP',
-        'RFP-36-GFP',
-        'Lacl-36-GFP',
-        'TetR-36-GFP',
-        'AraC-36-GFP',
-        'TetR-full-GFP',
-        'RFP',
-        'coPMK-36-RFP',
-        'coCellulase-36-RFP',
-        'PA-36-RFP',
-        'sfGFP-36-RFP',
-        'RFP-36-RFP',
-        'Lacl-36-RFP',
-        'TetR-36-RFP',
-        'AraC-36-RFP'
-    ],
-    
-
     nilfunc: function(e) {
         return false;
     },
@@ -92,7 +20,20 @@ var BCDDesign = {
         return data;
     },
 
-    init: function(bcd_data, bcd_sd, mcd_data, mcd_sd) {
+    init: function(bcd_labels, bcd_data, bcd_sd, bcd_rbs2_seqs, mcd_labels, mcd_data, mcd_sd, mcd_rbs2_seqs) {
+
+        // the seq of the variable RBS for the
+        // currently selected bar
+        this.bcd_selected_rbs_seq = this.rbs_template_seq;
+        this.mcd_selected_rbs_seq = this.rbs_template_seq;
+
+        this.bcd_bar_labels = bcd_labels;
+        this.bcd_rbs2_seqs = bcd_rbs2_seqs
+        this.mcd_bar_labels = mcd_labels;
+        this.mcd_rbs2_seqs = mcd_rbs2_seqs
+
+        // To generate the RBS2 part of the diagram widget
+        this.diagram_subseq_template = doT.template($('diagram_subseq').text, null, null);
 
         this.spinner_template = doT.template($('spinner_template').text, null, null);
 
@@ -131,15 +72,34 @@ var BCDDesign = {
         
     },
 
+    update_seq_diagram: function(diagram_node_id, box_index, sequence) {
+
+        var box_nodes = $$('#'+diagram_node_id+' .box');
+        if(box_nodes.length < box_index + 1) {
+            console.log("Error: Attempted to update non-existant box in sequence diagram");
+            return false;
+        }
+        var box_node = box_nodes[box_index];
+        
+        var dia_subseq_html = this.diagram_subseq_template({seq: sequence});
+
+        box_node.innerHTML = dia_subseq_html;
+        return true;
+    },
+
     bcd_bin_mouseover: function(node, index, is_simulated, value, error, label, per_bar_param) {
-//        console.log('Over: ' + index + ', ' + value + ', ' + error + ', ' + label);
+
+        this.update_seq_diagram('bcd_diagram', 2, this.bcd_rbs2_seqs[index]);
+        
         if(!is_simulated) {
             this.mcd_histogram.simulate_mouseover(index);
         }
         return true;
     },
     bcd_bin_mouseout: function(node, index, is_simulated, value, error, label, per_bar_param) {
-//        console.log('Over: ' + index + ', ' + value + ', ' + error + ', ' + label);
+
+        this.update_seq_diagram('bcd_diagram', 2, this.bcd_selected_rbs_seq);
+
         if(!is_simulated) {
             this.mcd_histogram.simulate_mouseout(index);
         }
@@ -147,7 +107,8 @@ var BCDDesign = {
     },
 
     bcd_bin_click: function(node, index, is_simulated, value, error, label, per_bar_param) {
-//        console.log('bcd bar click: ' + index + ', ' + value + ', ' + error + ', ' + label);
+
+        this.bcd_selected_rbs_seq = this.bcd_rbs2_seqs[index];
 
         new Ajax.Request('/bd_designs/get_per_goi_data', {
             method: 'get',
@@ -181,14 +142,18 @@ var BCDDesign = {
 
 
     mcd_bin_mouseover: function(node, index, is_simulated, value, error, label, per_bar_param) {
-//        console.log('Over: ' + index + ', ' + value + ', ' + error + ', ' + label);
+
+        this.update_seq_diagram('mcd_diagram', 0, this.mcd_rbs2_seqs[index]);
+
         if(!is_simulated) {
             this.bcd_histogram.simulate_mouseover(index);
         }
         return true;
     },
     mcd_bin_mouseout: function(node, index, is_simulated, value, error, label, per_bar_param) {
-//        console.log('Over: ' + index + ', ' + value + ', ' + error + ', ' + label);
+
+        this.update_seq_diagram('mcd_diagram', 0, this.mcd_selected_rbs_seq);
+
         if(!is_simulated) {
             this.bcd_histogram.simulate_mouseout(index);
         }
@@ -196,7 +161,8 @@ var BCDDesign = {
     },
 
     mcd_bin_click: function(node, index, is_simulated, value, error, label, per_bar_param) {
-//        console.log('bcd bar click: ' + index + ', ' + value + ', ' + error + ', ' + label);
+
+        this.mcd_selected_rbs_seq = this.mcd_rbs2_seqs[index];
 
         new Ajax.Request('/bd_designs/get_per_goi_data', {
             method: 'get',

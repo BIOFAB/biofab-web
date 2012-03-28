@@ -3,7 +3,7 @@ class BdDesignsController < ApplicationController
 
   def index
 
-    bcd_data = PartPerformance.where("name like 'BCD%'").all
+    bcd_data = PartPerformance.where("name like 'BCD%'").includes(:part => :annotations).all
 
     # sort by BCD1, BCD2, etc. number
     bcd_sorted = bcd_data.sort do |a,b|
@@ -11,9 +11,22 @@ class BdDesignsController < ApplicationController
       -a.goi_average <=> -b.goi_average
     end
 
+    @bcd_labels = bcd_sorted.collect(&:name)
     @bcd_data = bcd_sorted.collect(&:goi_average)
     @bcd_sd = bcd_sorted.collect(&:goi_sd)
 
+    # get the RBS2 sequences
+    @bcd_rbs2_seqs = bcd_sorted.collect do |perf|
+      seq = nil
+      perf.part.annotations.each do |annot|
+        if annot.label == 'Mutated SD'
+          seq = annot.part.sequence
+        end
+      end
+      seq
+    end
+
+    @bcd_rbs2_seqs.compact!
 
     mcd_data = PartPerformance.where("name like 'MCD%'").all
 
@@ -26,8 +39,23 @@ class BdDesignsController < ApplicationController
       mcd_order.index(mcd.name)
     end
 
+    @mcd_labels = mcd_sorted.collect(&:name)
     @mcd_data = mcd_sorted.collect(&:goi_average)
     @mcd_sd = mcd_sorted.collect(&:goi_sd)
+
+    # get the RBS2 sequences
+    @mcd_rbs2_seqs = mcd_sorted.collect do |perf|
+      seq = nil
+      perf.part.annotations.each do |annot|
+        if annot.label == 'Mutated SD'
+          seq = annot.part.sequence
+        end
+      end
+      seq
+    end
+
+    @bcd_rbs2_seqs.compact!
+
 
     @bcd_annotations = [19,
                     {:sequence => 'AGGAGA',

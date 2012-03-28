@@ -183,7 +183,8 @@ $sd_opacity: 0.3;
 .fixed {
   position: fixed;
   top: 113px;
-  bottom: 121px;
+/*  bottom: 121px; */
+  bottom: 0;
   width: 980px;
   left: auto;
   right: auto;
@@ -220,7 +221,8 @@ $sd_opacity: 0.3;
       }
       .dropdown {
         float: right;
-        display: inline-block;
+/*        display: inline-block; */
+          display: none;
       }
     }
   }
@@ -285,6 +287,7 @@ $sd_opacity: 0.3;
 
 
 .cart {
+  display: none;
   position: fixed;
   bottom: 0;
   height: 120px;
