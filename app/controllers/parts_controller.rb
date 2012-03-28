@@ -23,7 +23,7 @@ class PartsController < ApplicationController
       format.fasta do 
         send_data(@part.to_fasta, 
                   :filename => "#{@part.biofab_id}.fasta",
-                  :disposition => 'inline', # or 'attachment'
+                  :disposition => 'attachment', # or 'inline'
                   :type => 'application/fasta')
       end
       format.sbol do 
@@ -33,7 +33,7 @@ class PartsController < ApplicationController
         else
           send_data(data, 
                     :filename => "#{@part.biofab_id}.sbol",
-                    :disposition => 'inline', # or 'attachment'
+                    :disposition => 'attachment', # or 'inline'
                     :type => 'application/fasta')
         end
       end

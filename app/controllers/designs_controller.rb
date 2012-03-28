@@ -120,4 +120,17 @@ class DesignsController < ApplicationController
   def flash_test
 
   end
+
+  def get_plasmid_json
+
+    design = Design.find(params['design_id'])
+
+    render :text => {
+      :name => design.plasmid.biofab_id,
+      :sequence => design.plasmid.sequence,
+      :features => design.plasmid.annotations_for_flash_widgets
+    }.to_json
+
+  end
+
 end

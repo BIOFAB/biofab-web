@@ -162,6 +162,7 @@ var FlashWidgets = {
 
     // arguments: name, sequence, features
     show_and_load: function(container_id) {
+        console.log("aw yis");
         var args = Array.prototype.slice.apply(arguments);
         this.ready_callback_arguments = args.slice(1, args.length); // remove container_id from arg list
 //        this.ready_callback_arguments = arguments;

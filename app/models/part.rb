@@ -181,7 +181,7 @@ eos
     xml += "<s:name>#{biofab_id}</s:name>"
     xml += "<s:description>BIOFAB part #{biofab_id} of type #{part_type.name}</s:description>"
 
-    xml += "<s:dnaSequence><s:DnaSequence rdf:about=\"#{biofab_id}\"><s:nucleotides>#{sequence}</s:nucleotides></s:DnaSequence></s:dnaSequence>"
+    xml += "<s:dnaSequence><s:DnaSequence rdf:about=\"#{biofab_id}.DnaSequence\"><s:nucleotides>#{sequence}</s:nucleotides></s:DnaSequence></s:dnaSequence>"
 
     annots_with_biofab_id = 0
     annotations.each do |annot|
@@ -196,7 +196,7 @@ eos
       annotations.each do |annotation|
         next if annotation.part.biofab_id.blank?
 
-        xml += "<s:SequenceAnnotation rdf:about=\"#{annotation.part.biofab_id}\">"
+        xml += "<s:SequenceAnnotation rdf:about=\"#{annotation.part.biofab_id}.SequenceAnnotation\">"
 
         xml += "<s:bioStart>#{annotation.from}</s:bioStart>"
         xml += "<s:bioEnd>#{annotation.to}</s:bioEnd>"

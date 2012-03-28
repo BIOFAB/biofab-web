@@ -3,7 +3,7 @@
          *= require ConstraintSlider
          *= require part_diagram
          *= require eou_widget
-         *= reqiure Overlay
+         *= require Overlay
 */  
 
 html, body {
@@ -161,7 +161,8 @@ $sd_opacity: 0.3;
 
 .list {
   position: relative;
-  margin-top: 10px;
+/*  margin-top: 10px; */
+  margin-top: 105px;
   margin-bottom: 121px;
   width: 640px;
   padding: 10px;
@@ -450,3 +451,39 @@ $sd_opacity: 0.3;
   text-align: center;
 }
 
+/* BEGIN flash widgets stuff */
+
+#flash_widgets_container {
+  position: relative;
+  height: 350px;
+  width: 100%;
+}
+
+#plasmid_viewer_container {
+  width: 50%; 
+  height: 100%;
+  float: left;
+}
+
+#sequence_viewer_container {
+  width: 50%; 
+  height: 100%;
+  float: left;
+}
+
+/*
+.flash_widget_hide {
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  visibility: hidden;
+}
+*/
+
+#hidden {
+  display: none;
+}
+
+/* END flash widgets stuff */

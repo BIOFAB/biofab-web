@@ -137,7 +137,7 @@ var BCDDesign = {
         var labels = obj.labels;
         var per_bar_params = obj.params;
         
-        var histogram = this.make_goi_histogram('bcd_goi_histogram', labels, data, error_data, this.bcd_goi_histogram_click.bind(this), per_bar_params);
+        var histogram = this.make_goi_histogram('bcd_goi_histogram', labels, data, error_data, this.bcd_goi_histogram_click.bind(this), per_bar_params, '');
     },
 
 
@@ -185,10 +185,10 @@ var BCDDesign = {
         var labels = obj.labels;
         var per_bar_params = obj.params;
         
-        var histogram = this.make_goi_histogram('mcd_goi_histogram', labels, data, error_data, this.mcd_goi_histogram_click.bind(this), per_bar_params);
+        var histogram = this.make_goi_histogram('mcd_goi_histogram', labels, data, error_data, this.mcd_goi_histogram_click.bind(this), per_bar_params, "fluorescence of GFP or RFP in AU");
     },
 
-    make_goi_histogram: function(container_id, labels, data, error_data, click_callback, per_bar_params) {
+    make_goi_histogram: function(container_id, labels, data, error_data, click_callback, per_bar_params, y_axis_label) {
 
         var goi_histogram = Histogram.create(container_id, {
             data_is_bar_heights: true,
@@ -199,6 +199,7 @@ var BCDDesign = {
             bar_spacing: 10,
             histogram_max_height: 'inherit',
             y_axis_max: 'dynamic', // Can also be 'dynamic'. If you specify this, then you _must_not_ have any bins with more entries than y_axis_max. If you do, the widget will exceed histogram_max_height.
+            y_axis_label: y_axis_label,
             horizontal_lines: true,
             log_scale: false,
             on_mouseover: this.nilfunc,
@@ -246,8 +247,7 @@ var BCDDesign = {
         }
         var obj = transport.responseText.evalJSON(true);
 
-        // TODO kinda hackish
-        var html = "<h3>Plasmid sequence for pFAB123</h3><div id='flash_widgets_container'></div>";
+        var html = "<h3>Plasmid sequence for "+obj.name+"</h3><div id='flash_widgets_container'></div>";
 
         Overlay.show_html(html, this.overlay_hide_callback.bind(this));
 
