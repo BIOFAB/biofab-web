@@ -84,7 +84,7 @@ BiofabWeb::Application.routes.draw do
   #     resources :products
   #   end
 
-  root :to => 'main#index'
+  root :to => 'front_page#index'
 
   # See how all your routes lay out with "rake routes"
 

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+    <%= javascript_include_tag 'jquery-1.6.2.min' %>
+    <%= javascript_include_tag 'jquery-ui-1.8.16.custom.min' %>
+    <script type='text/javascript'>
+      $.noConflict(); // relinquish jquery control of $ variable
+    </script>
+    <%= javascript_include_tag 'prototype' %>
+
+    <%= stylesheet_link_tag 'frontpage' %>
+    <script type='text/javascript'>
+      
+      var FrontPage = {
+
+        popup_ids: [
+          'promoter_popup',
+          'fpu_popup'
+        ],
+
+        show: function(id) {
+          this.hide();
+          $(id).style.display = 'block';
+        },
+
+        hide: function() {
+          var i;
+          for(i=0; i < this.popup_ids.length; i++) {
+            $(this.popup_ids[i]).style.display = 'none';
+          }
+        }
+      }
+    </script>
+    </head>
+    <body>
+			<div class="container">
+
+        <div id='promoter_button' onclick="FrontPage.show('promoter_popup')"></div>
+
+        <div id='fpu_button' onclick="FrontPage.show('fpu_popup')"></div>
+
+        <div id='promoter_popup' class='popup' >
+          <div class='hline'></div>
+          <div class='vline'></div>
+          <div class='inside'>
+            <div class='headline'>BIOFAB Promoter Libraries</div>
+            <div class='content'>
+              <p>The BIOFAB currently contains three constitutive promoter libraries:</p>
+              <ul>
+                <li><a href='http://biofab.jbei.org:2000/'>The Pilot Project Promoter Library</a></li>
+                <li><a href='http://biofab.jbei.org/services/studio/dac/'>The Modular Promoter Library</a></li>
+                <li><a href='http://biofab.jbei.org/services/studio/dac/'>The Random Promoter Library</a></li>
+              </ul>
+              
+              <p>You can also use the <a href='/designs'><u>Expression Selector</u></a> to find suitable promoters.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id='fpu_popup' class='popup' >
+          <div class='hline'></div>
+          <div class='vline'></div>
+          <div class='inside'>
+            <div class='headline'>BIOFAB 5' UTR libraries</div>
+            <div class='content'>
+              <ul>
+                <li><a href='/bd_designs'>Bi and mono-cistronic 5' UTRs</a></li>
+                <li>Larger library of bi-cistronic 5' UTRs [coming soon]</li>
+              </ul>
+              
+              <p>You can also use the <a href='/designs'><u>Expression Selector</u></a> to find suitable 5' UTRs.</p>
+            </div>
+          </div>
+        </div>
+        
+
+				<div class="pilot">
+					<div class="title"><a href="http://biofab.jbei.org:2000/">Pilot Project</a></div>
+					
+				</div>
+				<div class="terminator">
+					<div class="title"><a href="http://biofab.jbei.org/services/studio/dac/">Terminator Project</a></div>
+					
+				</div>	
+				<div class="image" onclick="FrontPage.hide()"></div>
+				<div class="bicistronic">
+					<div class="title"><a href="/bd_designs">Bicistronic Project</a></div>
+					
+				</div>
+
+				<div class="selector">
+					<div class="title"><a href=""><u>Expression Selector</u>: Hit your target expression level</a></div>
+				</div>
+			</div>
+
+ 
+      <div id='container'>
+        <%= yield %>
+      </div>
+	</body>
+</html> 

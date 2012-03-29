@@ -13,6 +13,7 @@ class PartsController < ApplicationController
   # GET /parts/1
   # GET /parts/1.json
   def show
+
     @part = Part.find(params[:id], :include => {:annotations => :annotation_type})
 
     @performance = 0.6 # expression level (optional)
