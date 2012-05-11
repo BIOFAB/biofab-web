@@ -124,6 +124,26 @@ class Part < ActiveRecord::Base
     end
   end
 
+  def annotations_recursive
+    sub_annots = []
+    annotations.each do |annotation|
+      next if !annotation.part
+      sub_annots += annotation.part.annotations_recursive
+    end
+    annotations + sub_annots
+  end
+
+  def to_genbank
+    seq = Bio::Sequence.new(sequence)
+    seq.features = []
+
+    annotations_recursive.each do |annotation|
+      seq.features << Bio::Feature.new(annotation.part.part_type.name, "#{annotation.from}..#{annotation.to}",
+                                       [ Bio::Feature::Qualifier.new('biofab_id', annotation.part.biofab_id)])
+    end
+
+    seq.output(:genbank)
+  end
 
   def to_fasta
     seq = Bio::Sequence::NA.new(sequence)

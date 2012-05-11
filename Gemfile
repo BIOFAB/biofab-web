@@ -50,6 +50,8 @@ gem 'rsruby' # R interface
 gem 'spreadsheet' # xls file output
 
 gem 'zip' # required by roo
+
+gem 'nokogiri', '1.5.0' # nokogiri is required by roo but 1.5.2 broke google docs import 
 gem 'roo' # google docs import
 
 gem 'haml' # some widgets are in haml

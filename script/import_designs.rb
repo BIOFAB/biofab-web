@@ -1,5 +1,7 @@
 #!script/rails runner
 
+# run like this:
+#   ./script/import_bc_designs.rb data/BD_data_for_the\ paper-Web.xlsx "PBD"
 
 def usage
   puts "This script imports designs from an xlsx file."

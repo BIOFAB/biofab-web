@@ -72,3 +72,4 @@ while(!g.cell(row, 1).blank?)
   row += 1
 end
 
+puts "remember to run annotate_fpus.rb now, in order to add ATG to the end of 5' UTRs"

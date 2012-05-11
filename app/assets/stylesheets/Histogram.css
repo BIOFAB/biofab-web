@@ -129,8 +129,7 @@
     left: -4px;
     height: 1px;
     right: -4px;
-    background-color: black;
-	  opacity: 0.1;
+    background-color: #DDDDDD;
     overflow: visible;
 }
 
@@ -142,6 +141,7 @@
     height: 10px;
     font-size: 8px;
     color: black;
+    opacity: 0.9;
 }
 
 .histogram .y_axis_label_container {
@@ -149,7 +149,7 @@
   top: 0;
   left: 100%;
   font-size: 8px;
-  color: gray;
+  color: #333;
   -webkit-transform: rotate(90deg); 
   -moz-transform: rotate(90deg);	
   text-align: left;

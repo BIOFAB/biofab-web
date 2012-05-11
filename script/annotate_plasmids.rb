@@ -49,11 +49,16 @@ raise "no parts found" if !parts || (parts.length == 0)
 plasmids.each do |plasmid| 
   next if plasmid.sequence.blank?
 
+  puts "annotating plasmid #{plasmid.biofab_id}"
+
   annotations = []
 
   parts.each do |part|
     next if part.sequence.blank?
     offset = 0
+
+    # TODO ugly hack to ignore a second terminator present on some plasmids
+    next if part.biofab_id == 'apFAB840'
 
     mseq = plasmid.sequence.upcase
 
