@@ -1,0 +1,28 @@
+<table cellspacing='0' class='sortable'>
+  <thead>
+    <tr>
+      <th>5' UTR ID</th>
+      <th>5' UTR performance</th>
+      <th>5' UTR performance SD</th>
+      <th>5' UTR reliability</th>
+      <th>5' UTR sequence</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @fpus.each do |fpu| %>
+
+    <tr>
+
+
+      <td><%= fpu.biofab_id %></td>
+
+      <td><%= fpu.part_performance.performance.round(2) %></td>
+      <td><%= fpu.part_performance.performance_sd.round(2) %></td>
+      <td><%= fpu.part_performance.reliability.round %></td>
+      <td><%= fpu.sequence %></td>
+
+    </tr>
+
+  <% end %>
+  </tbody>
+</table>

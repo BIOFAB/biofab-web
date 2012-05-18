@@ -1,4 +1,54 @@
 
+== BCD vs. MCD view ==
+
+Create new fields for normalized data in the db and calculate and save them.
+
+Make checkbox for switching between normalized and non-normalized
+
+Put newest version on server (dev mode is OK for now).
+  Run the three import and annotate scripts:
+    import_google_docs_parts
+    annotate_fpus
+    annotate_plasmids
+
+== Expression level ==
+
+Normalized slider values.
+
+Add "Download as GenBank" links.
+
+Expanded promoter diagram.
+
+== General ==
+
+Script for removing the .0 on part names.
+  Also modify the import_google_docs_parts to fix that bug.
+
+Clean up excel sheet and make downloadable.
+
+Add nice help page for each of the two views.
+
+Add BIOFAB logo
+
+Check that annotations are OK.
+
+== Can wait ==
+
+Add to SynBERC registry.
+
+Put up:
+  Attributions
+  Link to article
+  
+
+
+  
+
+
+-----------------------
+OLD BELOW
+----------------------
+
 Friday:
 
 - Talk to Vivek about:

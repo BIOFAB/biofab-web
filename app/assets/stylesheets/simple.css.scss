@@ -1,0 +1,97 @@
+/*
+         *= require_self 
+         *= require Overlay
+*/  
+
+body {
+  font-family: sans-serif;
+  font-size: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+#container {
+  margin-top: 35px;
+}
+
+table th {
+  border-bottom: 2px solid #666699;
+  padding-bottom: 4px;
+
+}
+
+table td {
+  padding: 2px;
+  border-bottom: 1px solid #666699;  
+  text-align: center;
+}
+
+
+#top_menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  border-bottom: 1px solid black;
+  padding: 0;
+  margin: 0;
+  background-color: #EEE;
+}
+
+#top_menu ul {
+  padding: 0;
+  margin: 0;
+  height: 30px;
+}
+
+#top_menu ul li {
+  padding-top: 7px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 0;
+  display: inline-block;
+  border-right: 1px solid gray;
+  height: 23px;
+}
+
+#top_menu ul li.last {
+
+}
+
+/* BEGIN flash widgets stuff */
+
+#flash_widgets_container {
+  position: relative;
+  height: 400px;
+  width: 100%;
+}
+
+#plasmid_viewer_container {
+  width: 50%; 
+  height: 100%;
+  float: left;
+}
+
+#sequence_viewer_container {
+  width: 50%; 
+  height: 100%;
+  float: left;
+}
+
+/*
+.flash_widget_hide {
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  visibility: hidden;
+}
+*/
+
+#hidden {
+  display: none;
+}
+
+/* END flash widgets stuff */

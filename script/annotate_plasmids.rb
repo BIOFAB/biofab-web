@@ -32,7 +32,11 @@ raise "no plasmids found" if !plasmids || (plasmids.length == 0)
 allowed_part_type_names = ["Promoter",
                            "CDS",
                            "5' UTR",
-                           "Terminator"]
+                           "Terminator",
+                           "Resistance marker",
+                           "Spacer",
+                           "Insulator",
+                           "Replication origin"]
 
 query_parm = [(["name = ?"] * allowed_part_type_names.length).join(' OR ')] + allowed_part_type_names
 
@@ -59,6 +63,7 @@ plasmids.each do |plasmid|
 
     # TODO ugly hack to ignore a second terminator present on some plasmids
     next if part.biofab_id == 'apFAB840'
+    next if part.biofab_id == 'apFAB861'
 
     mseq = plasmid.sequence.upcase
 

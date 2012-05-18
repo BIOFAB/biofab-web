@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Expression Level Picker</title>
+
+    <!-- dot templates -->
+    <script id='histogram_template' type='text/x-dot-template'>
+      <div id="{{=it.node_id}}" class='histogram'>
+        <div class='histogram_container'>
+          <!-- horizontal lines and stuff -->
+          <div class='horizontal_lines'></div>
+          <!-- histogram for all items -->
+          <div id="{{=it.total_histogram_id}}" class='total_histogram_container'></div>
+        </div>
+        <div class='bar_label_container'>
+          <div class='offset'>
+          </div>
+        </div>
+      </div>      
+    </script>
+
+    <script id='spinner_template' type='text/x-dot-template'>
+      <div class='spinner_container'>
+        <div class='spinner'>
+          <img src='/assets/spinner.gif' />
+          <br />
+          {{=it.message}}
+        </div>
+      </div>
+    </script>
+
+    <script id='diagram_subseq' type='text/x-dot-template'>
+      {{
+        var i;
+        for(i=0; i < it.seq.length; i++) {
+      }} 
+         <div class='{{=it.seq[i].toLowerCase()}}'>{{=it.seq[i].toUpperCase()}}</div>
+      {{
+        }
+      }}
+    </script>
+
+    <!-- end dot templates -->
+
+    <%= stylesheet_link_tag 'jquery-ui-1.8.16.custom' %>
+    <%= stylesheet_link_tag 'simple' %>
+
+    <%= javascript_include_tag 'jquery-1.6.2.min' %>
+    <%= javascript_include_tag 'jquery-ui-1.8.16.custom.min' %>
+    <script type='text/javascript'>
+      $.noConflict(); // relinquish jquery control of $ variable
+    </script>
+    
+    <%= javascript_include_tag 'prototype' %>
+    <%= javascript_include_tag 'doT' %>
+
+    <%= javascript_include_tag 'tablesort_common' %>
+    <%= javascript_include_tag 'tablesort_css' %>
+    <%= javascript_include_tag 'tablesort_standardista' %>
+
+    <%= javascript_include_tag 'Histogram' %>
+    <%= javascript_include_tag 'Overlay' %>
+    <%= javascript_include_tag 'FlashWidgets' %>
+
+    <%= javascript_include_tag 'simple' %>
+
+    <script type='text/javascript'>
+
+      function page_init() {
+
+        standardistaTableSortingInit()
+
+        Simple.init();
+/*
+        var bcd_labels = <%=raw @bcd_labels.to_json %>;
+        var bcd_data = <%=raw @bcd_data.to_json %>;
+        var bcd_sd = <%=raw @bcd_sd.to_json %>;
+        var bcd_rbs2_seqs = <%=raw @bcd_rbs2_seqs.to_json %>;
+
+        var mcd_labels = <%=raw @mcd_labels.to_json %>;
+        var mcd_data = <%=raw @mcd_data.to_json %>;
+        var mcd_sd = <%=raw @mcd_sd.to_json %>;
+        var mcd_rbs2_seqs = <%=raw @mcd_rbs2_seqs.to_json %>;
+
+        var bcd_design = BCDDesign.init(bcd_labels, bcd_data, bcd_sd, bcd_rbs2_seqs, mcd_labels, mcd_data, mcd_sd, mcd_rbs2_seqs);
+  
+*/    
+        console.log('initialized');
+      }
+
+    </script>
+
+    <%= csrf_meta_tags %>    
+  </head>
+  <body onload='page_init()'>
+
+    <div id='top_menu'>
+      <ul>
+        <li><%= link_to "Characterized bi-cistronic 5' UTRs", :action => "characterized_bds" %></li>
+        <li><%= link_to "Characterized promoters", :action => "promoters" %></li>
+        <li><%= link_to "Randomized bi-cistronic 5' UTRs", :action => "randomized_bds" %></li>
+        <li><%= link_to "Promoter vs. 5' UTR", :action => "index" %></li>
+        <li class='last'><%= link_to "5' UTR vs. CDS", :action => "bd_gois" %></li>
+      </ul>
+    </div>
+
+
+    <div id='container'>
+      <%= yield %>
+    </div>
+
+    <div class='overlay' id='overlay'>
+      <div class='grayout' id='overlay_grayout' onclick='Overlay.hide()'></div>
+      <div class='box' id='overlay_box'>
+        <div class='close_button' onclick='Overlay.hide()'><a href='#'>X</a></div>
+        <div class='content' id='overlay_content'>
+        </div>
+      </div>
+    </div>
+
+    <div id='hidden'>
+      <div id='plasmid_viewer_container'>
+        <object width="100%" height="100%" type="application/x-shockwave-flash" data="/flash/PlasmidViewerBiofab.swf" id="plasmid_viewer" style="visibility: inherit;">
+          <param name='allowfullscreen' value='true'>
+          <param name='allowscriptaccess' value='always'>
+        </object>
+      </div>
+      
+      <div id='sequence_viewer_container'>
+        <object width="100%" height="100%" type="application/x-shockwave-flash" data="/flash/SequenceViewerBiofab.swf" id="sequence_viewer" style="visibility: inherit;">
+      <param name='allowfullscreen' value='true'>
+      <param name='allowscriptaccess' value='always'>
+        </object>
+      </div>
+    </div>
+
+
+	</body>
+</html> 

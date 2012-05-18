@@ -20,12 +20,17 @@ while(!g.cell(row, 1).blank?)
   if sequence
     sequence = sequence.upcase.gsub(/[^GATC]+/, '')
   end
-  
-  type_query = '%' + type.gsub(/[^\w\d]+/, '%') + '%'
+
+  type_query = type.gsub(/[^\w\d]+/, ' ').downcase
   part_type = PartType.where("name like '#{type_query}'").first
+
   if !part_type
-    puts "Failed for #{biofab_id} to find part type based on: #{type}"
-    exit
+    type_query = '%' + type.gsub(/[^\w\d]+/, '%') + '%'
+    part_type = PartType.where("name like '#{type_query}'").first
+    if !part_type
+      puts "Failed for #{biofab_id} to find part type based on: #{type}"
+      exit
+    end
   end
 
   part = Part.where(["biofab_id = ?", biofab_id]).first

@@ -1,0 +1,35 @@
+
+<table cellspacing='0' class='sortable'>
+  <thead>
+    <tr>
+      <th>Show plasmid</th>
+
+      <th>Plasmid ID</th>
+      <th>Strain ID</th>
+      <th>Strain performance</th>
+      <th>Strain performance SD</th>
+      <th>5' UTR ID</th>
+      <th>5' UTR sequence</th>
+
+    </tr>
+  </thead>
+  <tbody>
+  <% @designs.each do |design| %>
+
+    <tr>
+      <td><a href='#' onclick="Simple.show_plasmid('/simple/get_plasmid_json', '<%= design.plasmid.id %>')">plasmid</a></td>
+
+      <td><%= design.plasmid_biofab_id.gsub(/\.0$/, '') %></td>
+      <td><%= design.strain_biofab_id.gsub(/\.0$/, '') %></td>
+
+      <td><%= design.fcs_normalized.round(2) %></td>
+      <td><%= design.fcs_sd_normalized.round(2) %></td>
+
+      <td><%= design.biofab_id %></td>
+      <td><%= design.sequence %></td>
+
+    </tr>
+
+  <% end %>
+  </tbody>
+</table>

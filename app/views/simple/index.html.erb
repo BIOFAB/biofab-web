@@ -1,0 +1,118 @@
+
+
+
+<!--
+
+    = 5' UTRs =
+
+    5' UTR ID
+    5' UTR performance
+    5' UTR performance SD
+    5' UTR reliability
+    5' UTR sequence
+
+    = Promoters =
+
+    5' UTR ID
+    5' UTR performance
+    5' UTR performance SD
+    5' UTR reliability
+    5' UTR sequence
+
+    = Randomized BCD =
+
+    ! put them in the database in a new table first
+
+    Strain ID
+    5' UTR ID
+    Strain performance
+    Strain performance SD
+
+    Show plasmid
+
+    = BD-GOI =
+
+    Strain ID
+    GOI ID
+    Strain performance
+    Strain performance SD
+
+    5' UTR ID
+    5' UTR performance
+    5' UTR performance SD
+    5' UTR reliability
+    5' UTR sequence
+
+    Show plasmid    
+
+    = P-BD =
+
+    Strain ID
+    Promoter ID
+    5' UTR ID
+    Strain performance
+    Strain performance SD
+
+    Promoter performance
+    Promoter performance SD
+    Promoter sequence
+
+    5' UTR performance
+    5' UTR performance SD
+    5' UTR reliability
+    5' UTR sequence
+
+    Show plasmid
+    
+    
+-->
+
+<table cellspacing='0' class='sortable'>
+  <thead>
+    <tr>
+      <th>Show plasmid</th>
+
+      <th>Plasmid ID</th>
+      <th>Strain ID</th>
+      <th>Promoter ID</th>
+      <th>5' UTR ID</th>
+      <th>Strain performance</th>
+      <th>Strain performance SD</th>
+
+      <th>Promoter performance</th>
+      <th>Promoter performance SD</th>
+      <th>Promoter sequence</th>
+
+      <th>5' UTR performance</th>
+      <th>5' UTR performance SD</th>
+      <th>5' UTR reliability</th>
+      <th>5' UTR sequence</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @designs.each do |design| %>
+
+    <tr>
+
+      <td><a href='#' onclick="Simple.show_plasmid('/designs/get_plasmid_json', '<%= design.id %>')">plasmid</a></td>
+
+      <td><%= design.plasmid_biofab_id.gsub(/\.0$/, '') %></td>
+      <td><%= design.strain_biofab_id.gsub(/\.0$/, '') %></td>
+      <td><%= design.promoter.biofab_id %></td>
+      <td><%= design.fpu.biofab_id %></td>
+      <td><%= (design.performance_normalized * 100).round(2) %></td>
+      <td><%= (design.performance_sd_normalized * 100).round(2) %></td>
+      <td><%= design.promoter.part_performance.performance.round(2) %></td>
+      <td><%= design.promoter.part_performance.performance_sd.round(2) %></td>
+      <td><%= design.promoter.sequence %></td>
+
+      <td><%= design.fpu.part_performance.performance.round(2) %></td>
+      <td><%= design.fpu.part_performance.performance_sd.round(2) %></td>
+      <td><%= design.fpu.part_performance.reliability.round %></td>
+      <td><%= design.fpu.sequence %></td>
+
+    </tr>
+
+  <% end %>
+  </tbody>
+</table>

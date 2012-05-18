@@ -1,6 +1,6 @@
 #!script/rails runner
 
-designs = Design.all + BcDesign.all
+designs = Design.all + BcDesign.all + RandomizedBd.all
 
 type_name = 'Plasmid'
 part_type = PartType.find_by_name(type_name)
@@ -16,6 +16,9 @@ puts
 designs.each do |design|
 
   plasmid = Part.find_by_biofab_id(design.plasmid_biofab_id)
+  if !plasmid
+    plasmid = Part.find_by_biofab_id(design.plasmid_biofab_id.gsub(/\.0+$/, ''))
+  end
 
   if design.plasmid_biofab_id.match(/\.0$/)
     design.plasmid_biofab_id = design.plasmid_biofab_id.gsub(/\.0$/, '')
@@ -36,12 +39,17 @@ designs.each do |design|
   end
 
 
-  plasmid = Part.new
+  if !plasmid
+    puts "Saving new plasmid: #{design.plasmid_biofab_id}"
+    plasmid = Part.new
+  else
+    puts "Updating plasmid: #{design.plasmid_biofab_id}"
+  end
+
   plasmid.part_type_id = part_type.id
   plasmid.biofab_id = design.plasmid_biofab_id
   plasmid.sequence = design.plasmid_sequence
 
-  puts "Saving new plasmid: #{design.plasmid_biofab_id}"
   plasmid.save!
 
   design.plasmid_part_id = plasmid.id

@@ -284,7 +284,7 @@ def fetch_bcds
   raise "could not find 5' UTR part type" if !fpu_type
   
   # fetch the 22 makoff designs used for PBD library
-  parts = fpu_type.parts.where("description like 'Chosen 22 BD Makoff%Full%'").all
+  parts = fpu_type.parts.where("description like 'BCD%'").all
 
   # fetch the 138 randomized makoff designs
   parts += fpu_type.parts.where("description like 'Makoff-BD_rand%'").all
@@ -299,13 +299,12 @@ def fetch_mcds
   raise "could not find 5' UTR part type" if !fpu_type
   
   # fetch the 22 mono-cistronic makoff designs
-  parts = fpu_type.parts.where("description like 'Chosen 22 BD Makoff%Half%'").all
+  parts = fpu_type.parts.where("description like 'MCD%'").all
 
   # there are only the aboved-fetched 22 makoff designs
 
   parts
 end
-
 
 parts = fetch_bcds
 

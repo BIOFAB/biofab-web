@@ -1,0 +1,49 @@
+
+
+
+
+<table cellspacing='0' class='sortable'>
+  <thead>
+    <tr>
+      <th>Show plasmid</th>
+
+      <th>Plasmid ID</th>
+      <th>Strain ID</th>
+      <th>5' UTR ID</th>
+      <th>CDS ID</th>
+      <th>Strain performance</th>
+      <th>Strain performance SD</th>
+
+      <th>5' UTR performance</th>
+      <th>5' UTR performance SD</th>
+      <th>5' UTR reliability</th>
+      <th>5' UTR sequence</th>
+
+      <th>CDS sequence</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @designs.each do |design| %>
+
+    <tr>
+      <td><a href='#' onclick="Simple.show_plasmid('/bd_designs/get_plasmid_json', '<%= design.id %>')">plasmid</a></td>
+
+      <td><%= design.plasmid_biofab_id.gsub(/\.0$/, '') %></td>
+      <td><%= design.strain_biofab_id.gsub(/\.0$/, '') %></td>
+      <td><%= design.fpu.biofab_id %></td>
+      <td><%= design.cds.biofab_id %></td>
+      <td><%= design.performance.round(2) %></td>
+      <td>?</td>
+
+      <td><%= design.fpu.part_performance.performance.round(2) %></td>
+      <td><%= design.fpu.part_performance.performance_sd.round(2) %></td>
+      <td><%= design.fpu.part_performance.reliability.round %></td>
+      <td><%= design.fpu.sequence %></td>
+
+      <td><%= design.cds.sequence %></td>
+
+    </tr>
+
+  <% end %>
+  </tbody>
+</table>

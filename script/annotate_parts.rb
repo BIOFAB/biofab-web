@@ -1,7 +1,7 @@
 #!script/rails runner
 
-#puts "this is likely not what you want"
-#exit
+puts "this is likely not what you want"
+exit
 
 puts "faking up some nice annotations for your designs"
 
