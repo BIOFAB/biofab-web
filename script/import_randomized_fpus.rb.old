@@ -29,7 +29,7 @@ designs = []
 
 puts "Deleting all existing RandomizedBds in 10 seconds: "
 
-1.times do |i|
+10.times do |i|
   sleep 1
   print '.'
   $stdout.flush
@@ -83,35 +83,17 @@ while(true)
   row += 1
 end
 
-plasmid_part_type = PartType.find_by_name('Plasmid')
-
 puts "associating #{designs.length} designs with fpu and plasmid parts"
 count = 1
 designs.each do |design|
 
   part = Part.find_by_biofab_id(design.biofab_id)
-  if !part
-    part = Part.find_by_sequence(design.sequence)
-  end
-
   raise "no 5' UTR found with: #{design.biofab_id}" if !part
-
   design.part_id = (part) ? part.id : nil
 
   part = Part.find_by_biofab_id(design.plasmid_biofab_id)
-  if !part
-    part = Part.new
-    part.biofab_id = design.plasmid_biofab_id
-    part.sequence = design.plasmid_sequence
-    part.part_type = plasmid_part_type
-    part.save!
-  elsif part.sequence.blank?
-    part.sequence = design.plasmid_sequence
-  end
-
   raise "no plasmid found with: #{design.plasmid_biofab_id}" if !part
-
-  design.plasmid_part_id = part.id
+  design.plasmid_part_id = (part) ? part.id : nil
 
   print '.'
   print '|' if count % 100 == 0
@@ -120,13 +102,21 @@ designs.each do |design|
   count += 1
 end
 
+puts
+puts "== Finding max =="
+
+values = designs.collect {|design| design.fcs}
+max = values.max
 
 
 puts
-puts "== Saving =="
+puts "== Normalizing performances to 0-100 and saving =="
 
 count = 1
 designs.each do |design|
+
+  design.fcs_normalized = (design.fcs / max) * 100
+  design.fcs_sd_normalized = (design.fcs_sd / max) * 100
 
   print '.'
   print '|' if count % 100 == 0

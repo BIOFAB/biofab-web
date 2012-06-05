@@ -21,7 +21,6 @@ raise "no annotation type id!" if !anno_type.id
 
 annots = Annotation.delete_all(["annotation_type_id = ?", anno_type.id])
 
-
 plasmid_type = PartType.find_by_name('Plasmid')
 raise "plasmid type not found" if !plasmid_type
 
@@ -48,8 +47,6 @@ query_parm = [(["part_type_id = ?"] * allowed_part_types.length).join(' OR ')] +
 parts = Part.where(query_parm)
 raise "no parts found" if !parts || (parts.length == 0)
 
-
-
 plasmids.each do |plasmid| 
   next if plasmid.sequence.blank?
 
@@ -72,6 +69,8 @@ plasmids.each do |plasmid|
       annot_from = m.begin(0) + offset
       annot_to = m.end(0) + offset - 1
 
+      puts " -- annotating with: #{part.biofab_id} [#{part.part_type.name}]"
+
       anno = Annotation.new
       anno.parent_part = plasmid
       anno.part = part
@@ -82,7 +81,7 @@ plasmids.each do |plasmid|
 
       offset += m.end(0)
       mseq = mseq[offset..-1]
-      
+      break if mseq.blank?
     end
   end
 
@@ -93,7 +92,24 @@ plasmids.each do |plasmid|
     annotations.each do |outer|
       next if outer == inner
       if (outer.from <= inner.from) && (outer.to >= inner.to)
-        keep = false
+        # if they have the same sequence, then make sure one and only one of them is added
+        if outer.part.sequence.upcase == inner.part.sequence.upcase
+          seq_in_final_list = false
+          final_annos.each do |final|
+            if final.part.sequence.upcase == inner.part.sequence.upcase
+              seq_in_final_list = true
+              break
+            end
+          end
+
+          if seq_in_final_list
+            keep = false
+#            puts " == dropping: #{inner.part.biofab_id} [#{inner.part.part_type.name}] because it is inside #{outer.part.biofab_id} [#{outer.part.part_type.name}]"
+          end
+        else
+#          puts " == dropping: #{inner.part.biofab_id} [#{inner.part.part_type.name}] because it is inside #{outer.part.biofab_id} [#{outer.part.part_type.name}]"
+          keep = false
+        end
       end
     end
     if keep

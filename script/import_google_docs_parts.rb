@@ -1,5 +1,22 @@
 #!script/rails runner
 
+# add ATG to the end of BCD sequence if not already present
+def fix_sequence(part)
+
+  if part.sequence.blank?
+    return part
+  end
+
+  if part.sequence[-3..-1] == 'ATG'
+    return part
+  else
+    part.sequence += 'ATG'
+    return part
+  end
+
+end
+
+
 g = Google.new(Settings['google_docs_key'], Settings['google_username'], Settings['google_password'])
 
 g.default_sheet = 'PARTS'
@@ -67,6 +84,8 @@ while(!g.cell(row, 1).blank?)
   part.description = description
   part.part_type = part_type
 
+#  part = fix_sequence(part)
+
   begin
     part.save!
 #    puts "Imported #{biofab_id}"
@@ -77,4 +96,5 @@ while(!g.cell(row, 1).blank?)
   row += 1
 end
 
-puts "remember to run annotate_fpus.rb now, in order to add ATG to the end of 5' UTRs"
+
+puts "Remember to run annotate_fpus.rb to add missing ATG to end of 5' UTRs"

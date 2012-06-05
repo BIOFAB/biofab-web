@@ -4,11 +4,11 @@
     <tr>
       <th>Show plasmid</th>
 
-      <th>Plasmid ID</th>
-      <th>Strain ID</th>
+      <th>Plasmid BIOFAB ID</th>
+      <th>Strain BIOFAB ID</th>
       <th>Strain performance</th>
       <th>Strain performance SD</th>
-      <th>5' UTR ID</th>
+      <th>5' UTR BIOFAB ID</th>
       <th>5' UTR sequence</th>
 
     </tr>
@@ -22,8 +22,8 @@
       <td><%= design.plasmid_biofab_id.gsub(/\.0$/, '') %></td>
       <td><%= design.strain_biofab_id.gsub(/\.0$/, '') %></td>
 
-      <td><%= design.fcs_normalized.round(2) %></td>
-      <td><%= design.fcs_sd_normalized.round(2) %></td>
+      <td><%= (design.fcs == 0) ? "no data" : design.fcs.round(2) %></td>
+      <td><%= (design.fcs_sd == 0) ? "no data" : design.fcs_sd.round(2) %></td>
 
       <td><%= design.biofab_id %></td>
       <td><%= design.sequence %></td>

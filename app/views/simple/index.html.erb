@@ -72,21 +72,17 @@
     <tr>
       <th>Show plasmid</th>
 
-      <th>Plasmid ID</th>
-      <th>Strain ID</th>
-      <th>Promoter ID</th>
-      <th>5' UTR ID</th>
+      <th>Plasmid BIOFAB ID</th>
+      <th>Strain BIOFAB ID</th>
       <th>Strain performance</th>
       <th>Strain performance SD</th>
-
-      <th>Promoter performance</th>
-      <th>Promoter performance SD</th>
+      <th>Promoter BIOFAB ID</th>
+      <th>Promoter name</th>
       <th>Promoter sequence</th>
-
-      <th>5' UTR performance</th>
-      <th>5' UTR performance SD</th>
-      <th>5' UTR reliability</th>
+      <th>5' UTR BIOFAB ID</th>
+      <th>5' UTR name</th>
       <th>5' UTR sequence</th>
+
     </tr>
   </thead>
   <tbody>
@@ -98,18 +94,14 @@
 
       <td><%= design.plasmid_biofab_id.gsub(/\.0$/, '') %></td>
       <td><%= design.strain_biofab_id.gsub(/\.0$/, '') %></td>
-      <td><%= design.promoter.biofab_id %></td>
-      <td><%= design.fpu.biofab_id %></td>
-      <td><%= (design.performance_normalized * 100).round(2) %></td>
-      <td><%= (design.performance_sd_normalized * 100).round(2) %></td>
-      <td><%= design.promoter.part_performance.performance.round(2) %></td>
-      <td><%= design.promoter.part_performance.performance_sd.round(2) %></td>
-      <td><%= design.promoter.sequence %></td>
-
-      <td><%= design.fpu.part_performance.performance.round(2) %></td>
-      <td><%= design.fpu.part_performance.performance_sd.round(2) %></td>
-      <td><%= design.fpu.part_performance.reliability.round %></td>
-      <td><%= design.fpu.sequence %></td>
+      <td><%= design.performance.round(2)  %></td>
+      <td><%= design.performance_sd.round(2) %></td>
+      <td><%= design.promoter_biofab_id %></td>
+      <td><%= design.promoter_name %></td>
+      <td><%= design.promoter_sequence %></td>
+      <td><%= design.fpu_biofab_id %></td>
+      <td><%= design.fpu_name %></td>
+      <td><%= design.fpu_sequence %></td>
 
     </tr>
 

@@ -75,13 +75,7 @@ while(true)
   design.promoter_name = x.cell(row, 3)
   design.promoter_sequence = x.cell(row, 4)
   design.fpu_biofab_id = x.cell(row, 5).to_s.gsub(/\.\d+$/, '')
-  design.fpu_name = x.cell(row, 6)
   design.fpu_sequence = x.cell(row, 7)
-
-  if !design.fpu_sequence.match(/ATG$/)
-    design.fpu_sequence += 'ATG'
-  end
-
   design.promoter_upstream_sequence = x.cell(row, 8)
   design.fpu_downstream_sequence = x.cell(row, 9)
   design.plasmid_sequence = x.cell(row, 10)
@@ -107,7 +101,80 @@ end
 
 # find GFP and RFP means
 
-plasmid_part_type = PartType.find_by_name('Plasmid')
+gfp_mean = nil
+rfp_mean = nil
+
+gfp_values = []
+rfp_values = []
+
+designs.each do |design|
+  
+  if design.reporter_gene == 'GFP'
+    gfp_values << design.performance
+  elsif design.reporter_gene == 'RFP'
+    rfp_values << design.performance    
+  else
+    raise "Unknown gene '#{gene}'"
+  end
+end
+
+gfp_mean = gfp_values.mean
+rfp_mean = rfp_values.mean
+
+puts "GFP mean: #{gfp_mean}. RFP mean: #{rfp_mean}"
+puts
+
+# mid-center by CDS mean
+
+designs.each do |design|
+
+  if design.reporter_gene == 'GFP'
+    design.performance = design.performance / gfp_mean.to_f
+    design.performance_sd = design.performance_sd / gfp_mean.to_f
+  elsif design.reporter_gene == 'RFP'
+    design.performance = design.performance / rfp_mean.to_f
+    design.performance_sd = design.performance_sd / rfp_mean.to_f
+  else
+    raise "Unknown gene '#{gene}'"
+  end
+  
+end
+
+
+# combine GFP and RFP
+
+combined = []
+
+designs.each do |design|
+
+  other = nil
+
+  if design.reporter_gene == 'GFP'
+    other = find_design_with(designs, design.promoter_biofab_id, design.fpu_biofab_id, 'RFP')
+    if !other
+      raise "could not find other for strain #{design.strain_biofab_id}"
+    end
+
+    design.performance = (design.performance + other.performance) / 2.0
+
+    # keep highest standard deviation
+    if other.performance_sd > design.performance_sd
+      design.performance_sd = other.performance_sd
+    end
+
+    puts "#{design.strain_biofab_id} combined performance and sd: #{design.performance} and #{design.performance_sd}"
+
+    combined << design
+
+  elsif design.reporter_gene == 'RFP'
+    # these are just ignored
+  else
+    raise "Unknown gene '#{gene}'"
+  end
+
+end
+
+designs = combined
 
 puts "saving #{designs.length} designs: "
 count = 1
@@ -122,18 +189,7 @@ designs.each do |design|
   design.fpu_part_id = (part) ? part.id : nil
 
   part = Part.find_by_biofab_id(design.plasmid_biofab_id)
-  if !part
-    part = Part.new
-    part.biofab_id = design.plasmid_biofab_id
-    part.sequence = design.plasmid_sequence
-    part.part_type = plasmid_part_type
-    part.save!
-  elsif part.sequence.blank?
-    part.sequence = design.plasmid_sequence
-  end
-
-  raise "no plasmid found with: #{design.plasmid_biofab_id}" if !part
-
+#  raise "no plasmid found with: #{design.plasmid_biofab_id}" if !part
   design.plasmid_part_id = (part) ? part.id : nil
 
   design.strain_part_id = nil

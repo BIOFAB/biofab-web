@@ -3,7 +3,6 @@
     <tr>
       <th>Promoter ID</th>
       <th>Promoter performance</th>
-      <th>Promoter performance SD</th>
       <th>Promoter sequence</th>
     </tr>
   </thead>
@@ -15,7 +14,6 @@
       <td><%= promoter.biofab_id.gsub(/\.0$/, '') %></td>
 
       <td><%= promoter.part_performance.performance.round(2) %></td>
-      <td><%= promoter.part_performance.performance_sd.round(2) %></td>
       <td><%= promoter.sequence %></td>
 
     </tr>

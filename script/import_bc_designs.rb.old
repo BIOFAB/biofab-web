@@ -90,9 +90,7 @@ while(true)
   row += 1
 end
 
-plasmid_part_type = PartType.find_by_name('Plasmid')
-
-puts "associating #{designs.length} designs with fpu, cds and plasmid parts"
+puts "associating #{designs.length} designs with fpu and cds parts"
 count = 1
 designs.each do |design|
 
@@ -104,21 +102,6 @@ designs.each do |design|
   raise "no CDS found with: #{design.cds_biofab_id}" if !part
   design.cds_part_id = (part) ? part.id : nil
 
-  part = Part.find_by_biofab_id(design.plasmid_biofab_id)
-  if !part
-    part = Part.new
-    part.biofab_id = design.plasmid_biofab_id
-    part.sequence = design.plasmid_sequence
-    part.part_type = plasmid_part_type
-    part.save!
-  elsif part.sequence.blank?
-    part.sequence = design.plasmid_sequence
-  end
-
-  raise "no plasmid found with: #{design.plasmid_biofab_id}" if !part
-
-  design.plasmid_part_id = part.id
-
   print '.'
   print '|' if count % 100 == 0
   print '|' if count % 1000 == 0
@@ -129,10 +112,55 @@ end
 puts "\ndone saving designs"
 
 puts
-puts "== saving designs =="
+puts "== Finding per-GOI means =="
+
+gois = {}
+
+designs.each do |design|
+  if !gois[design.cds_name]
+    gois[design.cds_name] = {
+      :name => design.cds_name,
+      :values => [],
+      :mean => nil
+    }
+  end
+  gois[design.cds_name][:values] << design.fc_average
+end
+
+gois.each_key do |key|
+  gois[key][:mean] = gois[key][:values].mean
+end
+
+puts
+puts "== Mean-centering fc-data by per-GOI means  =="
+
+max = 0
+count = 1
+designs.each do |design|
+
+  goi = gois[design.cds_name]
+  raise "Could not find GOI for #{design.cds_name}" if !goi || (!goi[:mean])
+
+  design.performance = design.fc_average / goi[:mean]
+  design.performance_sd = design.fc_sd / goi[:mean]
+#  puts design.performance.to_s
+#  design.performance = Math.log(design.performance) / Math.log(2)
+#  puts 'x'+design.performance.to_s
+  
+  if design.performance > max
+    max = design.performance
+  end
+
+end
+
+puts
+puts "== Normalizing performances to 0-100 and saving =="
 
 count = 1
 designs.each do |design|
+
+  design.performance = (design.performance / max) * 100
+  design.performance_sd = (design.performance_sd / max) * 100
 
   print '.'
   print '|' if count % 100 == 0

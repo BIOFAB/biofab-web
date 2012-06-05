@@ -7,19 +7,19 @@
     <tr>
       <th>Show plasmid</th>
 
-      <th>Plasmid ID</th>
-      <th>Strain ID</th>
-      <th>5' UTR ID</th>
-      <th>CDS ID</th>
+      <th>Plasmid BIOFAB ID</th>
+      <th>Strain BIOFAB ID</th>
       <th>Strain performance</th>
       <th>Strain performance SD</th>
 
-      <th>5' UTR performance</th>
-      <th>5' UTR performance SD</th>
-      <th>5' UTR reliability</th>
+      <th>5' UTR BIOFAB ID</th>
+      <th>5' UTR name</th>
       <th>5' UTR sequence</th>
 
+      <th>CDS BIOFAB ID</th>
+      <th>CDS name</th>
       <th>CDS sequence</th>
+
     </tr>
   </thead>
   <tbody>
@@ -30,17 +30,17 @@
 
       <td><%= design.plasmid_biofab_id.gsub(/\.0$/, '') %></td>
       <td><%= design.strain_biofab_id.gsub(/\.0$/, '') %></td>
-      <td><%= design.fpu.biofab_id %></td>
-      <td><%= design.cds.biofab_id %></td>
-      <td><%= design.performance.round(2) %></td>
-      <td>?</td>
+      <td><%= design.fc_average.round(2) %></td>
+      <td><%= design.fc_sd.round(2) %></td>
 
-      <td><%= design.fpu.part_performance.performance.round(2) %></td>
-      <td><%= design.fpu.part_performance.performance_sd.round(2) %></td>
-      <td><%= design.fpu.part_performance.reliability.round %></td>
-      <td><%= design.fpu.sequence %></td>
+      <td><%= design.fpu_biofab_id %></td>
+      <td><%= design.fpu_name %></td>
+      <td><%= design.fpu_sequence %></td>
 
-      <td><%= design.cds.sequence %></td>
+
+      <td><%= design.cds_biofab_id %></td>
+      <td><%= design.cds_name %></td>
+      <td><%= design.cds_sequence %></td>
 
     </tr>
 

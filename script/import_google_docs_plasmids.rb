@@ -21,6 +21,7 @@ end
 row = 2
 while(!g.cell(row, 1).blank?)
   biofab_id = "pFAB#{g.cell(row, 1).to_i}"
+  puts biofab_id
 
   description = g.cell(row, 2)
 

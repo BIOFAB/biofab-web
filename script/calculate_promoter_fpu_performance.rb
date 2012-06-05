@@ -14,11 +14,13 @@ def group_by_method(designs, method_name)
         :mean => nil,
         :sd => nil,
         :normalized_mean => nil,
-        :normalized_sd => nil
+        :normalized_sd => nil,
+        :strains => []
       }
     end
     
     objs[key][:numbers] << design.performance
+    objs[key][:strains] << design.strain_biofab_id
   end
   
   max = 0
@@ -31,8 +33,8 @@ def group_by_method(designs, method_name)
   end
 
   objs.each_key do |key|
-    objs[key][:normalized_mean] = objs[key][:mean] / max
-    objs[key][:normalized_sd] = objs[key][:sd] / max
+    objs[key][:normalized_mean] = objs[key][:mean]
+    objs[key][:normalized_sd] = objs[key][:sd]
   end
 
   objs
@@ -46,6 +48,8 @@ designs = Design.all
 fpus = group_by_method(designs, :fpu_biofab_id)
 promoters = group_by_method(designs, :promoter_biofab_id)
 
+# TODO before merge, promoter-mean-center fpus and fpu-mean-center fpus
+
 objs = fpus.merge(promoters) do |key, val1, val2|
   raise "hash merge conflict for key #{key}"
 end
@@ -56,7 +60,7 @@ puts
 objs.each_key do |key|
   obj = objs[key]
 
-  puts "#{obj[:key]} - #{objs[key][:numbers].length} - #{obj[:normalized_mean] * 100}"
+  puts "#{obj[:key]} - #{objs[key][:numbers].length} - #{obj[:normalized_mean]} - #{obj[:normalized_sd]} - #{obj[:strains]}"
 
   part = Part.find_by_biofab_id(obj[:key])
   raise "Could not find part with biofab id #{obj[:key]}" if !part
@@ -66,8 +70,8 @@ objs.each_key do |key|
     perf.part_id = part.id
   end
 
-  perf.performance = obj[:normalized_mean] * 100
-  perf.performance_sd = obj[:normalized_sd] * 100
+  perf.performance = obj[:normalized_mean]
+  perf.performance_sd = obj[:normalized_sd]
 
   perf.save!
 end
